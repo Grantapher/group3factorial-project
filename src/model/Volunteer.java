@@ -7,6 +7,12 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains the information a Volunteer needs saved.
+ *
+ * @author Grant Toepfer
+ * @version May 1, 2015
+ */
 public class Volunteer extends AbstractUser implements Cloneable {
     /** Contains the jobs currently signed up for. */
     private final List<Job> myJobs;

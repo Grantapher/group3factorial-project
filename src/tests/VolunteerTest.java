@@ -18,6 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Test cases for {@link model.Volunteer}.
+ *
  * @author Grant Toepfer
  * @version May 1, 2015
  */
