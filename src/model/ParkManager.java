@@ -1,5 +1,5 @@
 
-package model;
+ppackage model;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,11 +8,7 @@ import java.util.List;
 
 public class ParkManager extends AbstractUser {
 	
-	//Fields
-	/**
-	 * User Email used to login.
-	 */
-	private String myUserName;
+	//Field
 	
 	/**
 	 * List of parks managed by this park manager.
@@ -20,20 +16,11 @@ public class ParkManager extends AbstractUser {
 	private ArrayList<String> myParks;
 	
 	/**
-	 * Constructs a park Manager.
-	 * @param theName The email/username of this park manager.
+	 * Constructs a ParkManager.
 	 */
-	public ParkManager(final String theName) {
-		myUserName = theName;
-		myParks = new ArrayList<String>();
-	}
-	
-	/**
-	 * This park managers username.
-	 * @return park managers name.
-	 */
-	public String getUserName() {
-		return myUserName;		
+	public ParkManager (final String theLastName, final String theFirstName, final String theEmail) {
+        super(theLastName, theFirstName, theEmail);
+        myParks = new ArrayList<String>();
 	}
 	
     /**
@@ -99,7 +86,11 @@ public class ParkManager extends AbstractUser {
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("Park Manager: ");	
-		str.append(myUserName);	
+		str.append(getFirstName());	
+		str.append(" ");
+		str.append(getLastName()); 
+		str.append("\nEmail: ");
+		str.append(getEmail());
 		if (myParks.size() > 0)
 		    moreToString(str);
 		return str.toString();
@@ -116,9 +107,6 @@ public class ParkManager extends AbstractUser {
 	        str.append("\n");
 	    }
 	}
-	
-	
-
 
 }
 
