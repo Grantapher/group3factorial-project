@@ -1,10 +1,14 @@
+/*
+ * TCSS 360 Project - Group 3!
+ */
+ 
 package model;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Job {
+public class Job implements Cloneable {
 	private String title;
 	private String parkName;
 	private String location;
@@ -23,7 +27,6 @@ public class Job {
 	public Job(String title, String parkName, String location,
 			Date start, Date end, int light, int med,
 			int heavy, String description) {
-
 		this.title = title;
 		this.parkName = parkName;
 		this.location = location;
@@ -87,7 +90,6 @@ public class Job {
 	//adds a volunteer to this job at the given grade 
 	//returns false if the grade was full
 	public boolean addVolunteer(Volunteer v, char grade) {
-
 		if(grade == 'L' || grade == 'l') {
 			if(maxLight == curLight) {
 				return false;			
@@ -107,4 +109,14 @@ public class Job {
 		volunteers.add(v);
 		return true;
 	}
+	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // TODO Auto-generated method stub
+        return super.clone();
+    }
+	
 }
