@@ -87,6 +87,33 @@ public class Job implements Cloneable {
 	}
 
 
+	/**
+	 * Checks if this job has the given volunteer signed up for it.
+	 * 
+	 */
+	//This method requires a user method getEmail() which returns a 
+	//String
+	public boolean containsVolunteer(Volunteer volunteer) {
+		for(Volunteer v : volunteers) {
+			if (v.getEmail().equals(volunteer.getEmail())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Receives a list of parks as input and returns true
+	 * if this job is in one of the parks.
+	 */
+	public boolean isJobinParkList(List<String> parks) {
+		for(String p : parks) {
+			if (parkName.equals(p)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	//adds a volunteer to this job at the given grade 
 	//returns false if the grade was full
 	public boolean addVolunteer(Volunteer v, char grade) {
@@ -109,7 +136,7 @@ public class Job implements Cloneable {
 		volunteers.add(v);
 		return true;
 	}
-	
+
     /**
      * {@inheritDoc}
      */
