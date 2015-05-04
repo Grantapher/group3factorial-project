@@ -3,9 +3,10 @@
  */
 package model;
 
+//TODO do we need to make this abstract?
 public class AbstractUser {
 
-    public AbstractUser(final String lastName, final String firstName, final String email) {
+    protected AbstractUser(final String lastName, final String firstName, final String email) {
         // TODO Auto-generated constructor stub
     }
 

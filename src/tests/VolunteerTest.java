@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -27,8 +27,8 @@ public class VolunteerTest {
     private static final String LAST = "Smith";
     private static final String FIRST = "John";
     private static final String EMAIL = "SmithJohn@gmail.com";
-    private static final List<Job> JOBS = null; // TODO Add jobs when
-    // constructor available.
+    private static final List<Job> JOBS = null;
+    // TODO Add jobs when constructor available.
     private Volunteer tester;
 
     /**
@@ -77,10 +77,8 @@ public class VolunteerTest {
      */
     @Test
     public final void testSignUp() {
-        final Job job = new Job();
-        tester.signUp(job);
-        assertTrue("Jobs list doesn't contain previously added job.", tester.getJobs()
-                .contains(job));
+        // TODO test for jobs that conflict plus edge cases.
+        fail("TODO");
     }
 
     /**

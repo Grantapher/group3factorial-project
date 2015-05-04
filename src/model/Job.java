@@ -1,7 +1,6 @@
 /*
  * TCSS 360 Project - Group 3!
  */
- 
 package model;
 
 import java.time.LocalDate;
@@ -92,8 +91,6 @@ public class Job implements Cloneable {
 	 * Checks if this job has the given volunteer signed up for it.
 	 * 
 	 */
-	//This method requires a user method getEmail() which returns a 
-	//String
 	public boolean containsVolunteer(Volunteer volunteer) {
 		for(Volunteer v : volunteers) {
 			if (v.getEmail().equals(volunteer.getEmail())) {
@@ -137,7 +134,6 @@ public class Job implements Cloneable {
 		volunteers.add(v);
 		return true;
 	}
-
     /**
      * {@inheritDoc}
      */
@@ -145,5 +141,5 @@ public class Job implements Cloneable {
     protected Object clone() throws CloneNotSupportedException {
         // TODO Auto-generated method stub
         return super.clone();
-    }	
+    }
 }
