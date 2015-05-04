@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This class is a Park Manager 
+ * @author Maurice Shaw
+ * @version May 2014
+ */
 public class ParkManager extends AbstractUser {
 	
 	//Field
