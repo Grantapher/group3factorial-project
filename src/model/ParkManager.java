@@ -14,7 +14,7 @@ import java.util.List;
  * @author Maurice Shaw
  * @version May 2014
  */
-public class ParkManager extends AbstractUser {
+public class ParkManager extends User {
 
     // Field
 

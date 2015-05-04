@@ -3,7 +3,7 @@
  */
 package model;
 
-public class Administrator extends AbstractUser {
+public class Administrator extends User {
 
     public Administrator(final String lastName, final String firstName, final String email) {
         super(lastName, firstName, email);
