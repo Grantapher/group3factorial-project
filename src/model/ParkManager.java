@@ -106,23 +106,6 @@ public class ParkManager extends AbstractUser {
 	        str.append("\n");
 	    }
 	}
-	
-	public static void main(String[] theArgs) throws FileNotFoundException {
-        ParkManager park = new ParkManager("Hampton", "Maurice", "email@youKnowWhere.com");
-       
-        Job job = new Job("Clean Stuff", "NW Park", "Elem Street", new Date(05/24/15), new Date(05/25/15), 1,2,3,"Clean up woods area and my office");
-        Calendar cal = new Calendar();
-        park.addPark("Nwp");
-        
-        park.submit(cal, "Clean Stuff", "NW Park", "Elem Street", new Date(05/24/15), new Date(05/25/15), 1,2,3,"Clean up woods area and my office");
-        if (cal.isFull()){
-        System.out.println(park.getParks());
-        System.out.println(park.getFirstName());
-        System.out.println(park.getLastName());
-        System.out.println(park.getEmail());
-        System.out.println(park);
-        }
-    }
 
 
 }
