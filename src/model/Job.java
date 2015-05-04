@@ -4,6 +4,7 @@
  
 package model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +13,8 @@ public class Job implements Cloneable {
 	private String title;
 	private String parkName;
 	private String location;
-	private Date start;
-	private Date end;
+	private LocalDate start;
+	private LocalDate end;
 	private int curLight;
 	private int curMed;
 	private int curHeavy;
@@ -25,13 +26,13 @@ public class Job implements Cloneable {
 
 	//Constructor
 	public Job(String title, String parkName, String location,
-			Date start, Date end, int light, int med,
+			LocalDate start, LocalDate end, int light, int med,
 			int heavy, String description) {
 		this.title = title;
 		this.parkName = parkName;
 		this.location = location;
-		this.start = start;
-		this.end = end;
+		this.start = LocalDate.from(start);
+		this.end = LocalDate.from(end);
 		maxLight = light;
 		maxMed = med;
 		maxHeavy = heavy;
@@ -44,7 +45,7 @@ public class Job implements Cloneable {
 
 
 	//Getters
-	public Date getStart() {
+	public LocalDate getStartDate() {
 		return start;
 	}
 
@@ -52,7 +53,7 @@ public class Job implements Cloneable {
 		return volunteers;
 	}
 
-	public Date getEnd() {
+	public LocalDate getEndDate() {
 		return end;
 	}
 
@@ -144,6 +145,5 @@ public class Job implements Cloneable {
     protected Object clone() throws CloneNotSupportedException {
         // TODO Auto-generated method stub
         return super.clone();
-    }
-	
+    }	
 }
