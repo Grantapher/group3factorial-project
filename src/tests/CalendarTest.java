@@ -1,7 +1,7 @@
 /**
  * 
  */
-package model;
+package tests;
 
 import static org.junit.Assert.*;
 
@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+
+import model.Calendar;
+import model.Job;
 
 import org.junit.Before;
 import org.junit.Test;

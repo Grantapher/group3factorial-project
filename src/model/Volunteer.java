@@ -4,7 +4,10 @@
 
 package model;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -54,17 +57,71 @@ public class Volunteer extends AbstractUser implements Cloneable {
         return clone;
     }
 
-    public void viewPending() {
-        // TODO print the jobs to the screen? Did we get rid of this?
-    }
-
     /**
      * Adds the job to the this volunteer's list of jobs.
      *
      * @param job the job to sign up for
      */
-    public void signUp(final Job job) {
+    public void signUp(final Job job) throws SignupFailException {
+        // BR 6: A Volunteer may not sign up for a job that has passed.
+        final Date now = Date.from(Instant.now());
+        if (job.getStart().before(now)) {
+            throw new SignupFailException("Job is now in the past.");
+        }
+
+        // BR 7: A Volunteer may not sign up for two jobs on the same day.
+        final GregorianCalendar start = new GregorianCalendar();
+        start.setTime(job.getStart());
+        final int startDay = start.get(GregorianCalendar.DAY_OF_YEAR);
+        final GregorianCalendar end = new GregorianCalendar();
+        end.setTime(job.getEnd());
+        final int endDay = end.get(GregorianCalendar.DAY_OF_YEAR);
+        for (final Job listJob : myJobs) {
+            final GregorianCalendar listStart = new GregorianCalendar();
+            listStart.setTime(listJob.getStart());
+            final int listStartDay = listStart.get(GregorianCalendar.DAY_OF_YEAR);
+            final GregorianCalendar listEnd = new GregorianCalendar();
+            listEnd.setTime(listJob.getEnd());
+            final int listEndDay = listEnd.get(GregorianCalendar.DAY_OF_YEAR);
+            if (checkJobConflict(startDay, endDay, listStartDay, listEndDay)) {
+                throw new SignupFailException(job + "conflicts with\n" + listJob);
+            }
+        }
+
+        // Both the business rules have been satisfied.
         myJobs.add(job);
+    }
+
+    /**
+     * Checks if these jobs' scheduled days of operation conflict with each
+     * other.
+     *
+     * @param startDay1 day of the year of the first start day
+     * @param endDay1 day of the year of the first end day
+     * @param startDay2 day of the year of the second start day
+     * @param endDay2 day of the year of the second end day
+     * @return true if these two jobs conflict
+     */
+    private boolean checkJobConflict(final int startDay1, int endDay1, final int startDay2,
+            int endDay2) {
+        // check for leap year
+        int numDays = 365;
+        final int year = GregorianCalendar.getInstance().get(GregorianCalendar.YEAR);
+        if (year % 4 == 0) {
+            // leap year
+            numDays = 366;
+        }
+
+        // adjust for jobs spilling over new year
+        if (startDay1 > endDay1) {
+            endDay1 += numDays;
+        }
+        if (startDay2 > endDay2) {
+            endDay2 += numDays;
+        }
+
+        return !(startDay2 < startDay1 && endDay2 < startDay1 || startDay1 < startDay2
+                && endDay1 < startDay2);
     }
 
     /**
@@ -130,6 +187,45 @@ public class Volunteer extends AbstractUser implements Cloneable {
             sb.append(job);
         }
         return sb.toString();
+    }
+
+    /**
+     * This exception is thrown when the signUp method fails to sign the
+     * Volunteer up for a job due to a business rule violation.
+     *
+     * @author Grant Toepfer
+     * @version May 4, 2015
+     */
+    static class SignupFailException extends Exception {
+        /** Generated version ID. */
+        private static final long serialVersionUID = -6216892480674809907L;
+        /** Carries the exception message */
+        private final String message;
+
+        /**
+         * Initializes message to a generic exception message.
+         */
+        public SignupFailException() {
+            message = "Signup failed.";
+        }
+
+        /**
+         * Initializes message to the given string.
+         *
+         * @param the exception message
+         */
+        public SignupFailException(final String message) {
+            this.message = message;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String getMessage() {
+            return message;
+        }
+
     }
 
 }

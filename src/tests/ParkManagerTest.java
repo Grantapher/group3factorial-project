@@ -1,7 +1,8 @@
 
-package model;
+package tests;
 
 import static org.junit.Assert.*;
+import model.ParkManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import org.junit.Test;
  * @author Maurice Shaw
  * @version May 2014
  */
-public class PMTest {
+public class ParkManagerTest {
     
     // Declare objects to use in the test fixture.
     
