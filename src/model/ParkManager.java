@@ -94,25 +94,19 @@ public class ParkManager extends User {
         }
     }
 
-    /**
-     * String representation of a Park Manager.
-     *
-     * @return park manager as string.
-     */
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("Park Manager: ");
-        str.append(getFirstName());
-        str.append(" ");
-        str.append(getLastName());
-        str.append("\nEmail: ");
-        str.append(getEmail());
-        if (myParks.size() > 0) {
-            moreToString(str);
-        }
-        return str.toString();
-    }
+	/**
+	 * String representation of a Park Manager.
+	 * 
+	 * @return park manager as string.
+	 */
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append("Park Manager: ");	
+		str.append(super.toString());	
+		if (myParks.size() > 0)
+		    moreToString(str);
+		return str.toString();
+	}
 
     /**
      * Helps print park manager representation.

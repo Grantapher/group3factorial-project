@@ -56,11 +56,7 @@ public class Administrator extends User {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("Administrator: ");   
-        str.append(getFirstName()); 
-        str.append(" ");
-        str.append(getLastName()); 
-        str.append("\nEmail: ");
-        str.append(getEmail());
+        str.append(super.toString()); 
         return str.toString();
     }
     
