@@ -32,8 +32,8 @@ public class Administrator extends User {
     * @param theName    The last name of the user to be searched.
     * @return           The volunteer or null if not found.
     */
-    public User findVolunteer(final FileIO theFileReader, final String theName) {
-        FileIO fileReader = theFileReader;
+    public User findVolunteer(final String theName) {
+        FileIO fileReader = FileIO.getInstance();
         User freeWorker = null; 
         List<User> userList = fileReader.queryUsers(theName, 'v'); // List of users
         if (userList != null) { // list does exist
@@ -49,18 +49,14 @@ public class Administrator extends User {
     }
     
     /**
-     * String representation of a Park Manager.
+     * String representation of an Administrator.
      * 
      * @return park manager as string.
      */
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("Administrator: ");   
-        str.append(getFirstName()); 
-        str.append(" ");
-        str.append(getLastName()); 
-        str.append("\nEmail: ");
-        str.append(getEmail());
+        str.append(super.toString()); 
         return str.toString();
     }
     
