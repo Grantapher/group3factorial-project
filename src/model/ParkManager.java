@@ -101,7 +101,7 @@ public class ParkManager extends User {
     @Override
     public String toString() {
         final StringBuilder str = new StringBuilder();
-        str.append("Park Manager: ");
+        str.append("Park Manager\n");
         str.append(super.toString());
         if (myParks.size() > 0) {
             str.append("Parks Managed:\n");

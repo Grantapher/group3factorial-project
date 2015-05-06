@@ -53,10 +53,7 @@ public class Administrator extends User {
      */
     @Override
     public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("Administrator:\n");
-        str.append(super.toString());
-        return str.toString();
+        return "Administrator\n" + super.toString();
     }
 
 }
