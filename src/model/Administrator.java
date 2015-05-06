@@ -35,7 +35,7 @@ public class Administrator extends User {
     public User findVolunteer(final FileIO theFileReader, final String theName) {
         FileIO fileReader = theFileReader;
         User freeWorker = null; 
-        List<User> userList = fileReader.queryUsers(theName, 118); // List of users
+        List<User> userList = fileReader.queryUsers(theName, 'v'); // List of users
         if (userList != null) { // list does exist
             for (User volunteer: userList) {
                 if (volunteer.getLastName().equals(theName)){ // search by last name
