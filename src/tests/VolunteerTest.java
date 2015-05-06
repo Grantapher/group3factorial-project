@@ -8,10 +8,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
-
-import java.util.List;
-
-import model.Job;
 import model.Volunteer;
 
 import org.junit.Before;
@@ -27,8 +23,6 @@ public class VolunteerTest {
     private static final String LAST = "Smith";
     private static final String FIRST = "John";
     private static final String EMAIL = "SmithJohn@gmail.com";
-    private static final List<Job> JOBS = null;
-    // TODO Add jobs when constructor available.
     private Volunteer tester;
 
     /**
@@ -38,7 +32,7 @@ public class VolunteerTest {
      */
     @Before
     public void setUp() throws Exception {
-        tester = new Volunteer(LAST, FIRST, EMAIL, JOBS);
+        tester = new Volunteer(LAST, FIRST, EMAIL);
     }
 
     /**
@@ -57,13 +51,11 @@ public class VolunteerTest {
         final String actualEmail = tester.getEmail();
         assertSame("Last names differ: expected \"" + EMAIL + "\", actual was \""
                 + actualEmail + "\"", LAST, actualEmail);
-        final List<Job> actualJobs = tester.getJobs();
-        assertSame("Last names differ: expected \"" + JOBS + "\", actual was \"" + actualJobs
-                + "\"", LAST, actualJobs);
     }
 
     /**
-     * Test method for {@link model.Volunteer#Volunteer(model.Volunteer)}.
+     * Test method for {@link model.Volunteer#Volunteer(model.Volunteer)} and
+     * {@link model.Volunteer#clone()}.
      */
     @Test
     public final void testVolunteerVolunteer() {
@@ -73,10 +65,10 @@ public class VolunteerTest {
     }
 
     /**
-     * Test method for {@link model.Volunteer#signUp(model.Job)}.
+     * Test method for {@link model.Volunteer#getJobs()}.
      */
     @Test
-    public final void testSignUp() {
+    public final void testGetJobs() {
         // TODO test for jobs that conflict plus edge cases.
         fail("TODO");
     }
@@ -86,8 +78,8 @@ public class VolunteerTest {
      */
     @Test
     public final void testEqualsObject() {
-        final Volunteer other = new Volunteer("Testing", "Is", "Fun!", null);
-        assertEquals("equals false negative", tester, new Volunteer(LAST, FIRST, EMAIL, JOBS));
+        final Volunteer other = new Volunteer("Testing", "Is", "Fun!");
+        assertEquals("equals false negative", tester, new Volunteer(LAST, FIRST, EMAIL));
         assertNotEquals("false positive", tester, other);
     }
 
