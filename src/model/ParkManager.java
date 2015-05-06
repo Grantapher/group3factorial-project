@@ -54,39 +54,41 @@ public class ParkManager extends User {
         return gig.getVolunteers();
     }
 
-    /**
-     * Submits a new job to the calendar.
-     *
-     * @param theCalendar The calendar to add job.
-     * @param theTitle The title of the job
-     * @param theParkName The name of the park where job is located.
-     * @param theLocation The location of the job.
-     * @param theStart The start date of the job.
-     * @param theEnd The end date of the job
-     * @param theLight The level of work.
-     * @param theMed The level of work.
-     * @param theHeavy The level of work.
-     * @param theDescription Description of the job.
-     * @throws FileNotFoundException
-     */
-    public void submit(final Calendar theCalendar, final String theTitle,
-            final String theParkName, final String theLocation, final Date theStart,
-            final Date theEnd, final int theLight, final int theMed, final int theHeavy,
-            final String theDescription) throws FileNotFoundException {
-
-        final Job gig = new Job(theTitle, theParkName, theLocation, theStart, theEnd,
-                theLight, theMed, theHeavy, theDescription);
-        final Calendar cal = theCalendar;
-        cal.addJob(gig);
-    }
-
+	/**
+	 * Submits a new job to the calendar.
+	 * 
+	 * @param theCalendar The calendar to add job.
+	 * @param theTitle The title of the job
+	 * @param theParkName The name of the park where job is located.
+	 * @param theLocation The location of the job.
+	 * @param theStart	The start date of the job.
+	 * @param theEnd	The end date of the job
+	 * @param theLight	The level of work.
+	 * @param theMed	The level of work.
+	 * @param theHeavy	The level of work.
+	 * @param theDescription Description of the job.
+	 * @throws Exception 
+	 */
+	public void submit(final Calendar theCalendar, final String theTitle, final String theParkName, final String theLocation,
+			final Date theStart, final Date theEnd, final int theLight, final int theMed,
+			final int theHeavy, final String theDescription) throws Exception {
+	    if (myParks.contains(theParkName)) {
+	        Job gig = new Job(theTitle, theParkName, theLocation,theStart, theEnd, theLight, theMed,
+						theHeavy, theDescription);
+	        Calendar cal = theCalendar;
+	        cal.addJob(gig);
+	    
+	    } else {
+	        throw new Exception(theParkName + " is not one of the parks you manage");
+	    }
+	}
     /**
      * Adds a park to this Park Managers list.
      *
      * @thePark the name of the park.
      */
-    public void addPark(final String thePark) {
-        final String park = thePark;
+    public void addPark(final String theParkName) {
+        final String park = theParkName;
         if (park.length() > 0) {
             myParks.add(park);
         }
