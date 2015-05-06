@@ -13,7 +13,7 @@ import java.util.List;
 
 
 /**
- * This class represents a an Administrator.
+ * This class represents an Administrator.
  *  
  * @author Maurice Shaw
  * @version May 2014
@@ -38,7 +38,7 @@ public class Administrator extends User {
         List<User> userList = fileReader.queryUsers(theName, 'v'); // List of users
         if (userList != null) { // list does exist
             for (User volunteer: userList) {
-                if (volunteer.getLastName().equals(theName)){ // search by last name
+                if (volunteer.getLastName().toLowerCase().equals(theName.toLowerCase())){ // search by last name
                     freeWorker = volunteer;
                     break;
                 }
