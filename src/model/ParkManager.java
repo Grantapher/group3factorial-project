@@ -24,7 +24,7 @@ public class ParkManager extends User {
     private final ArrayList<String> myParks;
 
     /**
-     * Constructs a ParkManager.
+     * Constructs a park manager.
      */
     public ParkManager(final String theLastName, final String theFirstName,
             final String theEmail) {
