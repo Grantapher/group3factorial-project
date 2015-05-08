@@ -18,9 +18,11 @@ import java.util.List;
  * @author Maurice Shaw
  * @version May 2014
  */
-public class Administrator extends User {
+public class Administrator extends AbstractUser {
     
-    
+   /**
+    * {@inheritDoc}
+    */
     public Administrator(final String theLastName, final String theFirstName, final String theEmail) {
         super(theLastName, theFirstName, theEmail);
     }
