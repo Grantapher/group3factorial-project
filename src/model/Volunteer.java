@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Grant Toepfer
  * @version May 1, 2015
  */
-public class Volunteer extends User implements Cloneable {
+public class Volunteer extends AbstractUser {
 
     /**
      * Creates a new volunteer object with the given identifiers and list of
@@ -52,14 +52,6 @@ public class Volunteer extends User implements Cloneable {
      * {@inheritDoc}
      */
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new Volunteer(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean equals(final Object that) {
         if (this == that) {
             return true;
@@ -68,14 +60,6 @@ public class Volunteer extends User implements Cloneable {
             return super.equals(that);
         }
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 
     /**

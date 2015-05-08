@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,17 +25,18 @@ import java.util.Scanner;
  * @version May 4, 2015
  */
 public final class FileIO {
+    /** The constant signifying an Administrator. */
     public static final char ADMIN_CHAR = 'A';
+    /** The constant signifying a Park Manager. */
     public static final char PARK_MANAGER_CHAR = 'P';
+    /** The constant signifying an Volunteer. */
     public static final char VOLUNTEER_CHAR = 'V';
+    /** The constant signifying a user that does not exist. */
     public static final char USER_NOT_FOUND_CHAR = 'X';
     private static final String USER_FILE = "/files/users.info";
     private static final String JOB_FILE = "/files/jobs.info";
     private static FileIO instance = null;
 
-    /**
-     * Empty constructor.
-     */
     private FileIO() {
         // empty constructor
     }
@@ -58,7 +60,19 @@ public final class FileIO {
     public Map<LocalDate, List<Job>> readJobs() throws FileNotFoundException {
         final Map<LocalDate, List<Job>> map = new HashMap<>();
         final BufferedReader br = new BufferedReader(new FileReader(JOB_FILE));
-        // TODO
+        try {
+            while (br.ready()) {
+                // TODO will fail until job can be split easily
+                final Job job = new Job(br.readLine());
+                final LocalDate date = job.getStartDate();
+                if (!map.containsKey(date)) {
+                    map.put(date, new ArrayList<>());
+                }
+                map.get(date).add(job);
+            } // end while
+        } catch (final IOException theE) {
+            System.err.println("ERROR: Job file corrupted.");
+        }
         try {
             br.close();
         } catch (final IOException theE) {
@@ -90,14 +104,14 @@ public final class FileIO {
      * users.
      *
      * @param lastName the last name query
-     * @param userType the userType query
+     * @param userType the user type query
      * @return a list of Users matching the given query
      * @throws FileNotFoundException if the User file doesn't exist
      */
-    public List<User> queryUsers(final String lastName, final Character userType)
+    public List<AbstractUser> queryUsers(final String lastName, final Character userType)
             throws FileNotFoundException {
         final BufferedReader br = new BufferedReader(new FileReader(USER_FILE));
-        final List<User> list = queryUsers(br, lastName, userType, null);
+        final List<AbstractUser> list = queryUsers(br, lastName, userType, null);
         try {
             br.close();
         } catch (final IOException theE) {
@@ -121,7 +135,7 @@ public final class FileIO {
      */
     public char getUserType(final String email) throws FileNotFoundException {
         final BufferedReader br = new BufferedReader(new FileReader(USER_FILE));
-        final List<User> list = queryUsers(br, null, null, email);
+        final List<AbstractUser> list = queryUsers(br, null, null, email);
         try {
             br.close();
         } catch (final IOException theE) {
@@ -133,7 +147,7 @@ public final class FileIO {
         } else if (size > 1) {
             throw new AssertionError("Multiple Users under same email.");
         } else {
-            final User user = list.get(1);
+            final AbstractUser user = list.get(1);
             if (user instanceof Administrator) {
                 return ADMIN_CHAR;
             } else if (user instanceof ParkManager) {
@@ -161,9 +175,9 @@ public final class FileIO {
      * @param email the email query
      * @return a list of Users who match the query
      */
-    private List<User> queryUsers(final BufferedReader reader, final String lastName,
+    private List<AbstractUser> queryUsers(final BufferedReader reader, final String lastName,
             final Character type, final String email) {
-        final List<User> list = new ArrayList<>();
+        final List<AbstractUser> list = new ArrayList<>();
         try {
             // gather User info
             String queryType;
@@ -181,7 +195,7 @@ public final class FileIO {
                         && (email == null || email.equals(queryEmail))) {
 
                     // user match found
-                    User user;
+                    AbstractUser user;
                     if (queryChar == PARK_MANAGER_CHAR) {
                         final ParkManager pm = new ParkManager(queryLastName, queryFirstName,
                                 queryEmail);
@@ -201,12 +215,29 @@ public final class FileIO {
                                 "User type other than Admin, PM, or Volunteer read from file");
                     }
                     list.add(user);
-                } // end while
-            } // end try
+                } // end if
+            } // end while
         } catch (final IOException theE) {
-            // TODO handle exception
+            System.err.println("ERROR: User file corrupted.");
         }
         return list;
+    }
+
+    /**
+     * Creates a list of volunteers from a string of volunteers in Volunteer's
+     * toString() method format.
+     * 
+     * @param volunteers A string containing volunteers
+     * @return A list of volunteers
+     */
+    public List<Volunteer> getVolunteers(final String volunteers) {
+        final BufferedReader br = new BufferedReader(new StringReader(volunteers));
+        final List<AbstractUser> userList = queryUsers(br, null, VOLUNTEER_CHAR, null);
+        final List<Volunteer> volunteerList = new ArrayList<>();
+        for (final AbstractUser user : userList) {
+            volunteerList.add((Volunteer) user);
+        }
+        return volunteerList;
     }
 
     /**
@@ -215,7 +246,7 @@ public final class FileIO {
      * @param user the user to add to the file
      * @throws IOException if the User file doesn't exist
      */
-    public void addUser(final User user) throws IOException {
+    public void addUser(final AbstractUser user) throws IOException {
         final PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(USER_FILE,
                 true)));
         pw.println(user.toString());

@@ -5,7 +5,6 @@ package tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import model.Volunteer;
@@ -51,17 +50,6 @@ public class VolunteerTest {
         final String actualEmail = tester.getEmail();
         assertSame("Last names differ: expected \"" + EMAIL + "\", actual was \""
                 + actualEmail + "\"", LAST, actualEmail);
-    }
-
-    /**
-     * Test method for {@link model.Volunteer#Volunteer(model.Volunteer)} and
-     * {@link model.Volunteer#clone()}.
-     */
-    @Test
-    public final void testVolunteerVolunteer() {
-        final Volunteer clone = new Volunteer(tester);
-        assertEquals("equals() returns false on a clone.", tester, clone);
-        assertNotSame("clone constructor returns the same object.", tester, clone);
     }
 
     /**

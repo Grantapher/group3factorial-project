@@ -22,38 +22,33 @@ public class Job implements Comparable<Job>, Cloneable {
     private final int maxHeavy;
     private final List<Volunteer> volunteers;
 
-    
     /**
-     * Constructs a job from a string in this format
-    	title + "/" + parkName "/" + location
-    	+ "/" + start + "/" + end
-    	+ "/" + maxLight + "/" + curLight
-    	+ "/" + maxMed + "/" + curMed
-    	+ "/" + maxHeavy + "/" + curHeavy
-    	for(Volunteer v : volunteers) {
-    		+ "/" + v.getEmail()   		
-    	}
+     * Constructs a job from a string in this format title + "/" + parkName "/"
+     * + location + "/" + start + "/" + end + "/" + maxLight + "/" + curLight +
+     * "/" + maxMed + "/" + curMed + "/" + maxHeavy + "/" + curHeavy
+     * for(Volunteer v : volunteers) { + "/" + v.getEmail() }
      */
-    public Job(String jobString) {
-    	String[] params = jobString.split("/");
-    	title = params[0];
-    	parkName = params[1];
-    	location = params[2];
-    	start = LocalDate.parse(params[3]);
-    	end = LocalDate.parse(params[4]);
-    	maxLight = Integer.parseInt(params[5]);
-    	curLight = Integer.parseInt(params[6]);
-    	maxMed = Integer.parseInt(params[7]);
-    	curMed = Integer.parseInt(params[8]);
-    	curHeavy = Integer.parseInt(params[9]);
-    	maxHeavy = Integer.parseInt(params[10]);
-    	volunteers = new ArrayList<Volunteer>();
-    	for(int i = 11; i < params.length; i++) {
-    		volunteers.add(new Volunteer(params[i]));
-    	}
+    public Job(final String jobString) {
+        final String[] params = jobString.split("/");
+        title = params[0];
+        parkName = params[1];
+        location = params[2];
+        start = LocalDate.parse(params[3]);
+        end = LocalDate.parse(params[4]);
+        maxLight = Integer.parseInt(params[5]);
+        curLight = Integer.parseInt(params[6]);
+        maxMed = Integer.parseInt(params[7]);
+        curMed = Integer.parseInt(params[8]);
+        curHeavy = Integer.parseInt(params[9]);
+        maxHeavy = Integer.parseInt(params[10]);
+        volunteers = FileIO.getInstance().getVolunteers(params[11]);
+        description = "";
+        // TODO add description into toString
     }
+
     /**
      * Constructs a new job
+     *
      * @param title
      * @param parkName
      * @param location
@@ -113,6 +108,7 @@ public class Job implements Comparable<Job>, Cloneable {
 
     /**
      * These 3 methods check if a job is full
+     *
      * @return
      */
     public boolean isLightFull() {
@@ -153,16 +149,17 @@ public class Job implements Comparable<Job>, Cloneable {
     }
 
     /**
-     * Adds a volunteer to this job at the given job. 
-     * Returns false if the add failed (because a grade was full)
+     * Adds a volunteer to this job at the given job. Returns false if the add
+     * failed (because a grade was full)
+     *
      * @param v
      * @param grade
      * @return
      */
     public boolean addVolunteer(final Volunteer v, final char grade) {
-    	if(this.containsVolunteer(v)) {
-    		return false;
-    	}
+        if (containsVolunteer(v)) {
+            return false;
+        }
         if (grade == 'L' || grade == 'l') {
             if (maxLight == curLight) {
                 return false;
@@ -182,17 +179,19 @@ public class Job implements Comparable<Job>, Cloneable {
         volunteers.add(v);
         return true;
     }
-    
+
+    @Override
     public String toString() {
-    	String result = "";
-    	result += title + "/" + parkName + "/" + location;
-    	result += "/" + start + "/" + end;
-    	result += "/" + maxLight + "/" + curLight;
-    	result += "/" + maxMed + "/" + curMed;
-    	result += "/" + maxHeavy + "/" + curHeavy;
-    	for(Volunteer v : volunteers) {
-    		result += "/" + v;   		
-    	}
+        String result = "";
+        result += title + "/" + parkName + "/" + location;
+        result += "/" + start + "/" + end;
+        result += "/" + maxLight + "/" + curLight;
+        result += "/" + maxMed + "/" + curMed;
+        result += "/" + maxHeavy + "/" + curHeavy;
+        for (final Volunteer v : volunteers) {
+            result += "/" + v;
+        }
+        return result;
     }
 
     /**
@@ -207,7 +206,8 @@ public class Job implements Comparable<Job>, Cloneable {
     /**
      * Compares this job to another based on start date.
      */
-	public int compareTo(Job other) {
-		return this.start.compareTo(other.start);
-	}
+    @Override
+    public int compareTo(final Job other) {
+        return start.compareTo(other.start);
+    }
 }
