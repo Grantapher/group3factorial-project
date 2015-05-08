@@ -145,9 +145,9 @@ public final class FileIO {
         if (size == 0) {
             return USER_NOT_FOUND_CHAR;
         } else if (size > 1) {
-            throw new AssertionError("Multiple Users under same email.");
+            throw new AssertionError("Multiple users under same email.");
         } else {
-            final AbstractUser user = list.get(1);
+            final AbstractUser user = list.get(0);
             if (user instanceof Administrator) {
                 return ADMIN_CHAR;
             } else if (user instanceof ParkManager) {
@@ -161,72 +161,9 @@ public final class FileIO {
     }
 
     /**
-     * Gathers a list of users that matches the query.
-     * <p>
-     * If the last name, user type, and/or email parameters are left null then
-     * the query will not factor that parameter into it's query.
-     * <p>
-     * Via the above, leaving all but the first parameter null will return a
-     * list of all users.
-     *
-     * @param reader the reader attached to the User file
-     * @param lastName the last name query
-     * @param type the User type query
-     * @param email the email query
-     * @return a list of Users who match the query
-     */
-    private List<AbstractUser> queryUsers(final BufferedReader reader, final String lastName,
-            final Character type, final String email) {
-        final List<AbstractUser> list = new ArrayList<>();
-        try {
-            // gather User info
-            String queryType;
-            while ((queryType = reader.readLine()) != null) {
-                final char queryChar = queryType.charAt(0);
-                final Scanner name = new Scanner(reader.readLine());
-                final String queryFirstName = name.next();
-                final String queryLastName = name.next();
-                name.close();
-                final String queryEmail = reader.readLine();
-
-                // check if user matches query
-                if ((lastName == null || lastName.equals(queryLastName))
-                        && (type == null || type == queryChar)
-                        && (email == null || email.equals(queryEmail))) {
-
-                    // user match found
-                    AbstractUser user;
-                    if (queryChar == PARK_MANAGER_CHAR) {
-                        final ParkManager pm = new ParkManager(queryLastName, queryFirstName,
-                                queryEmail);
-                        String park;
-                        while (!"".equals(park = reader.readLine())) {
-                            pm.addPark(park);
-                        }
-                        user = pm;
-                    } else if (queryChar == ADMIN_CHAR) {
-                        user = new Administrator(queryLastName, queryFirstName, queryEmail);
-                        reader.readLine();
-                    } else if (queryChar == VOLUNTEER_CHAR) {
-                        user = new Volunteer(queryLastName, queryFirstName, queryEmail);
-                        reader.readLine();
-                    } else {
-                        throw new AssertionError(
-                                "User type other than Admin, PM, or Volunteer read from file");
-                    }
-                    list.add(user);
-                } // end if
-            } // end while
-        } catch (final IOException theE) {
-            System.err.println("ERROR: User file corrupted.");
-        }
-        return list;
-    }
-
-    /**
      * Creates a list of volunteers from a string of volunteers in Volunteer's
      * toString() method format.
-     * 
+     *
      * @param volunteers A string containing volunteers
      * @return A list of volunteers
      */
@@ -252,6 +189,94 @@ public final class FileIO {
         pw.println(user.toString());
         pw.println('\n');
         pw.close();
+    }
+
+    /**
+     * Gathers a list of users that matches the query.
+     * <p>
+     * If the last name, user type, and/or email parameters are left null then
+     * the query will not factor that parameter into it's query.
+     * <p>
+     * Via the above, leaving all but the first parameter null will return a
+     * list of all users.
+     *
+     * @param reader the reader attached to the User file
+     * @param lastName the last name query
+     * @param type the User type query
+     * @param email the email query
+     * @return a list of Users who match the query
+     */
+    private List<AbstractUser> queryUsers(final BufferedReader reader, final String lastName,
+            final Character type, final String email) {
+        final List<AbstractUser> list = new ArrayList<>();
+        try {
+            // gather User info
+            while (reader.ready()) {
+                final AbstractUser user = parseUser(reader, lastName, type, email);
+                if (user != null) {
+                    list.add(user);
+                }
+            } // end while
+        } catch (final IOException theE) {
+            System.err.println("ERROR: User file corrupted.");
+        }
+        return list;
+    }
+
+    /**
+     * Gets a single user.
+     * <p>
+     * If the last name, user type, and/or email parameters are left null then
+     * the query will not factor that parameter into it's query.
+     * <p>
+     * Via the above, leaving all but the first parameter null will return a
+     * list of all users.
+     *
+     * @param reader the reader attached to the User file
+     * @param lastName the last name query
+     * @param type the User type query
+     * @param email the email query
+     * @return the user if it matches the query, otherwise null
+     * @throws IOException if an I/O error occurs
+     */
+    private AbstractUser parseUser(final BufferedReader reader, final String lastName,
+            final Character type, final String email) throws IOException {
+        final char queryChar = reader.readLine().charAt(0);
+        final Scanner name = new Scanner(reader.readLine());
+        final String queryFirstName = name.next();
+        final String queryLastName = name.next();
+        name.close();
+        final String queryEmail = reader.readLine();
+
+        // check if user matches query
+        if ((lastName == null || lastName.equals(queryLastName))
+                && (type == null || type == queryChar)
+                && (email == null || email.equals(queryEmail))) {
+
+            // user match found
+            AbstractUser user;
+            if (queryChar == PARK_MANAGER_CHAR) {
+                final ParkManager pm = new ParkManager(queryLastName, queryFirstName,
+                        queryEmail);
+                String park;
+                while (!"".equals(park = reader.readLine())) {
+                    pm.addPark(park);
+                }
+                user = pm;
+            } else if (queryChar == ADMIN_CHAR) {
+                user = new Administrator(queryLastName, queryFirstName, queryEmail);
+                reader.readLine();
+            } else if (queryChar == VOLUNTEER_CHAR) {
+                user = new Volunteer(queryLastName, queryFirstName, queryEmail);
+                reader.readLine();
+            } else {
+                throw new AssertionError(
+                        "User type other than Admin, PM, or Volunteer read from file");
+            }
+            return user;
+        } else {
+            return null;
+        }
     }
 
 }
