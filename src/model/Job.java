@@ -50,7 +50,7 @@ public class Job implements Comparable<Job>, Cloneable {
     	maxHeavy = Integer.parseInt(params[10]);
     	description = params[11];
     	volunteers = new ArrayList<Volunteer>();
-    	for(int i = 11; i < params.length; i++) {
+    	for(int i = 12; i < params.length; i++) {
     		volunteers.add(new Volunteer(params[i]));
     	}
     }
