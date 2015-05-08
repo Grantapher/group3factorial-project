@@ -12,10 +12,10 @@ import java.util.TreeMap;
 
 /**
  * Calendar
- * <p>
+ * 
  * April 30, 2015
  *
- * @version 0.1
+ * @version 0.2
  * @author Wing-Sea Poon
  */
 
@@ -179,4 +179,8 @@ public class Calendar {
     public String toString() {
         return dateToListOfJobs.toString();
     }
+    
+    public Map<LocalDate, ArrayList<Job>> getJobs() {
+		return dateToListOfJobs;
+	}
 }
