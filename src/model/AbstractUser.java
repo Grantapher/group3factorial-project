@@ -8,7 +8,7 @@ public abstract class AbstractUser {
 	protected String firstName;
 	protected String email;
 
-    public AbstractUser(final String lastName, final String firstName, final String email) {
+    protected AbstractUser(final String lastName, final String firstName, final String email) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;

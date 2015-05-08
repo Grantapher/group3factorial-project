@@ -13,11 +13,12 @@ import java.util.List;
 
 
 /**
- * This class represents a Park Manager 
+ * This class represents a Park Manager .
+ * 
  * @author Maurice Shaw
  * @version May 2014
  */
-public class ParkManager extends User {
+public class ParkManager extends AbstractUser {
 	
 	//Field
 	
@@ -28,6 +29,7 @@ public class ParkManager extends User {
 	
 	/**
 	 * Constructs a Park Manager.
+	 * 
 	 * @param theLastName  Park Manager's last name.
 	 * @param theFirstName Park Manager's first name.
 	 * @param theEmail     Park Manager's email.
@@ -39,6 +41,7 @@ public class ParkManager extends User {
 	
     /**
      * Returns a list of parks used to search jobs.
+     * 
      * @return list of parks.
      */
     public List<String> getParks() {
@@ -49,6 +52,7 @@ public class ParkManager extends User {
     
     /**
      * Returns a list of volunteers for a job.
+     * 
      * @param theJob The job for which a list of volunteers is requested.
      * @return  List of volunteers.
      */
@@ -60,6 +64,7 @@ public class ParkManager extends User {
 	
 	/**
 	 * Submits a new job to the calendar.
+	 * 
 	 * @param theCalendar The calendar to add job.
 	 * @param theTitle The title of the job
 	 * @param theParkName The name of the park where job is located.
@@ -75,15 +80,32 @@ public class ParkManager extends User {
 	public void submit(final Calendar theCalendar, final String theTitle, final String theParkName, final String theLocation,
 			final LocalDate theStart, final LocalDate theEnd, final int theLight, final int theMed,
 			final int theHeavy, final String theDescription) throws Exception {
-	    if (myParks.contains(theParkName.toLowerCase())) {
+	    if (isMyPark(theParkName.toLowerCase())) { 
 	        Job gig = new Job(theTitle, theParkName, theLocation,theStart, theEnd, theLight, theMed,
 						theHeavy, theDescription);
 	        Calendar cal = theCalendar;
 	        cal.addJob(gig);
 	    
 	    } else {
-	        throw new Exception("This not one of the parks you manage");
+	        throw new Exception("This is not one of the parks you manage");
 	    }
+	}
+	
+	/**
+	 * Checks to see if the park is managed by this park manager.
+	 * 
+	 * @param theParkName Name of park.
+	 * @return            If park is present are not.
+	 */
+	private boolean isMyPark(final String theParkName) {
+	    boolean amIThere = false;
+	    for (String parkName: myParks) {
+	        if (parkName.toLowerCase().equals(theParkName));
+	            amIThere = true;
+	            break;
+	    }
+	    
+	        return amIThere;
 	}
 	    
 		
@@ -95,12 +117,13 @@ public class ParkManager extends User {
     public void addPark(final String thePark) {
         String park = thePark;
         if(park.length() > 0)
-            myParks.add(park.toLowerCase());
+            myParks.add(park);
     }
 
 	
 	/**
 	 * String representation of a Park Manager.
+	 * 
 	 * @return park manager as string.
 	 */
 	public String toString() {
@@ -114,32 +137,18 @@ public class ParkManager extends User {
 	
 	/**
 	 * Helps print park manager representation.
+	 * 
 	 * @param str StringBuilder to make string
 	 */
 	private void moreToString(final StringBuilder str) {
 	    str.append("\nParks Managed:\n");
 	    for(String park: myParks){
-	        str.append(park.toUpperCase().charAt(0));
+	        str.append(park);
 	        str.append("\n");
 	    }
 	}
 	
-	public static void main(String[] theArgs) throws Exception {
-        ParkManager park = new ParkManager("Hampton", "Maurice", "email@youKnowWhere.com");
-       
-        Job job = new Job("Clean Stuff", "NW Park", "Elem Street", new Date(05/24/15), new Date(05/25/15), 1,2,3,"Clean up woods area and my office");
-        Calendar cal = new Calendar();
-        park.addPark("Nwp");
-        
-        park.submit(cal, "Clean Stuff", "NW Park", "Elem Street", new Date(05/24/15), new Date(05/25/15), 1,2,3,"Clean up woods area and my office");
-        if (cal.isFull()){
-        System.out.println(park.getParks());
-        System.out.println(park.getFirstName());
-        System.out.println(park.getLastName());
-        System.out.println(park.getEmail());
-        System.out.println(park);
-        }
-    }
+
 
 
 }
