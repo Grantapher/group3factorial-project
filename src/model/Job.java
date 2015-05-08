@@ -30,6 +30,7 @@ public class Job implements Comparable<Job>, Cloneable {
     	+ "/" + maxLight + "/" + curLight
     	+ "/" + maxMed + "/" + curMed
     	+ "/" + maxHeavy + "/" + curHeavy
+    	+ "/" + description
     	for(Volunteer v : volunteers) {
     		+ "/" + v.getEmail()   		
     	}
@@ -47,6 +48,7 @@ public class Job implements Comparable<Job>, Cloneable {
     	curMed = Integer.parseInt(params[8]);
     	curHeavy = Integer.parseInt(params[9]);
     	maxHeavy = Integer.parseInt(params[10]);
+    	description = params[11];
     	volunteers = new ArrayList<Volunteer>();
     	for(int i = 11; i < params.length; i++) {
     		volunteers.add(new Volunteer(params[i]));
@@ -190,9 +192,11 @@ public class Job implements Comparable<Job>, Cloneable {
     	result += "/" + maxLight + "/" + curLight;
     	result += "/" + maxMed + "/" + curMed;
     	result += "/" + maxHeavy + "/" + curHeavy;
+    	result += "/" + description;
     	for(Volunteer v : volunteers) {
     		result += "/" + v;   		
     	}
+    	result += "\n";
     }
 
     /**
