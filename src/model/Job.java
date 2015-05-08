@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Job implements Cloneable {
+public class Job implements Comparable<Job>, Cloneable {
     private final String title;
     private final String parkName;
     private final String location;
@@ -22,7 +22,48 @@ public class Job implements Cloneable {
     private final int maxHeavy;
     private final List<Volunteer> volunteers;
 
-    // Constructor
+    
+    /**
+     * Constructs a job from a string in this format
+    	title + "/" + parkName "/" + location
+    	+ "/" + start + "/" + end
+    	+ "/" + maxLight + "/" + curLight
+    	+ "/" + maxMed + "/" + curMed
+    	+ "/" + maxHeavy + "/" + curHeavy
+    	for(Volunteer v : volunteers) {
+    		+ "/" + v.getEmail()   		
+    	}
+     */
+    public Job(String jobString) {
+    	String[] params = jobString.split("/");
+    	title = params[0];
+    	parkName = params[1];
+    	location = params[2];
+    	start = LocalDate.parse(params[3]);
+    	end = LocalDate.parse(params[4]);
+    	maxLight = Integer.parseInt(params[5]);
+    	curLight = Integer.parseInt(params[6]);
+    	maxMed = Integer.parseInt(params[7]);
+    	curMed = Integer.parseInt(params[8]);
+    	curHeavy = Integer.parseInt(params[9]);
+    	maxHeavy = Integer.parseInt(params[10]);
+    	volunteers = new ArrayList<Volunteer>();
+    	for(int i = 11; i < params.length; i++) {
+    		volunteers.add(new Volunteer(params[i]));
+    	}
+    }
+    /**
+     * Constructs a new job
+     * @param title
+     * @param parkName
+     * @param location
+     * @param start
+     * @param end
+     * @param light
+     * @param med
+     * @param heavy
+     * @param description
+     */
     public Job(final String title, final String parkName, final String location,
             final LocalDate start, final LocalDate end, final int light, final int med,
             final int heavy, final String description) {
@@ -70,7 +111,10 @@ public class Job implements Cloneable {
         return description;
     }
 
-    // Check if a grade is full
+    /**
+     * These 3 methods check if a job is full
+     * @return
+     */
     public boolean isLightFull() {
         return maxLight == curLight;
     }
@@ -108,9 +152,17 @@ public class Job implements Cloneable {
         return false;
     }
 
-    // adds a volunteer to this job at the given grade
-    // returns false if the grade was full
+    /**
+     * Adds a volunteer to this job at the given job. 
+     * Returns false if the add failed (because a grade was full)
+     * @param v
+     * @param grade
+     * @return
+     */
     public boolean addVolunteer(final Volunteer v, final char grade) {
+    	if(this.containsVolunteer(v)) {
+    		return false;
+    	}
         if (grade == 'L' || grade == 'l') {
             if (maxLight == curLight) {
                 return false;
@@ -130,6 +182,18 @@ public class Job implements Cloneable {
         volunteers.add(v);
         return true;
     }
+    
+    public String toString() {
+    	String result = "";
+    	result += title + "/" + parkName + "/" + location;
+    	result += "/" + start + "/" + end;
+    	result += "/" + maxLight + "/" + curLight;
+    	result += "/" + maxMed + "/" + curMed;
+    	result += "/" + maxHeavy + "/" + curHeavy;
+    	for(Volunteer v : volunteers) {
+    		result += "/" + v;   		
+    	}
+    }
 
     /**
      * {@inheritDoc}
@@ -139,4 +203,11 @@ public class Job implements Cloneable {
         // TODO Auto-generated method stub
         return super.clone();
     }
+
+    /**
+     * Compares this job to another based on start date.
+     */
+	public int compareTo(Job other) {
+		return this.start.compareTo(other.start);
+	}
 }

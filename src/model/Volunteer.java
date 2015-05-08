@@ -31,15 +31,6 @@ public class Volunteer extends User implements Cloneable {
     }
 
     /**
-     * Creates a copy of the given volunteer.
-     *
-     * @param that the volunteer to create a copy of
-     */
-    public Volunteer(final Volunteer that) {
-        super(that);
-    }
-
-    /**
      * @return the list of jobs this volunteer is signed up for
      * @throws FileNotFoundException if the file doesn't exist
      */
