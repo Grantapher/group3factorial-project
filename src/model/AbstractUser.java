@@ -72,6 +72,6 @@ public abstract class AbstractUser {
      */
     @Override
     public String toString() {
-        return lastName + "\t" + firstName + "\t" + email;
+        return lastName + ' ' + firstName + ' ' + email + '\n';
     }
 }

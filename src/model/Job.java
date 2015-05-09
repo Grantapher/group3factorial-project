@@ -185,7 +185,8 @@ public class Job implements Comparable<Job>, Cloneable {
         sb.append("|" + maxHeavy + "|" + curHeavy);
         sb.append("|" + description);
         for (final Volunteer v : volunteers) {
-            sb.append("|" + v);
+            sb.append(v);
+            sb.append('\n');
         }
         sb.append("\n");
         return sb.toString();

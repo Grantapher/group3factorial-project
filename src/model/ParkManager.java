@@ -56,7 +56,7 @@ public class ParkManager extends AbstractUser {
 
     /**
      * Submits a new job to the calendar.
-     * 
+     *
      * @param theCalendar The calendar to add job.
      * @param theTitle The title of the job
      * @param theParkName The name of the park where job is located.
@@ -86,7 +86,7 @@ public class ParkManager extends AbstractUser {
 
     /**
      * Checks to see if the park is managed by this park manager.
-     * 
+     *
      * @param theParkName Name of park.
      * @return If park is present are not.
      */
@@ -117,7 +117,7 @@ public class ParkManager extends AbstractUser {
 
     /**
      * String representation of a Park Manager.
-     * 
+     *
      * @return park manager as string.
      */
     @Override
@@ -125,23 +125,13 @@ public class ParkManager extends AbstractUser {
         final StringBuilder str = new StringBuilder();
         str.append("Park Manager\n");
         str.append(super.toString());
-        if (myParks.size() > 0) {
-            moreToString(str);
-        }
-        return str.toString();
-    }
-
-    /**
-     * Helps print park manager representation.
-     * 
-     * @param str StringBuilder to make string
-     */
-    private void moreToString(final StringBuilder str) {
-        str.append("Parks Managed:\n");
+        str.append("Parks Managed: ");
+        str.append(myParks.size());
+        str.append('\n');
         for (final String park : myParks) {
             str.append(park);
             str.append("\n");
         }
+        return str.toString();
     }
-
 }
