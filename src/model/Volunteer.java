@@ -53,6 +53,9 @@ public class Volunteer extends AbstractUser {
      */
     @Override
     public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        }
         if (this == that) {
             return true;
         }

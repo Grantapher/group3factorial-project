@@ -10,9 +10,9 @@ package model;
  * @version May 8, 2015
  */
 public abstract class AbstractUser {
-	protected String lastName;
-	protected String firstName;
-	protected String email;
+    protected String lastName;
+    protected String firstName;
+    protected String email;
 
     /**
      * Assigns the given parameters to this User.
@@ -53,10 +53,17 @@ public abstract class AbstractUser {
      */
     @Override
     public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (other == this) {
+            return true;
+        }
         if (other instanceof AbstractUser) {
-            return this.firstName.equalsIgnoreCase(other.getFirstName())
-            	&& this.lastName.equalsIgnoreCase(other.getLastName())
-            	&& this.email.equalsIgnoreCase(other.getEmail());
+            final AbstractUser user = (AbstractUser) other;
+            return firstName.equalsIgnoreCase(user.getFirstName())
+                    && lastName.equalsIgnoreCase(user.getLastName())
+                    && email.equalsIgnoreCase(user.getEmail());
         }
         return false;
     }
