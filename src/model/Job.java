@@ -41,9 +41,8 @@ public class Job implements Comparable<Job>, Cloneable {
         curMed = Integer.parseInt(params[8]);
         curHeavy = Integer.parseInt(params[9]);
         maxHeavy = Integer.parseInt(params[10]);
-        volunteers = FileIO.getInstance().getVolunteers(params[11]);
-        description = "";
-        // TODO add description into toString
+        description = params[11];
+        volunteers = FileIO.getInstance().getVolunteers(params[12]);
     }
 
     /**
@@ -188,9 +187,11 @@ public class Job implements Comparable<Job>, Cloneable {
         result += "/" + maxLight + "/" + curLight;
         result += "/" + maxMed + "/" + curMed;
         result += "/" + maxHeavy + "/" + curHeavy;
+        result += "/" + description;
         for (final Volunteer v : volunteers) {
             result += "/" + v;
         }
+        result += "\n";
         return result;
     }
 
