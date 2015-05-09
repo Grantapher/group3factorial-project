@@ -23,36 +23,27 @@ public class Job implements Comparable<Job>, Cloneable {
     private final List<Volunteer> volunteers;
 
     /**
-     * Constructs a job from a jobs toString.
-     * The string should be in this format:
-    	title + "|" + parkName "|" + location
-    	+ "|" + start + "|" + end
-    	+ "|" + maxLight + "|" + curLight
-    	+ "|" + maxMed + "|" + curMed
-    	+ "|" + maxHeavy + "|" + curHeavy
-    	+ "|" + description
-    	for(Volunteer v : volunteers) {
-    		+ "|" + v.getEmail()   		
-    	}
+     * Constructs a job from a jobs toString. The string should be in this
+     * format: title + "|" + parkName "|" + location + "|" + start + "|" + end +
+     * "|" + maxLight + "|" + curLight + "|" + maxMed + "|" + curMed + "|" +
+     * maxHeavy + "|" + curHeavy + "|" + description for(Volunteer v :
+     * volunteers) { + "|" + v.getEmail() }
      */
-    public Job(String jobString) {
-    	String[] params = jobString.split("|");
-    	title = params[0];
-    	parkName = params[1];
-    	location = params[2];
-    	start = LocalDate.parse(params[3]);
-    	end = LocalDate.parse(params[4]);
-    	maxLight = Integer.parseInt(params[5]);
-    	curLight = Integer.parseInt(params[6]);
-    	maxMed = Integer.parseInt(params[7]);
-    	curMed = Integer.parseInt(params[8]);
-    	curHeavy = Integer.parseInt(params[9]);
-    	maxHeavy = Integer.parseInt(params[10]);
-    	description = params[11];
-    	volunteers = new ArrayList<Volunteer>();
-    	for(int i = 12; i < params.length; i++) {
-    		volunteers.add(new Volunteer(params[i]));
-    	}
+    public Job(final String jobString) {
+        final String[] params = jobString.split("|");
+        title = params[0];
+        parkName = params[1];
+        location = params[2];
+        start = LocalDate.parse(params[3]);
+        end = LocalDate.parse(params[4]);
+        maxLight = Integer.parseInt(params[5]);
+        curLight = Integer.parseInt(params[6]);
+        maxMed = Integer.parseInt(params[7]);
+        curMed = Integer.parseInt(params[8]);
+        curHeavy = Integer.parseInt(params[9]);
+        maxHeavy = Integer.parseInt(params[10]);
+        description = params[11];
+        volunteers = FileIO.getVolunteers(params[12]);
     }
 
     /**
@@ -136,7 +127,7 @@ public class Job implements Comparable<Job>, Cloneable {
      * Checks if this job has the given volunteer signed up for it.
      */
     public boolean containsVolunteer(final Volunteer volunteer) {
-    	return volunteers.contains(volunteer);
+        return volunteers.contains(volunteer);
     }
 
     /**
@@ -161,9 +152,9 @@ public class Job implements Comparable<Job>, Cloneable {
      * @return
      */
     public boolean addVolunteer(final Volunteer v, final char grade) {
-    	if(this.containsVolunteer(v)) {
-    		return false;
-    	}
+        if (containsVolunteer(v)) {
+            return false;
+        }
         if (grade == 'l') {
             if (maxLight == curLight) {
                 return false;
@@ -186,18 +177,18 @@ public class Job implements Comparable<Job>, Cloneable {
 
     @Override
     public String toString() {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append(title + "|" + parkName + "|" + location);
-    	sb.append("|" + start + "|" + end);
-    	sb.append("|" + maxLight + "|" + curLight);
-    	sb.append("|" + maxMed + "|" + curMed);
-    	sb.append("|" + maxHeavy + "|" + curHeavy);
-    	sb.append("|" + description);
-    	for(Volunteer v : volunteers) {
-    		sb.append("|" + v);   		
-    	}
-    	sb.append("\n");
-    	return sb.toString();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(title + "|" + parkName + "|" + location);
+        sb.append("|" + start + "|" + end);
+        sb.append("|" + maxLight + "|" + curLight);
+        sb.append("|" + maxMed + "|" + curMed);
+        sb.append("|" + maxHeavy + "|" + curHeavy);
+        sb.append("|" + description);
+        for (final Volunteer v : volunteers) {
+            sb.append("|" + v);
+        }
+        sb.append("\n");
+        return sb.toString();
     }
 
     /**

@@ -60,16 +60,9 @@ public abstract class AbstractUser {
             return true;
         }
         if (other instanceof AbstractUser) {
-<<<<<<< HEAD
-            final AbstractUser user = (AbstractUser) other;
-            return firstName.equalsIgnoreCase(user.getFirstName())
-                    && lastName.equalsIgnoreCase(user.getLastName())
-                    && email.equalsIgnoreCase(user.getEmail());
-=======
-            return this.firstName.equalsIgnoreCase(((AbstractUser) other).getFirstName())
-            	&& this.lastName.equalsIgnoreCase(((AbstractUser) other).getLastName())
-            	&& this.email.equalsIgnoreCase(((AbstractUser) other).getEmail());
->>>>>>> 97d7c38275a42df393d51e69c9e8c133f7cc5d08
+            return firstName.equalsIgnoreCase(((AbstractUser) other).getFirstName())
+                    && lastName.equalsIgnoreCase(((AbstractUser) other).getLastName())
+                    && email.equalsIgnoreCase(((AbstractUser) other).getEmail());
         }
         return false;
     }
