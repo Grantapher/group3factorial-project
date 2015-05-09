@@ -242,11 +242,11 @@ public final class FileIO {
     private AbstractUser parseUser(final BufferedReader reader, final String lastName,
             final Character type, final String email) throws IOException {
         final char queryChar = reader.readLine().charAt(0);
-        final Scanner name = new Scanner(reader.readLine());
-        final String queryFirstName = name.next();
-        final String queryLastName = name.next();
-        name.close();
-        final String queryEmail = reader.readLine();
+        final Scanner sc = new Scanner(reader.readLine());
+        final String queryFirstName = sc.next();
+        final String queryLastName = sc.next();
+		final String queryEmail = sc.next();
+        sc.close();
 
         // check if user matches query
         if ((lastName == null || lastName.equals(queryLastName))
