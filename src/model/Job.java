@@ -24,19 +24,20 @@ public class Job implements Comparable<Job>, Cloneable {
 
     
     /**
-     * Constructs a job from a string in this format
-    	title + "/" + parkName "/" + location
-    	+ "/" + start + "/" + end
-    	+ "/" + maxLight + "/" + curLight
-    	+ "/" + maxMed + "/" + curMed
-    	+ "/" + maxHeavy + "/" + curHeavy
-    	+ "/" + description
+     * Constructs a job from a jobs toString.
+     * The string should be in this format:
+    	title + "|" + parkName "|" + location
+    	+ "|" + start + "|" + end
+    	+ "|" + maxLight + "|" + curLight
+    	+ "|" + maxMed + "|" + curMed
+    	+ "|" + maxHeavy + "|" + curHeavy
+    	+ "|" + description
     	for(Volunteer v : volunteers) {
-    		+ "/" + v.getEmail()   		
+    		+ "|" + v.getEmail()   		
     	}
      */
     public Job(String jobString) {
-    	String[] params = jobString.split("/");
+    	String[] params = jobString.split("|");
     	title = params[0];
     	parkName = params[1];
     	location = params[2];
@@ -133,12 +134,7 @@ public class Job implements Comparable<Job>, Cloneable {
      * Checks if this job has the given volunteer signed up for it.
      */
     public boolean containsVolunteer(final Volunteer volunteer) {
-        for (final Volunteer v : volunteers) {
-            if (v.getEmail().equals(volunteer.getEmail())) {
-                return true;
-            }
-        }
-        return false;
+    	return volunteers.contains(volunteer);
     }
 
     /**
@@ -165,17 +161,17 @@ public class Job implements Comparable<Job>, Cloneable {
     	if(this.containsVolunteer(v)) {
     		return false;
     	}
-        if (grade == 'L' || grade == 'l') {
+        if (grade == 'l') {
             if (maxLight == curLight) {
                 return false;
             }
             curLight++;
-        } else if (grade == 'M' || grade == 'm') {
+        } else if (grade == 'm') {
             if (maxMed == curMed) {
                 return false;
             }
             curMed++;
-        } else if (grade == 'H' || grade == 'h') {
+        } else if (grade == 'h') {
             if (maxHeavy == curHeavy) {
                 return false;
             }
@@ -186,17 +182,18 @@ public class Job implements Comparable<Job>, Cloneable {
     }
     
     public String toString() {
-    	String result = "";
-    	result += title + "/" + parkName + "/" + location;
-    	result += "/" + start + "/" + end;
-    	result += "/" + maxLight + "/" + curLight;
-    	result += "/" + maxMed + "/" + curMed;
-    	result += "/" + maxHeavy + "/" + curHeavy;
-    	result += "/" + description;
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(title + "|" + parkName + "|" + location);
+    	sb.append("|" + start + "|" + end);
+    	sb.append("|" + maxLight + "|" + curLight);
+    	sb.append("|" + maxMed + "|" + curMed);
+    	sb.append("|" + maxHeavy + "|" + curHeavy);
+    	sb.append("|" + description);
     	for(Volunteer v : volunteers) {
-    		result += "/" + v;   		
+    		sb.append("|" + v);   		
     	}
-    	result += "\n";
+    	sb.append("\n");
+    	return sb.toString();
     }
 
     /**

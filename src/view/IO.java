@@ -22,6 +22,7 @@ import model.Volunteer;
  */
 public class IO {
 	private static char userType;
+	private static AbstractUser user;
 	private static Volunteer volunteer;
 	private static Administrator admin;
 	private static ParkManager manager;
@@ -42,11 +43,11 @@ public class IO {
 	 * Called repeatedly once a user is logged in to display to the user their optios
 	 */
 	private static void interact() {
-		if(userType == 'v') {
+		if(userType == FileIO.VOLUNTEER_CHAR) {
 			volunteerInteract();
-		} else if(userType == 'a') {
+		} else if(userType == FileIO.ADMIN_CHAR) {
 			administratorInteract();
-		} else if(userType == 'p') {
+		} else if(userType == FileIO.PARK_MANAGER_CHAR) {
 			managerInteract();
 		}
 	}
@@ -68,7 +69,7 @@ public class IO {
 		} else if(userInput == 'q') {
 			System.exit(0);
 		}
-		volunteerInteract();
+		managerInteract();
 	}
 	
 	/**
@@ -78,8 +79,8 @@ public class IO {
 	private static void displayManagersJobs() {
 		int jobIndex = 0;
 		List<Job> jobs = new ArrayList<Job>();
-		for (Job j : manager.getJobs()) {
-			System.out.print(jobIndex + " " + j.display());
+		for (Job j : calendar.getJobs(manager)) {
+			System.out.print(jobIndex + " " + j);
 			jobs.add(j);
 			jobIndex++;
 		}
@@ -97,33 +98,24 @@ public class IO {
 	 * Creating a new job
 	 */
 	private static void createJob() {
-		String title;
-		String parkName;
-		String location;
-		String startDate;
-		String endDate;
-		int light;
-		int med;
-		int heavy;
-		String description;
 		System.out.print("Title: ");
-		title = inputReader.next();
+		String title = inputReader.next();
 		System.out.print("Park Name: ");
-		parkName = inputReader.next();
+		String parkName = inputReader.next();
 		System.out.print("Location: ");
-		location = inputReader.next();
+		String location = inputReader.next();
 		System.out.print("Start Date (yyyy-mm-dd): ");
-		startDate = inputReader.next();
+		String startDate = inputReader.next();
 		System.out.print("End Date (yyyy-mm-dd): ");
-		endDate = inputReader.next();
+		String endDate = inputReader.next();
 		System.out.print("# of light volunteers needed: ");
-		light = inputReader.nextInt();
+		int light = inputReader.nextInt();
 		System.out.print("# of mediuim volunteers needed: ");
-		med = inputReader.nextInt();
+		int med = inputReader.nextInt();
 		System.out.print("# of heavy volunteers needed: ");
-		heavy = inputReader.nextInt();
+		int heavy = inputReader.nextInt();
 		System.out.print("Description: ");
-		description = inputReader.next();
+		String description = inputReader.next();
 		manager.submit(calendar, title, parkName, location, LocalDate.parse(startDate),
 				LocalDate.parse(endDate), light, med, heavy, description);
 	}
@@ -138,7 +130,11 @@ public class IO {
 		if(lastName.equals("q")) {
 			System.exit(0);
 		}
-		System.out.println(fileIO.findVolunteer(lastName));
+		List<Volunteer> volunteers;
+		volunteers = FileIO.queryUsers(lastName, FileIO.VOLUNTEER_CHAR);
+		for(Volunteer v : volunteers) {
+			System.out.println(v);
+		}
 		administratorInteract();
 	}
 	
@@ -165,7 +161,10 @@ public class IO {
 	 * Displays all jobs the volunteer has signed up for
 	 */
 	private static void displaySignedUp() {
-		volunteer.viewSignedUp();
+		List<job> jobs = volunteer.getJobs();
+		for(job j : jobs) {
+			System.out.println(j);
+		}
 	}
 	
 	/**
@@ -175,7 +174,7 @@ public class IO {
 	private static void displayJobs() {
 		int jobIndex = 0;
 		List<Job> jobs = new ArrayList<Job>();
-		for (Job j : FileIO.readJobs()) {
+		for (Job j : FileIO.readJobs().keySet()) {
 			System.out.print(jobIndex + " " + j.display());
 			jobs.add(j);
 			jobIndex++;
@@ -185,11 +184,16 @@ public class IO {
 		jobIndex = inputReader.nextInt();
 		char grade = 0;
 		while (jobIndex >= 0 &&
-			(grade == 'l' || grade == 'm' || grade == 'h')) {
+			(grade != 'l' && grade != 'm' && grade != 'h')) {
 			System.out.print("Which grade (l/m/h): ");
 			grade = inputReader.next().charAt(0);
 		}
-		jobs.get(jobIndex).addVolunteer(volunteer, grade);
+		boolean check = jobs.get(jobIndex).addVolunteer(volunteer, grade);
+		if(check) {
+			System.out.println("Signup Successful");
+		} else {
+			System.out.println("Signup Failed");
+		}
 	}
 	
 	/**
@@ -209,11 +213,11 @@ public class IO {
 			} else {
 				login();
 			}
-		} else if(userType == 'v') {
+		} else if(userType == FileIO.VOLUNTEER_CHAR) {
 			volunteer = FileIO.getUser(email);
-		} else if(userType == 'a') {
+		} else if(userType == FileIO.ADMIN_CHAR) {
 			admin = FileIO.getUser(email);
-		} else if(userType == 'p') {
+		} else if(userType == FileIO.PARK_MANAGER_CHAR) {
 			manager = fileIO.getUser(email);
 		}
 	}
@@ -227,23 +231,23 @@ public class IO {
 		String first = inputReader.next();
 		System.out.print("Last Name: ");
 		String last = inputReader.next();
-		while(userType != 'v' || userType != 'p' || userType != 'a') {
-			System.out.print("User Type(v for volunteer, p for park manager, a for admin): ");
+		while(userType != FileIO.VOLUNTEER_CHAR || userType != FileIO.PARK_MANAGER_CHAR || userType != FileIO.ADMIN_CHAR) {
+			System.out.print("User Type(V for volunteer, P for park manager, A for admin): ");
 			userType = inputReader.next().charAt(0);
 		}
-		if(userType == 'p') {
+		if(userType == FileIO.PARK_MANAGER_CHAR) {
 			manager = new ParkManager(last, first, email);
 			String park;
 			do {
 				System.out.print("Tell me a park you work in (leave empty when done): ");
 				park = inputReader.next();
 				if(!park.equals("")) {
-					p.addPark(park);
+					manager.addPark(park);
 				}
 			} while (!park.equals(""));
-		} else if(userType == 'v') {
+		} else if(userType == FileIO.VOLUNTEER_CHAR) {
 			volunteer = new Volunteer(last, first, email);
-		} else if(userType == 'a') {
+		} else if(userType == FileIO.ADMIN_CHAR) {
 			admin = new Administrator(last, first, email);
 		}
 	}
