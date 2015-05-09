@@ -23,26 +23,36 @@ public class Job implements Comparable<Job>, Cloneable {
     private final List<Volunteer> volunteers;
 
     /**
-     * Constructs a job from a string in this format title + "/" + parkName "/"
-     * + location + "/" + start + "/" + end + "/" + maxLight + "/" + curLight +
-     * "/" + maxMed + "/" + curMed + "/" + maxHeavy + "/" + curHeavy
-     * for(Volunteer v : volunteers) { + "/" + v.getEmail() }
+     * Constructs a job from a jobs toString.
+     * The string should be in this format:
+    	title + "|" + parkName "|" + location
+    	+ "|" + start + "|" + end
+    	+ "|" + maxLight + "|" + curLight
+    	+ "|" + maxMed + "|" + curMed
+    	+ "|" + maxHeavy + "|" + curHeavy
+    	+ "|" + description
+    	for(Volunteer v : volunteers) {
+    		+ "|" + v.getEmail()   		
+    	}
      */
-    public Job(final String jobString) {
-        final String[] params = jobString.split("/");
-        title = params[0];
-        parkName = params[1];
-        location = params[2];
-        start = LocalDate.parse(params[3]);
-        end = LocalDate.parse(params[4]);
-        maxLight = Integer.parseInt(params[5]);
-        curLight = Integer.parseInt(params[6]);
-        maxMed = Integer.parseInt(params[7]);
-        curMed = Integer.parseInt(params[8]);
-        curHeavy = Integer.parseInt(params[9]);
-        maxHeavy = Integer.parseInt(params[10]);
-        description = params[11];
-        volunteers = FileIO.getVolunteers(params[12]);
+    public Job(String jobString) {
+    	String[] params = jobString.split("|");
+    	title = params[0];
+    	parkName = params[1];
+    	location = params[2];
+    	start = LocalDate.parse(params[3]);
+    	end = LocalDate.parse(params[4]);
+    	maxLight = Integer.parseInt(params[5]);
+    	curLight = Integer.parseInt(params[6]);
+    	maxMed = Integer.parseInt(params[7]);
+    	curMed = Integer.parseInt(params[8]);
+    	curHeavy = Integer.parseInt(params[9]);
+    	maxHeavy = Integer.parseInt(params[10]);
+    	description = params[11];
+    	volunteers = new ArrayList<Volunteer>();
+    	for(int i = 12; i < params.length; i++) {
+    		volunteers.add(new Volunteer(params[i]));
+    	}
     }
 
     /**
@@ -126,12 +136,7 @@ public class Job implements Comparable<Job>, Cloneable {
      * Checks if this job has the given volunteer signed up for it.
      */
     public boolean containsVolunteer(final Volunteer volunteer) {
-        for (final Volunteer v : volunteers) {
-            if (v.getEmail().equals(volunteer.getEmail())) {
-                return true;
-            }
-        }
-        return false;
+    	return volunteers.contains(volunteer);
     }
 
     /**
@@ -156,20 +161,20 @@ public class Job implements Comparable<Job>, Cloneable {
      * @return
      */
     public boolean addVolunteer(final Volunteer v, final char grade) {
-        if (containsVolunteer(v)) {
-            return false;
-        }
-        if (grade == 'L' || grade == 'l') {
+    	if(this.containsVolunteer(v)) {
+    		return false;
+    	}
+        if (grade == 'l') {
             if (maxLight == curLight) {
                 return false;
             }
             curLight++;
-        } else if (grade == 'M' || grade == 'm') {
+        } else if (grade == 'm') {
             if (maxMed == curMed) {
                 return false;
             }
             curMed++;
-        } else if (grade == 'H' || grade == 'h') {
+        } else if (grade == 'h') {
             if (maxHeavy == curHeavy) {
                 return false;
             }
@@ -181,18 +186,18 @@ public class Job implements Comparable<Job>, Cloneable {
 
     @Override
     public String toString() {
-        String result = "";
-        result += title + "/" + parkName + "/" + location;
-        result += "/" + start + "/" + end;
-        result += "/" + maxLight + "/" + curLight;
-        result += "/" + maxMed + "/" + curMed;
-        result += "/" + maxHeavy + "/" + curHeavy;
-        result += "/" + description;
-        for (final Volunteer v : volunteers) {
-            result += "/" + v;
-        }
-        result += "\n";
-        return result;
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(title + "|" + parkName + "|" + location);
+    	sb.append("|" + start + "|" + end);
+    	sb.append("|" + maxLight + "|" + curLight);
+    	sb.append("|" + maxMed + "|" + curMed);
+    	sb.append("|" + maxHeavy + "|" + curHeavy);
+    	sb.append("|" + description);
+    	for(Volunteer v : volunteers) {
+    		sb.append("|" + v);   		
+    	}
+    	sb.append("\n");
+    	return sb.toString();
     }
 
     /**
