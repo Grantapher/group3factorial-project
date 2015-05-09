@@ -42,7 +42,7 @@ public class Job implements Comparable<Job>, Cloneable {
         curHeavy = Integer.parseInt(params[9]);
         maxHeavy = Integer.parseInt(params[10]);
         description = params[11];
-        volunteers = FileIO.getInstance().getVolunteers(params[12]);
+        volunteers = FileIO.getVolunteers(params[12]);
     }
 
     /**

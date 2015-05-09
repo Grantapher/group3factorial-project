@@ -29,10 +29,9 @@ public class Administrator extends AbstractUser {
      * @throws FileNotFoundException if the file isn't found
      */
     public AbstractUser findVolunteer(final String theName) throws FileNotFoundException {
-        final FileIO fileReader = FileIO.getInstance();
         AbstractUser freeWorker = null;
         // List of users
-        final List<AbstractUser> userList = fileReader.queryUsers(theName, 'v');
+        final List<AbstractUser> userList = FileIO.queryUsers(theName, 'v');
         if (userList != null) { // list does exist
             for (final AbstractUser volunteer : userList) {
                 // search by last name

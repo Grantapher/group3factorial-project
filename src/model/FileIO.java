@@ -35,20 +35,9 @@ public final class FileIO {
     public static final char USER_NOT_FOUND_CHAR = 'X';
     private static final String USER_FILE = "/files/users.info";
     private static final String JOB_FILE = "/files/jobs.info";
-    private static FileIO instance = null;
 
     private FileIO() {
         // empty constructor
-    }
-
-    /**
-     * @return the single instance to this class
-     */
-    public static FileIO getInstance() {
-        if (instance == null) {
-            instance = new FileIO();
-        }
-        return instance;
     }
 
     /**
@@ -57,7 +46,7 @@ public final class FileIO {
      * @return a map of all the jobs
      * @throws FileNotFoundException if the Job file doesn't exist
      */
-    public Map<LocalDate, List<Job>> readJobs() throws FileNotFoundException {
+    public static Map<LocalDate, List<Job>> readJobs() throws FileNotFoundException {
         final Map<LocalDate, List<Job>> map = new HashMap<>();
         final BufferedReader br = new BufferedReader(new FileReader(JOB_FILE));
         try {
@@ -87,7 +76,7 @@ public final class FileIO {
      * @param job the job to add to the file
      * @throws IOException if the Job file doesn't exist
      */
-    public void appendJobs(final Job job) throws IOException {
+    public static void appendJobs(final Job job) throws IOException {
         final PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(JOB_FILE,
                 true)));
         pw.println(job.toString());
@@ -108,7 +97,7 @@ public final class FileIO {
      * @return a list of Users matching the given query
      * @throws FileNotFoundException if the User file doesn't exist
      */
-    public List<AbstractUser> queryUsers(final String lastName, final Character userType)
+    public static List<AbstractUser> queryUsers(final String lastName, final Character userType)
             throws FileNotFoundException {
         final BufferedReader br = new BufferedReader(new FileReader(USER_FILE));
         final List<AbstractUser> list = queryUsers(br, lastName, userType, null);
@@ -133,7 +122,7 @@ public final class FileIO {
      * @return the user type of the user associated with the given email
      * @throws FileNotFoundException if the User file doesn't exist
      */
-    public char getUserType(final String email) throws FileNotFoundException {
+    public static char getUserType(final String email) throws FileNotFoundException {
         final BufferedReader br = new BufferedReader(new FileReader(USER_FILE));
         final List<AbstractUser> list = queryUsers(br, null, null, email);
         try {
@@ -167,7 +156,7 @@ public final class FileIO {
      * @param volunteers A string containing volunteers
      * @return A list of volunteers
      */
-    public List<Volunteer> getVolunteers(final String volunteers) {
+    public static List<Volunteer> getVolunteers(final String volunteers) {
         final BufferedReader br = new BufferedReader(new StringReader(volunteers));
         final List<AbstractUser> userList = queryUsers(br, null, VOLUNTEER_CHAR, null);
         final List<Volunteer> volunteerList = new ArrayList<>();
@@ -183,7 +172,7 @@ public final class FileIO {
      * @param user the user to add to the file
      * @throws IOException if the User file doesn't exist
      */
-    public void addUser(final AbstractUser user) throws IOException {
+    public static void addUser(final AbstractUser user) throws IOException {
         final PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(USER_FILE,
                 true)));
         pw.println(user.toString());
@@ -206,8 +195,8 @@ public final class FileIO {
      * @param email the email query
      * @return a list of Users who match the query
      */
-    private List<AbstractUser> queryUsers(final BufferedReader reader, final String lastName,
-            final Character type, final String email) {
+    private static List<AbstractUser> queryUsers(final BufferedReader reader,
+            final String lastName, final Character type, final String email) {
         final List<AbstractUser> list = new ArrayList<>();
         try {
             // gather User info
@@ -239,13 +228,13 @@ public final class FileIO {
      * @return the user if it matches the query, otherwise null
      * @throws IOException if an I/O error occurs
      */
-    private AbstractUser parseUser(final BufferedReader reader, final String lastName,
+    private static AbstractUser parseUser(final BufferedReader reader, final String lastName,
             final Character type, final String email) throws IOException {
         final char queryChar = reader.readLine().charAt(0);
         final Scanner sc = new Scanner(reader.readLine());
         final String queryFirstName = sc.next();
         final String queryLastName = sc.next();
-		final String queryEmail = sc.next();
+        final String queryEmail = sc.next();
         sc.close();
 
         // check if user matches query
