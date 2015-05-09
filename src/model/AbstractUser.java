@@ -7,7 +7,7 @@ package model;
  * Every type of User in the system will inherit from this abstract class.
  *
  * @author Wing-Sea Poon
- * @version May 8, 2015
+ * @version May 9, 2015
  */
 public abstract class AbstractUser {
 	protected String lastName;
@@ -54,9 +54,9 @@ public abstract class AbstractUser {
     @Override
     public boolean equals(final Object other) {
         if (other instanceof AbstractUser) {
-            return this.firstName.equalsIgnoreCase(other.getFirstName())
-            	&& this.lastName.equalsIgnoreCase(other.getLastName())
-            	&& this.email.equalsIgnoreCase(other.getEmail());
+            return this.firstName.equalsIgnoreCase(((AbstractUser) other).getFirstName())
+            	&& this.lastName.equalsIgnoreCase(((AbstractUser) other).getLastName())
+            	&& this.email.equalsIgnoreCase(((AbstractUser) other).getEmail());
         }
         return false;
     }
