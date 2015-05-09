@@ -4,64 +4,68 @@
 package model;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 /**
- * Calendar
- * 
- * April 30, 2015
+ * Handles the association between jobs, dates, and scheduling.
  *
- * @version 0.2
+ * @version May 9, 2015
  * @author Wing-Sea Poon
  */
-
 public class Calendar {
-    public static final String JOB_FILE_NAME = "Jobs.txt";
-    public static final int MAX_TOTAL_JOBS = 30;
-    public static final int MAX_JOBS_PER_WEEK = 5;
-    public static final int MAX_JOB_LENGTH = 2;
-    public static final int MAX_DAYS = 90;
-    public static final int HALF_WEEK = 3;
+	private static Calendar instance = null;
+    private static final int MAX_TOTAL_JOBS = 30;
+    private static final int MAX_JOBS_PER_WEEK = 5;
+    private static final int MAX_JOB_LENGTH = 2;
+    private static final int MAX_DAYS = 90;
+    private static final int HALF_WEEK = 3;
 
-    private final Map<LocalDate, ArrayList<Job>> dateToListOfJobs;
+    private final Map<LocalDate, List<Job>> dateToListOfJobs;
 
     /**
-     * Constructor. This will eventually read in the persistent data from a
-     * File, and store it back into this Calendar.
-     *
-     * @throws FileNotFoundException if the Jobs.txt file is not found.
+     * @return the single instance to this class
+     * @throws FileNotFoundException if the job info file is not found.
      */
-    public Calendar() {
-        dateToListOfJobs = new TreeMap<LocalDate, ArrayList<Job>>();
-        // Scanner fileReader = new Scanner(new File(JOB_FILE_NAME));
-
-        // TODO: Have to re-create job objects from File
-        // If job is in the past, don't add it.
-        // while (fileReader.hasNextLine()) {
-        // Job job = new Job(fileReader.next());
-        // LocalDateTime startDate = LocalDateTime.parse(fileReader.next());
-        // LocalDateTime endDate = LocalDateTime.parse(fileReader.next());
-        // addJobToMap(job);
-        // }
-        // fileReader.close();
+    public static Calendar getInstance() throws FileNotFoundException {
+        if (instance == null) {
+            instance = new Calendar();
+        }
+        return instance;
     }
+
+    /**
+     * Private constructor. Reads in persistent data from a
+     * File, and stores it back into the Calendar.
+     *
+     * @throws FileNotFoundException if the job info file is not found.
+     */
+    private Calendar() throws FileNotFoundException {
+        dateToListOfJobs = FileIO.readJobs();
+    }
+    
+    /**
+     * @return a Map from dates to lists of jobs on that date.
+     */
+    public Map<LocalDate, List<Job>> getJobs() {
+		return dateToListOfJobs;
+	}
 
     /**
      * Adds a Job to the Calendar.
      *
      * @param job the Job to add.
-     * @throws FileNotFoundException if the persistent Jobs.txt file is not
-     *             found.
+     * @throws IOException if the Job file doesn't exist
      */
-    public void addJob(final Job job) {
+    public void addJob(final Job job) throws IOException {
         if (!isFull() && !isFull(job.getStartDate()) && !isFull(job.getEndDate())
                 && isValidLength(job) && isValidInterval(job)) {
             addJobToMap(job);
-            // addJobToFile(job);
+            addJobToFile(job);
         }
     }
 
@@ -71,7 +75,7 @@ public class Calendar {
      * @param job The Job whose length we want to check
      * @return true if this Job is within the max job length
      */
-    boolean isValidLength(final Job job) {
+    public boolean isValidLength(final Job job) {
         final LocalDate startDate = job.getStartDate();
         final LocalDate endDate = job.getEndDate();
         return startDate.plusDays(MAX_JOB_LENGTH).isAfter(endDate);
@@ -84,7 +88,7 @@ public class Calendar {
      * @return true if this Job is not in the past, and within the max number of
      *         days we want to keep track of.
      */
-    boolean isValidInterval(final Job job) {
+    public boolean isValidInterval(final Job job) {
         final LocalDate startDate = job.getStartDate();
         final LocalDate now = LocalDate.now();
         return startDate.isAfter(now) && now.plusDays(MAX_DAYS).isAfter(startDate);
@@ -97,12 +101,12 @@ public class Calendar {
      * @return true if this week contains the max number of Jobs it can handle
      *         for a week.
      */
-    boolean isFull(final LocalDate date) {
+    public boolean isFull(final LocalDate date) {
         int jobsThisWeek = 0;
         final LocalDate startDate = date.minusDays(HALF_WEEK);
         final LocalDate endDate = date.plusDays(HALF_WEEK);
         final LocalDate dayBeforeStart = startDate.minusDays(1);
-        ArrayList<Job> listOfJobsThisDay = null;
+        List<Job> listOfJobsThisDay = null;
 
         // Count all jobs that have startDate within this week,
         // based on date param
@@ -132,10 +136,10 @@ public class Calendar {
      *
      * @return true if the Calendar contains the max number of Jobs.
      */
-    boolean isFull() {
+    public boolean isFull() {
         int totalJobs = 0;
         final Set<LocalDate> allDaysInCalendar = dateToListOfJobs.keySet();
-        ArrayList<Job> listOfJobsThisDay = null;
+        List<Job> listOfJobsThisDay = null;
 
         for (final LocalDate date : allDaysInCalendar) {
             listOfJobsThisDay = dateToListOfJobs.get(date);
@@ -148,7 +152,7 @@ public class Calendar {
     // private helper method for addJob(Job).
     // Adds the job to this Calendar's temporary data structure
     // for keeping track of jobs.
-    void addJobToMap(final Job job) {
+    private void addJobToMap(final Job job) {
         final boolean dateIsInCalendar = dateToListOfJobs.containsKey(job.getStartDate());
 
         if (!dateIsInCalendar) {
@@ -164,13 +168,9 @@ public class Calendar {
     // private helper method for addJob(Job).
     // Adds the job to a persistent file so that the Calendar can restore
     // this information when the program starts up again.
-    // void addJobToFile(Job job) throws FileNotFoundException {
-    // PrintStream output = new PrintStream(new File(JOB_FILE_NAME));
-    //
-    // output.append(job.getTitle() + "\t" + job.getStartDate() + "\t"
-    // + job.getEndDate());
-    // output.close();
-    // }
+    private void addJobToFile(Job job) throws IOException {
+    	 FileIO.appendJobs(job);
+     }
 
     /**
      * {@inheritDoc}
@@ -179,8 +179,4 @@ public class Calendar {
     public String toString() {
         return dateToListOfJobs.toString();
     }
-    
-    public Map<LocalDate, ArrayList<Job>> getJobs() {
-		return dateToListOfJobs;
-	}
 }
