@@ -24,13 +24,13 @@ public class Job implements Comparable<Job>, Cloneable {
 
 	/**
 	 * Constructs a job from a jobs toString. The string should be in this
-	 * format: title + "/" + parkName "/" + location + "/" + start + "/" + end +
-	 * "/" + maxLight + "/" + curLight + "/" + maxMed + "/" + curMed + "/" +
-	 * maxHeavy + "/" + curHeavy + "/" + description for(Volunteer v :
-	 * volunteers) { + "/" + v.getEmail() }
+	 * format: title + "|" + parkName "|" + location + "|" + start + "|" + end +
+	 * "|" + maxLight + "|" + curLight + "|" + maxMed + "|" + curMed + "|" +
+	 * maxHeavy + "|" + curHeavy + "|" + description for(Volunteer v :
+	 * volunteers) { + "|" + v.getEmail() }
 	 */
 	public Job(final String jobString) {
-		final String[] params = jobString.split("[/]");
+		final String[] params = jobString.split("[|]");
 		title = params[0];
 		parkName = params[1];
 		location = params[2];
@@ -233,13 +233,13 @@ public class Job implements Comparable<Job>, Cloneable {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append(title + "/" + parkName + "/" + location);
-		sb.append("/" + start + "/" + end);
-		sb.append("/" + maxLight + "/" + curLight);
-		sb.append("/" + maxMed + "/" + curMed);
-		sb.append("/" + maxHeavy + "/" + curHeavy);
-		sb.append("/" + description);
-		sb.append("/");
+		sb.append(title + "|" + parkName + "|" + location);
+		sb.append("|" + start + "|" + end);
+		sb.append("|" + maxLight + "|" + curLight);
+		sb.append("|" + maxMed + "|" + curMed);
+		sb.append("|" + maxHeavy + "|" + curHeavy);
+		sb.append("|" + description);
+		sb.append("|");
 		for (final Volunteer v : volunteers) {
 			sb.append(v);
 		}
