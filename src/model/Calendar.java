@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,7 @@ import java.util.Set;
  */
 public class Calendar {
 	private static Calendar instance = null;
+	
     private static final int MAX_TOTAL_JOBS = 30;
     private static final int MAX_JOBS_PER_WEEK = 5;
     private static final int MAX_JOB_LENGTH = 2;
@@ -52,8 +54,29 @@ public class Calendar {
      * @return a Map from dates to lists of jobs on that date.
      */
     public Map<LocalDate, List<Job>> getJobs() {
-		return dateToListOfJobs;
+    	Map<LocalDate, List<Job>> copy = new HashMap<LocalDate, List<Job>>(dateToListOfJobs);
+		return copy;
 	}
+    
+    /**
+     * @param parks A List of parks that we want to see the jobs for.
+     * @return A list of jobs associated with the parks passed in.
+     */
+    public List<Job> getJobs(List<String> parks) {
+    	List<Job> jobs = new ArrayList<Job>();
+    	
+    	for (String park : parks) {
+    		for (LocalDate date : dateToListOfJobs.keySet()) {
+    			for (Job job : dateToListOfJobs.get(date)) {
+    				if (job.getPark().equalsIgnoreCase(park)) {
+    					jobs.add(job);
+    				}
+    			}
+    		}
+    	}
+    	
+    	return jobs;
+    }
 
     /**
      * Adds a Job to the Calendar.
@@ -169,8 +192,8 @@ public class Calendar {
     // Adds the job to a persistent file so that the Calendar can restore
     // this information when the program starts up again.
     private void addJobToFile(Job job) throws IOException {
-    	 FileIO.addJob(job);
-     }
+    	 FileIO.appendJobs(job);
+    }
 
     /**
      * {@inheritDoc}
