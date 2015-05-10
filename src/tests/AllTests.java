@@ -14,7 +14,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @version May 4, 2015
  */
 @RunWith(Suite.class)
-@SuiteClasses({ CalendarTest.class, JobTest.class, ParkManagerTest.class, VolunteerTest.class })
+@SuiteClasses({ CalendarTest.class, FileIOTest.class, JobTest.class, ParkManagerTest.class,
+        VolunteerTest.class })
 public class AllTests {
 
 }

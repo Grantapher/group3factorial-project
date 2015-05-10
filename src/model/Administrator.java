@@ -1,66 +1,75 @@
-
 /*
  * TCSS 360 Project - Group 3!
  */
 
 package model;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.io.FileNotFoundException;
 import java.util.List;
-
-
-
 
 /**
  * This class represents an Administrator.
- *  
+ *
  * @author Maurice Shaw
  * @version May 2014
  */
 public class Administrator extends AbstractUser {
-    
-   /**
-    * {@inheritDoc}
-    */
-    public Administrator(final String theLastName, final String theFirstName, final String theEmail) {
+
+    public Administrator(final String theLastName, final String theFirstName,
+            final String theEmail) {
         super(theLastName, theFirstName, theEmail);
     }
-    
-   /**
-    * Returns a volunteer found by last name.
-    * 
-    * @param theFileReader  Used to obtain list of users.
-    * @param theName    The last name of the user to be searched.
-    * @return           The volunteer or null if not found.
-    */
-    public User findVolunteer(final String theName) {
-        FileIO fileReader = FileIO.getInstance();
-        User freeWorker = null; 
-        List<User> userList = fileReader.queryUsers(theName, 'v'); // List of users
+
+    /**
+     * Returns a volunteer found by last name.
+     *
+     * @param theFileReader Used to obtain list of users.
+     * @param theName The last name of the user to be searched.
+     * @return The volunteer or null if not found.
+     * @throws FileNotFoundException if the file isn't found
+     */
+    public AbstractUser findVolunteer(final String theName) throws FileNotFoundException {
+        AbstractUser freeWorker = null;
+        // List of users
+        final List<AbstractUser> userList = FileIO.queryUsers(theName, 'v');
         if (userList != null) { // list does exist
-            for (User volunteer: userList) {
-                if (volunteer.getLastName().toLowerCase().equals(theName.toLowerCase())){ // search by last name
+            for (final AbstractUser volunteer : userList) {
+                // search by last name
+                if (volunteer.getLastName().toLowerCase().equals(theName.toLowerCase())) {
                     freeWorker = volunteer;
                     break;
                 }
-  
+
             }
         }
-        return freeWorker; 
+        return freeWorker;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        }
+        if (this == that) {
+            return true;
+        }
+        if (that instanceof Administrator) {
+            return super.equals(that);
+        }
+        return false;
+    }
+
     /**
      * String representation of an Administrator.
-     * 
+     *
      * @return park manager as string.
      */
+    @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
-        str.append("Administrator: ");   
-        str.append(super.toString()); 
-        return str.toString();
+        return "Administrator\n" + super.toString();
     }
-    
 
 }

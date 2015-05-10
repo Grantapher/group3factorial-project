@@ -15,10 +15,10 @@ import model.Volunteer;
 import org.junit.Test;
 
 public class JobTest {
+    private static final Volunteer v = new Volunteer("Doe", "John", "john.doe@fake.com");
 
     @Test
     public void containsVolunteerTest() {
-        final Volunteer v = new Volunteer();
         final Job j = new Job(null, null, null, null, null, 0, 0, 0, null);
         assertFalse("Volunteer shouldn't be contained", j.containsVolunteer(v));
         j.addVolunteer(v, 'l');
@@ -39,7 +39,6 @@ public class JobTest {
     @Test
     public void addVolunteerTest() {
         final Job j = new Job(null, "Rainier", null, null, null, 1, 0, 0, null);
-        final Volunteer v = new Volunteer();
         assertFalse("Can't add to a full grade", j.addVolunteer(v, 'm'));
         assertTrue("Volunteer added", j.addVolunteer(v, 'l'));
         assertFalse("Full", j.addVolunteer(v, 'l'));

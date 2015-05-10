@@ -4,6 +4,7 @@
 
 package model;
 
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Map;
  * @author Grant Toepfer
  * @version May 1, 2015
  */
-public class Volunteer extends User implements Cloneable {
+public class Volunteer extends AbstractUser {
 
     /**
      * Creates a new volunteer object with the given identifiers and list of
@@ -24,37 +25,18 @@ public class Volunteer extends User implements Cloneable {
      * @param lastName the user's last name
      * @param firstName the user's first name
      * @param email the user's email
-     * @param jobs the jobs the user is signed up for
      */
-    public Volunteer(final String lastName, final String firstName, final String email,
-            final List<Job> jobs) {
+    public Volunteer(final String lastName, final String firstName, final String email) {
         super(lastName, firstName, email);
     }
 
     /**
-     * Creates a copy of the given volunteer.
-     *
-     * @param that the volunteer to create a copy of
-     */
-    public Volunteer(final Volunteer that) {
-        super(that);
-    }
-
-    /**
-     * Prints all the jobs signed up for to the console.
-     */
-    public void viewSignedUp() {
-        for (final Job job : getJobs()) {
-            System.out.println(job);
-        }
-    }
-
-    /**
      * @return the list of jobs this volunteer is signed up for
+     * @throws FileNotFoundException if the file doesn't exist
      */
-    public List<Job> getJobs() {
+    public List<Job> getJobs() throws FileNotFoundException {
         final ArrayList<Job> list = new ArrayList<>();
-        final Map<LocalDate, List<Job>> map = Calendar.getJobs();
+        final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
         for (final LocalDate date : map.keySet()) {
             for (final Job job : map.get(date)) {
                 if (job.containsVolunteer(this)) {
@@ -70,27 +52,17 @@ public class Volunteer extends User implements Cloneable {
      * {@inheritDoc}
      */
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new Volunteer(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        }
         if (this == that) {
             return true;
         }
-        return super.equals(that);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return super.hashCode();
+        if (that instanceof Volunteer) {
+            return super.equals(that);
+        }
+        return false;
     }
 
     /**
@@ -98,14 +70,7 @@ public class Volunteer extends User implements Cloneable {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(super.toString());
-        sb.append("Jobs: ");
-        for (final Job job : getJobs()) {
-            sb.append('\t');
-            sb.append(job);
-        }
-        return sb.toString();
+        return "Volunteer\n" + super.toString();
     }
 
 }

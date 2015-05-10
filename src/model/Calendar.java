@@ -169,7 +169,7 @@ public class Calendar {
     // Adds the job to a persistent file so that the Calendar can restore
     // this information when the program starts up again.
     private void addJobToFile(Job job) throws IOException {
-    	 FileIO.appendJobs(job);
+    	 FileIO.addJob(job);
      }
 
     /**

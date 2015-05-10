@@ -22,41 +22,33 @@ public class Job implements Comparable<Job>, Cloneable {
     private final int maxHeavy;
     private final List<Volunteer> volunteers;
 
-    
     /**
-     * Constructs a job from a jobs toString.
-     * The string should be in this format:
-    	title + "|" + parkName "|" + location
-    	+ "|" + start + "|" + end
-    	+ "|" + maxLight + "|" + curLight
-    	+ "|" + maxMed + "|" + curMed
-    	+ "|" + maxHeavy + "|" + curHeavy
-    	+ "|" + description
-    	for(Volunteer v : volunteers) {
-    		+ "|" + v.getEmail()   		
-    	}
+     * Constructs a job from a jobs toString. The string should be in this
+     * format: title + "|" + parkName "|" + location + "|" + start + "|" + end +
+     * "|" + maxLight + "|" + curLight + "|" + maxMed + "|" + curMed + "|" +
+     * maxHeavy + "|" + curHeavy + "|" + description for(Volunteer v :
+     * volunteers) { + "|" + v.getEmail() }
      */
-    public Job(String jobString) {
-    	String[] params = jobString.split("|");
-    	title = params[0];
-    	parkName = params[1];
-    	location = params[2];
-    	start = LocalDate.parse(params[3]);
-    	end = LocalDate.parse(params[4]);
-    	maxLight = Integer.parseInt(params[5]);
-    	curLight = Integer.parseInt(params[6]);
-    	maxMed = Integer.parseInt(params[7]);
-    	curMed = Integer.parseInt(params[8]);
-    	curHeavy = Integer.parseInt(params[9]);
-    	maxHeavy = Integer.parseInt(params[10]);
-    	description = params[11];
-    	volunteers = new ArrayList<Volunteer>();
-    	for(int i = 12; i < params.length; i++) {
-    		volunteers.add(new Volunteer(params[i]));
-    	}
+    public Job(final String jobString) {
+        final String[] params = jobString.split("[|]");
+        title = params[0];
+        parkName = params[1];
+        location = params[2];
+        start = LocalDate.parse(params[3]);
+        end = LocalDate.parse(params[4]);
+        maxLight = Integer.parseInt(params[5]);
+        curLight = Integer.parseInt(params[6]);
+        maxMed = Integer.parseInt(params[7]);
+        curMed = Integer.parseInt(params[8]);
+        maxHeavy = Integer.parseInt(params[9]);
+        curHeavy = Integer.parseInt(params[10]);
+        description = params[11];
+        volunteers = FileIO.getVolunteers(params[12]);
     }
+
     /**
      * Constructs a new job
+     *
      * @param title
      * @param parkName
      * @param location
@@ -116,6 +108,7 @@ public class Job implements Comparable<Job>, Cloneable {
 
     /**
      * These 3 methods check if a job is full
+     *
      * @return
      */
     public boolean isLightFull() {
@@ -134,7 +127,7 @@ public class Job implements Comparable<Job>, Cloneable {
      * Checks if this job has the given volunteer signed up for it.
      */
     public boolean containsVolunteer(final Volunteer volunteer) {
-    	return volunteers.contains(volunteer);
+        return volunteers.contains(volunteer);
     }
 
     /**
@@ -151,16 +144,17 @@ public class Job implements Comparable<Job>, Cloneable {
     }
 
     /**
-     * Adds a volunteer to this job at the given job. 
-     * Returns false if the add failed (because a grade was full)
+     * Adds a volunteer to this job at the given job. Returns false if the add
+     * failed (because a grade was full)
+     *
      * @param v
      * @param grade
      * @return
      */
     public boolean addVolunteer(final Volunteer v, final char grade) {
-    	if(this.containsVolunteer(v)) {
-    		return false;
-    	}
+        if (containsVolunteer(v)) {
+            return false;
+        }
         if (grade == 'l') {
             if (maxLight == curLight) {
                 return false;
@@ -180,20 +174,53 @@ public class Job implements Comparable<Job>, Cloneable {
         volunteers.add(v);
         return true;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        }
+        if (this == that) {
+            return true;
+        }
+        if (that instanceof Job) {
+            final Job other = (Job) that;
+            if (volunteers.size() != other.volunteers.size()) {
+                return false;
+            }
+            for (int i = 0; i < volunteers.size(); i++) {
+                if (!volunteers.get(i).equals(other.volunteers.get(i))) {
+                    return false;
+                }
+            }
+            return title.equals(other.title) && parkName.equals(other.parkName)
+                    && location.equals(other.location) && start.equals(other.start)
+                    && end.equals(other.end) && curLight == other.curLight
+                    && curMed == other.curMed && curHeavy == other.curHeavy
+                    && description.equals(other.description) && maxLight == other.maxLight
+                    && maxMed == other.maxMed && maxHeavy == other.maxHeavy;
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append(title + "|" + parkName + "|" + location);
-    	sb.append("|" + start + "|" + end);
-    	sb.append("|" + maxLight + "|" + curLight);
-    	sb.append("|" + maxMed + "|" + curMed);
-    	sb.append("|" + maxHeavy + "|" + curHeavy);
-    	sb.append("|" + description);
-    	for(Volunteer v : volunteers) {
-    		sb.append("|" + v);   		
-    	}
-    	sb.append("\n");
-    	return sb.toString();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(title + "|" + parkName + "|" + location);
+        sb.append("|" + start + "|" + end);
+        sb.append("|" + maxLight + "|" + curLight);
+        sb.append("|" + maxMed + "|" + curMed);
+        sb.append("|" + maxHeavy + "|" + curHeavy);
+        sb.append("|" + description);
+        sb.append('|');
+        for (final Volunteer v : volunteers) {
+            sb.append(v);
+        }
+        sb.append("\n");
+        return sb.toString();
     }
 
     /**
@@ -208,7 +235,8 @@ public class Job implements Comparable<Job>, Cloneable {
     /**
      * Compares this job to another based on start date.
      */
-	public int compareTo(Job other) {
-		return this.start.compareTo(other.start);
-	}
+    @Override
+    public int compareTo(final Job other) {
+        return start.compareTo(other.start);
+    }
 }
