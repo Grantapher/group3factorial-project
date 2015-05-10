@@ -119,7 +119,7 @@ public class Job implements Comparable<Job>, Cloneable {
 	}
 
 	public int getCurMed() {
-		return maxMed;
+		return curMed;
 	}
 
 	public int getMaxHeavy() {
