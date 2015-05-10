@@ -127,14 +127,12 @@ public class FileIOTest {
      */
     @Test
     public final void testGetUserType() throws FileNotFoundException {
-        assertEquals("Administrator type lookup failed", FileIO.ADMIN_CHAR,
-                FileIO.getUserType(admin.getEmail()));
-        assertEquals("ParkManager type lookup failed", FileIO.PARK_MANAGER_CHAR,
-                FileIO.getUserType(pm.getEmail()));
-        assertEquals("Volunteer type lookup failed", FileIO.VOLUNTEER_CHAR,
-                FileIO.getUserType(volunteer.getEmail()));
-        assertEquals("No type lookup failed", FileIO.USER_NOT_FOUND_CHAR,
-                FileIO.getUserType("noEmail"));
+        assertEquals("Administrator type lookup failed", admin,
+                FileIO.getUser(admin.getEmail()));
+        assertEquals("ParkManager type lookup failed", pm, FileIO.getUser(pm.getEmail()));
+        assertEquals("Volunteer type lookup failed", volunteer,
+                FileIO.getUser(volunteer.getEmail()));
+        assertEquals("No type lookup failed", null, FileIO.getUser("noEmail"));
     }
 
 }

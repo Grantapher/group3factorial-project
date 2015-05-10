@@ -121,38 +121,24 @@ public final class FileIO {
     }
 
     /**
-     * Gets the user type of the user associated with the given email.
-     * <p>
-     * Check the "See Also" for the possible return values.
+     * Gets the user associated with the given email.
      *
-     * @see ADMIN_CHAR
-     * @see PARK_MANAGER_CHAR
-     * @see USER_NOT_FOUND_CHAR
-     * @see VOLUNTEER_CHAR
      * @param email the email to query for
-     * @return the user type of the user associated with the given email
+     * @return the user associated with the given email or null if the email
+     *         doesn't exist
      * @throws FileNotFoundException if the User file doesn't exist
      */
-    public static char getUserType(final String email) throws FileNotFoundException {
+    public static AbstractUser getUser(final String email) throws FileNotFoundException {
         final Scanner scan = new Scanner(USER_FILE);
         final List<AbstractUser> list = queryUsers(scan, null, null, email);
         scan.close();
         final int size = list.size();
         if (size == 0) {
-            return USER_NOT_FOUND_CHAR;
+            return null;
         } else if (size > 1) {
             throw new AssertionError("Multiple users under same email.");
         } else {
-            final AbstractUser user = list.get(0);
-            if (user instanceof Administrator) {
-                return ADMIN_CHAR;
-            } else if (user instanceof ParkManager) {
-                return PARK_MANAGER_CHAR;
-            } else if (user instanceof Volunteer) {
-                return VOLUNTEER_CHAR;
-            } else {
-                throw new AssertionError("User not instance of Admin, PM, or Volunteer.");
-            }
+            return list.get(0);
         }
     }
 
@@ -197,7 +183,7 @@ public final class FileIO {
      * @throws FileNotFoundException if the file doesn't exist
      */
     private static boolean emailExists(final String email) throws FileNotFoundException {
-        return USER_NOT_FOUND_CHAR != getUserType(email);
+        return null != getUser(email);
     }
 
     /**
