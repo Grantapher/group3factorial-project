@@ -29,8 +29,10 @@ public final class FileIO {
     public static final char VOLUNTEER_CHAR = 'V';
     /** The constant signifying a user that does not exist. */
     public static final char USER_NOT_FOUND_CHAR = 'X';
-    private static final String USER_FILE = "/users.info";
-    private static final String JOB_FILE = "/jobs.info";
+    private static final File USER_FILE = new File(System.getProperty("user.dir")
+            + "/files/users.info");
+    private static final File JOB_FILE = new File(System.getProperty("user.dir")
+            + "/files/jobs.info");
 
     private FileIO() {
         // empty constructor
@@ -44,7 +46,7 @@ public final class FileIO {
      */
     public static Map<LocalDate, List<Job>> readJobs() throws FileNotFoundException {
         final Map<LocalDate, List<Job>> map = new HashMap<>();
-        final Scanner scan = new Scanner(new File(JOB_FILE));
+        final Scanner scan = new Scanner(JOB_FILE);
         while (scan.hasNextLine()) {
             final StringBuilder sb = new StringBuilder();
             String line;
@@ -71,17 +73,13 @@ public final class FileIO {
      * @throws IOException if the Job file doesn't exist
      */
     public static void addJob(final Job job) throws IOException {
-        FileWriter fw;
+        if (!JOB_FILE.exists()) {
+            JOB_FILE.createNewFile();
+        }
         if (jobExists(job)) {
             return;
         }
-        try {
-            fw = new FileWriter(JOB_FILE, true);
-        } catch (final IOException theE) {
-            final File file = new File(JOB_FILE);
-            file.createNewFile();
-            fw = new FileWriter(file, true);
-        }
+        final FileWriter fw = new FileWriter(JOB_FILE, true);
         fw.write(job.toString());
         fw.close();
     }
@@ -116,7 +114,7 @@ public final class FileIO {
      */
     public static List<AbstractUser> queryUsers(final String lastName, final Character userType)
             throws FileNotFoundException {
-        final Scanner scan = new Scanner(new File(USER_FILE));
+        final Scanner scan = new Scanner(USER_FILE);
         final List<AbstractUser> list = queryUsers(scan, lastName, userType, null);
         scan.close();
         return list;
@@ -136,7 +134,7 @@ public final class FileIO {
      * @throws FileNotFoundException if the User file doesn't exist
      */
     public static char getUserType(final String email) throws FileNotFoundException {
-        final Scanner scan = new Scanner(new File(USER_FILE));
+        final Scanner scan = new Scanner(USER_FILE);
         final List<AbstractUser> list = queryUsers(scan, null, null, email);
         scan.close();
         final int size = list.size();
@@ -182,17 +180,13 @@ public final class FileIO {
      * @throws IOException if the User file doesn't exist
      */
     public static void addUser(final AbstractUser user) throws IOException {
-        FileWriter fw;
+        if (!USER_FILE.exists()) {
+            USER_FILE.createNewFile();
+        }
         if (emailExists(user.getEmail())) {
             return;
         }
-        try {
-            fw = new FileWriter(USER_FILE, true);
-        } catch (final IOException theE) {
-            final File file = new File(USER_FILE);
-            file.createNewFile();
-            fw = new FileWriter(file, true);
-        }
+        final FileWriter fw = new FileWriter(USER_FILE, true);
         fw.write(user.toString());
         fw.close();
     }
