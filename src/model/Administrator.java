@@ -46,6 +46,23 @@ public class Administrator extends AbstractUser {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        }
+        if (this == that) {
+            return true;
+        }
+        if (that instanceof Administrator) {
+            return super.equals(that);
+        }
+        return false;
+    }
+
+    /**
      * String representation of an Administrator.
      *
      * @return park manager as string.

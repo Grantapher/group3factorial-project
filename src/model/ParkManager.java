@@ -116,6 +116,29 @@ public class ParkManager extends AbstractUser {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        }
+        if (this == that) {
+            return true;
+        }
+        if (that instanceof ParkManager) {
+            final ParkManager other = (ParkManager) that;
+            for (final String park : myParks) {
+                if (!other.myParks.contains(park)) {
+                    return false;
+                }
+            }
+            return super.equals(that);
+        }
+        return false;
+    }
+
+    /**
      * String representation of a Park Manager.
      *
      * @return park manager as string.

@@ -30,7 +30,7 @@ public class Job implements Comparable<Job>, Cloneable {
      * volunteers) { + "|" + v.getEmail() }
      */
     public Job(final String jobString) {
-        final String[] params = jobString.split("|");
+        final String[] params = jobString.split("[|]");
         title = params[0];
         parkName = params[1];
         location = params[2];
@@ -40,8 +40,8 @@ public class Job implements Comparable<Job>, Cloneable {
         curLight = Integer.parseInt(params[6]);
         maxMed = Integer.parseInt(params[7]);
         curMed = Integer.parseInt(params[8]);
-        curHeavy = Integer.parseInt(params[9]);
-        maxHeavy = Integer.parseInt(params[10]);
+        maxHeavy = Integer.parseInt(params[9]);
+        curHeavy = Integer.parseInt(params[10]);
         description = params[11];
         volunteers = FileIO.getVolunteers(params[12]);
     }
@@ -175,6 +175,37 @@ public class Job implements Comparable<Job>, Cloneable {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object that) {
+        if (that == null) {
+            return false;
+        }
+        if (this == that) {
+            return true;
+        }
+        if (that instanceof Job) {
+            final Job other = (Job) that;
+            if (volunteers.size() != other.volunteers.size()) {
+                return false;
+            }
+            for (int i = 0; i < volunteers.size(); i++) {
+                if (!volunteers.get(i).equals(other.volunteers.get(i))) {
+                    return false;
+                }
+            }
+            return title.equals(other.title) && parkName.equals(other.parkName)
+                    && location.equals(other.location) && start.equals(other.start)
+                    && end.equals(other.end) && curLight == other.curLight
+                    && curMed == other.curMed && curHeavy == other.curHeavy
+                    && description.equals(other.description) && maxLight == other.maxLight
+                    && maxMed == other.maxMed && maxHeavy == other.maxHeavy;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -184,9 +215,9 @@ public class Job implements Comparable<Job>, Cloneable {
         sb.append("|" + maxMed + "|" + curMed);
         sb.append("|" + maxHeavy + "|" + curHeavy);
         sb.append("|" + description);
+        sb.append('|');
         for (final Volunteer v : volunteers) {
             sb.append(v);
-            sb.append('\n');
         }
         sb.append("\n");
         return sb.toString();
