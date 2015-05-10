@@ -29,14 +29,14 @@ import org.junit.Test;
  */
 public class FileIOTest {
     private static final LocalDate date = LocalDate.parse("2015-12-25");
-    private static final Job job = new Job("Cleaning", "Kopachuck State Park", "Beach", date,
-            date, 10, 10, 10, "We're cleaning the beach.");
+    private static final Job job = new Job("Clearing", "Kopachuck State Park", "Trails", date,
+            date, 10, 10, 10, "We're cleaning brush off the trails.");
     private static final Administrator admin = new Administrator("Doe", "John",
             "johndoe@fake.com");
     private static final ParkManager pm = new ParkManager("Doe", "Jane", "janedoe@fake.com");
     private static final Volunteer volunteer = new Volunteer("Skins", "Bob",
             "bobskins@fake.com");
-    private static final Volunteer otherV = new Volunteer("Smith", "Ryan",
+    private static final Volunteer otherV = new Volunteer("Ross", "William",
             "ryansmith@fake.com");
     private static final String[] parks = { "Kopachuck", "Blake Island", "Camp Seymour" };
 
