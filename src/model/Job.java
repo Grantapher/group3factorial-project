@@ -106,6 +106,30 @@ public class Job implements Comparable<Job>, Cloneable {
         return description;
     }
 
+	public int getCurLight() {
+		return curLight;
+	}
+
+	public int getMaxMed() {
+		return maxMed;
+	}
+
+	public int getMaxLight() {
+		return maxLight;
+	}
+
+	public int getCurMed() {
+		return maxMed;
+	}
+
+	public int getMaxHeavy() {
+		return maxHeavy;
+	}
+
+	public int getCurHeavy() {
+		return curHeavy;
+	}
+
     /**
      * These 3 methods check if a job is full
      *
@@ -235,8 +259,10 @@ public class Job implements Comparable<Job>, Cloneable {
     /**
      * Compares this job to another based on start date.
      */
-    @Override
     public int compareTo(final Job other) {
         return start.compareTo(other.start);
     }
+
+
+
 }

@@ -1,5 +1,7 @@
 package view;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +30,11 @@ public class IO {
     private static Calendar calendar;
 
     public static void main(final String[] args) {
-        calendar = new Calendar();
-        Calendar.addJobs(fileReader.readJobs());
+        try {
+			calendar = Calendar.getInstance();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
         inputReader = new Scanner(System.in);
         login();
         interact();
@@ -37,7 +42,7 @@ public class IO {
 
     /**
      * Called repeatedly once a user is logged in to display to the user their
-     * optios
+     * options
      */
     private static void interact() {
         if (userType == FileIO.VOLUNTEER_CHAR) {
@@ -84,14 +89,14 @@ public class IO {
         System.out.print("Job Number (-1 to not view volunteers): ");
         jobIndex = inputReader.nextInt();
         if (jobIndex >= 0) {
-            for (final Volunteer v : manager.getVolunteers(j)) {
+            for (final Volunteer v : manager.getVolunteers(jobs.get(jobIndex))) {
                 System.out.println(v);
             }
         }
     }
 
     /**
-     * Creating a new job
+     * Promps to create a new job
      */
     private static void createJob() {
         System.out.print("Title: ");
@@ -125,8 +130,13 @@ public class IO {
         if (lastName.equals("q")) {
             System.exit(0);
         }
-        List<AbstractUser> volunteers;
-        volunteers = FileIO.queryUsers(lastName, FileIO.VOLUNTEER_CHAR);
+        List<AbstractUser> volunteers = new ArrayList<AbstractUser>();
+        try {
+			volunteers = FileIO.queryUsers(lastName, FileIO.VOLUNTEER_CHAR);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         for (final AbstractUser v : volunteers) {
             System.out.println(v);
         }
@@ -156,12 +166,35 @@ public class IO {
      * Displays all jobs the volunteer has signed up for
      */
     private static void displaySignedUp() {
-        final List<Job> jobs = volunteer.getJobs();
+        List<Job> jobs = new ArrayList<Job>();
+		try {
+			jobs = volunteer.getJobs();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         for (final Job j : jobs) {
             System.out.println(j);
         }
     }
 
+    /**
+     * Returns a string of a job ready to print to console
+     * @param j
+     * @return
+     */
+    private static String displayJob(Job j) {
+    		final StringBuilder sb = new StringBuilder();
+            sb.append(j.getTitle() + "|" + j.getPark() + "|" + j.getLocation());
+            sb.append("|" + j.getStartDate() + "|" + j.getEndDate());
+            sb.append("|" + j.getMaxLight() + "|" + j.getCurLight());
+            sb.append("|" + j.getMaxMed() + "|" + j.getCurMed());
+            sb.append("|" + j.getMaxHeavy() + "|" + j.getCurHeavy());
+            sb.append("|" + j.getDescription());
+            sb.append("\n");
+            return sb.toString();
+    }
+    
     /**
      * Displays all upcoming jobs Then it prompts the user for if they want to
      * sign up for one.
@@ -169,10 +202,12 @@ public class IO {
     private static void displayJobs() {
         int jobIndex = 0;
         final List<Job> jobs = new ArrayList<Job>();
-        for (final Job j : FileIO.readJobs().keySet()) {
-            System.out.print(jobIndex + " " + j.display());
-            jobs.add(j);
-            jobIndex++;
+        for (final List<Job> jobList : calendar.getJobs().values()) {
+        	for(Job j : jobList) {
+        		System.out.print(jobIndex + " " + displayJob(j));
+            	jobs.add(j);
+            	jobIndex++;
+        	}
         }
         System.out.println("Would you like to sign up for a job?");
         System.out.print("Job Number (-1 to not sign up for a job): ");
@@ -241,10 +276,28 @@ public class IO {
                     manager.addPark(park);
                 }
             } while (!park.equals(""));
+            try {
+				FileIO.addUser(manager);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } else if (userType == FileIO.VOLUNTEER_CHAR) {
             volunteer = new Volunteer(last, first, email);
+            try {
+				FileIO.addUser(volunteer);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } else if (userType == FileIO.ADMIN_CHAR) {
             admin = new Administrator(last, first, email);
+            try {
+				FileIO.addUser(admin);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
 }
