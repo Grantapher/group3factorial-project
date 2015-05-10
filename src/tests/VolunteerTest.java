@@ -6,7 +6,15 @@ package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import model.Calendar;
+import model.Job;
 import model.Volunteer;
 
 import org.junit.Before;
@@ -46,19 +54,28 @@ public class VolunteerTest {
                 + "\"", LAST, actualLast);
         final String actualFirst = tester.getFirstName();
         assertSame("First names differ: expected \"" + FIRST + "\", actual was \""
-                + actualFirst + "\"", LAST, actualFirst);
+                + actualFirst + "\"", FIRST, actualFirst);
         final String actualEmail = tester.getEmail();
         assertSame("Last names differ: expected \"" + EMAIL + "\", actual was \""
-                + actualEmail + "\"", LAST, actualEmail);
+                + actualEmail + "\"", EMAIL, actualEmail);
     }
 
     /**
      * Test method for {@link model.Volunteer#getJobs()}.
+     *
+     * @throws FileNotFoundException if the file isn't found
      */
     @Test
-    public final void testGetJobs() {
-        // TODO test for jobs that conflict plus edge cases.
-        fail("TODO");
+    public final void testGetJobs() throws FileNotFoundException {
+        final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
+        final List<Job> list = map.get(LocalDate.parse("2015-12-25"));
+        final Job job = list.get(0);
+        job.addVolunteer(tester, 'm');
+        final List<Job> jobs = tester.getJobs();
+        assertTrue("Volunteer wasn't added to the job or get jobs didn't get the job.",
+                jobs.contains(job));
+        // TODO volunteer getting added to the job won't add that volunteer to
+        // the job file's records!
     }
 
     /**

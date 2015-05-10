@@ -36,7 +36,7 @@ public class Volunteer extends AbstractUser {
      */
     public List<Job> getJobs() throws FileNotFoundException {
         final ArrayList<Job> list = new ArrayList<>();
-        final Map<LocalDate, List<Job>> map = FileIO.readJobs();
+        final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
         for (final LocalDate date : map.keySet()) {
             for (final Job job : map.get(date)) {
                 if (job.containsVolunteer(this)) {
