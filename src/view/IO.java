@@ -282,8 +282,8 @@ public class IO {
 		final String last = inputReader.next();
 		
 		//Query for userType
-		while (userType != FileIO.VOLUNTEER_CHAR || userType != FileIO.PARK_MANAGER_CHAR
-				|| userType != FileIO.ADMIN_CHAR) {
+		while (userType != FileIO.VOLUNTEER_CHAR && userType != FileIO.PARK_MANAGER_CHAR
+				&& userType != FileIO.ADMIN_CHAR) {
 			System.out.print("User Type(V for volunteer, P for park manager, A for admin): ");
 			userType = inputReader.next().charAt(0);
 		}
