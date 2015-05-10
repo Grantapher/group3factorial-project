@@ -33,7 +33,8 @@ public class IO {
 		try {
 			calendar = Calendar.getInstance();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Jobs File missing, find it!");
+			System.exit(0);
 		}
 		inputReader = new Scanner(System.in);
 		login();
@@ -123,8 +124,8 @@ public class IO {
 			manager.submit(calendar, title, parkName, location, LocalDate.parse(startDate),
 					LocalDate.parse(endDate), light, med, heavy, description);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Job File not found, Find it!");
+			System.exit(0);
 		}
 	}
 
@@ -141,8 +142,8 @@ public class IO {
 		try {
 			volunteers = FileIO.queryUsers(lastName, FileIO.VOLUNTEER_CHAR);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("User File missing, find it!");
+			System.exit(0);
 		}
 		for (final AbstractUser v : volunteers) {
 			System.out.println(v);
@@ -177,8 +178,8 @@ public class IO {
 		try {
 			jobs = volunteer.getJobs();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Job File missing, find it!");
+			System.exit(0);
 		}
 		for (final Job j : jobs) {
 			System.out.println(j);
@@ -244,8 +245,8 @@ public class IO {
 		try {
 			AbstractUser user = FileIO.getUser(email);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("User File missing, find it!");
+			System.exit(0);
 		}
 
 		if (user == null) {
@@ -301,8 +302,8 @@ public class IO {
 			try {
 				FileIO.addUser(manager);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("User File missing, find it!");
+				System.exit(0);
 			}
 			
 		} else if (userType == FileIO.VOLUNTEER_CHAR) {
@@ -310,16 +311,16 @@ public class IO {
 			try {
 				FileIO.addUser(volunteer);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("User File missing, find it!");
+				System.exit(0);
 			}
 		} else if (userType == FileIO.ADMIN_CHAR) {
 			admin = new Administrator(last, first, email);
 			try {
 				FileIO.addUser(admin);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("User File missing, find it!");
+				System.exit(0);
 			}
 		}
 	}
