@@ -85,13 +85,16 @@ public class Calendar {
      *
      * @param job the Job to add.
      * @throws IOException if the Job file doesn't exist
+     * @return true if the Job has been added successfully
      */
-    public void addJob(final Job job) throws IOException {
+    public boolean addJob(final Job job) throws IOException {
         if (!isFull() && !isFull(job.getStartDate()) && !isFull(job.getEndDate())
                 && isValidLength(job) && isValidInterval(job)) {
             addJobToMap(job);
             addJobToFile(job);
+            return true;
         }
+        return false;
     }
 
     /**
