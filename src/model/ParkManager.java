@@ -75,7 +75,7 @@ public final class ParkManager extends AbstractUser {
             final LocalDate theEnd, final int theLight, final int theMed, final int theHeavy,
             final String theDescription) throws IOException {
 
-        if (isMyPark(theParkName.toLowerCase())) {
+        if (isMyPark(theParkName)) {
             final Job gig = new Job(theTitle, theParkName, theLocation, theStart, theEnd,
                     theLight, theMed, theHeavy, theDescription);
             final Calendar cal = theCalendar;
@@ -93,11 +93,10 @@ public final class ParkManager extends AbstractUser {
         boolean amIThere = false;
 
         for (final String parkName : myParks) {
-            if (parkName.toLowerCase().equals(theParkName)) {
-                ;
+            if (parkName.toLowerCase().equals(theParkName.toLowerCase())) {
+                amIThere = true;
+                break;
             }
-            amIThere = true;
-            break;
         }
         return amIThere;
     }
