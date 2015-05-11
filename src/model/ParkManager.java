@@ -68,19 +68,23 @@ public final class ParkManager extends AbstractUser {
      * @param theMed The level of work.
      * @param theHeavy The level of work.
      * @param theDescription Description of the job.
-     * @throws IOException if the Job file doesn't exist
+     * @throws IOException if the Job file doesn't exist.
+     * @return If Job has been successfully added.
      */
-    public void submit(final Calendar theCalendar, final String theTitle,
+    public boolean submit(final Calendar theCalendar, final String theTitle,
             final String theParkName, final String theLocation, final LocalDate theStart,
             final LocalDate theEnd, final int theLight, final int theMed, final int theHeavy,
             final String theDescription) throws IOException {
+
+        boolean jobAdded = false;
 
         if (isMyPark(theParkName)) {
             final Job gig = new Job(theTitle, theParkName, theLocation, theStart, theEnd,
                     theLight, theMed, theHeavy, theDescription);
             final Calendar cal = theCalendar;
-            cal.addJob(gig);
+            jobAdded = cal.addJob(gig);
         }
+        return jobAdded;
     }
 
     /**
@@ -93,7 +97,7 @@ public final class ParkManager extends AbstractUser {
         boolean amIThere = false;
 
         for (final String parkName : myParks) {
-            if (parkName.toLowerCase().equals(theParkName.toLowerCase())) {
+            if (parkName.equalsIgnoreCase(theParkName)) {
                 amIThere = true;
                 break;
             }
