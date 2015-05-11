@@ -1,12 +1,13 @@
 /*
  * TCSS 360 Project - Group 3!
  */
-package tests;
+package test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Map;
@@ -24,10 +25,23 @@ import org.junit.Test;
  * @author Wing-Sea Poon
  * @version May 3, 2015
  */
+/*
+ * final String title, final String parkName, final String location,
+            final LocalDate start, final LocalDate end, final int light, final int med,
+            final int heavy, final String description
+ * 
+ */
 public class CalendarTest {
-    private static final LocalDate today = LocalDate.now();
-    private static final LocalDate tomorrow = today.plusDays(1);
-    private static final LocalDate oneMonthFromNow = today.plusDays(30);
+	private static final String TITLE = "Title";
+	private static final String PARK = "Park";
+	private static final String LOCATION = "Location";
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDate TOMORROW = TODAY.plusDays(1);
+    private static final LocalDate ONE_MONTH_FROM_NOW = TODAY.plusDays(30);
+    private static final int LIGHT = 5;
+    private static final int MED = 5;
+    private static final int HEAVY = 5;
+    private static final String DESCRIPTION = "Description";
     private Calendar cal;
     private Job oneDayJobToday;
     private Job twoDayJobToday;
@@ -41,11 +55,11 @@ public class CalendarTest {
      */
     @Before
     public void setUp() throws Exception {
-        cal = new Calendar();
-        oneDayJobToday = new Job("One Day Job", today, today);
-        twoDayJobToday = new Job("Two Day Job", today, tomorrow);
-        over3MonthsAway = new Job("Over 3 Months", today.plusDays(91), today.plusDays(92));
-        oneMonthAwayJob = new Job("Over 3 Months", oneMonthFromNow, oneMonthFromNow);
+        cal = Calendar.getInstance();
+        oneDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TODAY, LIGHT, MED, HEAVY, DESCRIPTION);
+        twoDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TOMORROW, LIGHT, MED, HEAVY, DESCRIPTION);
+        over3MonthsAway = new Job(TITLE, PARK, LOCATION, TODAY.plusDays(91), TODAY.plusDays(92), LIGHT, MED, HEAVY, DESCRIPTION);
+        oneMonthAwayJob = new Job(TITLE, PARK, LOCATION, ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW, LIGHT, MED, HEAVY, DESCRIPTION);
     }
 
     /**
@@ -55,7 +69,7 @@ public class CalendarTest {
     public void testIsValidLength() {
         assertTrue(cal.isValidLength(oneDayJobToday));
         assertTrue(cal.isValidLength(twoDayJobToday));
-        final Job job3 = new Job("Job 3", today, today.plusDays(4));
+        final Job job3 = new Job(TITLE, PARK, LOCATION, TODAY, TODAY.plusDays(4), LIGHT, MED, HEAVY, DESCRIPTION);
         assertFalse(cal.isValidLength(job3));
     }
 
@@ -64,7 +78,7 @@ public class CalendarTest {
      */
     @Test
     public void testIsValidInterval() {
-        final Job job1 = new Job("Job 1", today, today.minusDays(10));
+        final Job job1 = new Job(TITLE, PARK, LOCATION, TODAY, TODAY.minusDays(10), LIGHT, MED, HEAVY, DESCRIPTION);
         assertFalse(cal.isValidInterval(job1));
         assertFalse(cal.isValidInterval(oneDayJobToday));
         assertFalse(cal.isValidInterval(over3MonthsAway));
@@ -73,40 +87,43 @@ public class CalendarTest {
 
     /**
      * Test method for {@link model.Calendar#isFull(java.time.LocalDate)}.
+     * @throws IOException if Job info file not found.
      */
     @Test
-    public void testIsFullDate() {
-        assertFalse(cal.isFull(oneMonthFromNow));
+    public void testIsFullDate() throws IOException {
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW));
         cal.addJob(oneMonthAwayJob);
-        assertFalse(cal.isFull(oneMonthFromNow));
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW));
         for (int i = 0; i < 4; i++) {
             cal.addJob(oneMonthAwayJob);
         }
-        assertTrue(cal.isFull(oneMonthFromNow));
+        assertTrue(cal.isFull(ONE_MONTH_FROM_NOW));
     }
 
     /**
      * Test method for {@link model.Calendar#isFull()}.
+     * @throws IOException if Job info file not found.
      */
     @Test
-    public void testIsFull() {
+    public void testIsFull() throws IOException {
         assertFalse(cal.isFull());
-        for (LocalDate ctr = LocalDate.now(); ctr.isBefore(oneMonthFromNow)
-                || ctr.isEqual(oneMonthFromNow); ctr = ctr.plusDays(1)) {
-            cal.addJob(new Job("Job", ctr, ctr));
+        for (LocalDate ctr = LocalDate.now(); ctr.isBefore(ONE_MONTH_FROM_NOW)
+                || ctr.isEqual(ONE_MONTH_FROM_NOW); ctr = ctr.plusDays(1)) {
+            cal.addJob(new Job(TITLE, PARK, LOCATION, ctr, ctr, LIGHT, MED, HEAVY, DESCRIPTION));
         }
         assertTrue(cal.isFull());
     }
 
     /**
      * Test method for {@link model.Calendar#addJob(model.Job)}.
+     * @throws IOException if Job info file not found.
      */
     @Test
-    public void testAddJob() {
+    public void testAddJob() throws IOException {
         cal.addJob(oneMonthAwayJob);
         final Map<LocalDate, ArrayList<Job>> map = new TreeMap<LocalDate, ArrayList<Job>>();
-        map.put(oneMonthFromNow, new ArrayList<Job>());
-        map.get(oneMonthFromNow).add(oneMonthAwayJob);
+        map.put(ONE_MONTH_FROM_NOW, new ArrayList<Job>());
+        map.get(ONE_MONTH_FROM_NOW).add(oneMonthAwayJob);
 
         assertEquals(map.toString(), cal.toString());
     }
