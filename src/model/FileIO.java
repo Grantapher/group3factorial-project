@@ -30,9 +30,9 @@ public final class FileIO {
     /** The constant signifying a user that does not exist. */
     public static final char USER_NOT_FOUND_CHAR = 'X';
     private static final File USER_FILE = new File(System.getProperty("user.dir")
-            + "/files/users.info");
+            + "/files/users2.info");
     private static final File JOB_FILE = new File(System.getProperty("user.dir")
-            + "/files/jobs.info");
+            + "/files/jobs2.info");
 
     private FileIO() {
         // empty constructor

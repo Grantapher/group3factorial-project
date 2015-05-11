@@ -2,13 +2,16 @@
  * TCSS 360 Project - Group 3!
  */
 
-package model;
+package tests;
 
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Administrator;
+import model.Volunteer;
 
 import org.junit.Before;
 import org.junit.Test;
