@@ -82,7 +82,7 @@ public class IO {
         int jobIndex = 1;
         final List<Job> jobs = new ArrayList<Job>();
         for (final Job j : calendar.getJobs(manager.getParks())) {
-            System.out.print(jobIndex + " " + j);
+            System.out.print(jobIndex + " " + displayJob(j));
             jobs.add(j);
             jobIndex++;
         }
