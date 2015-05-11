@@ -38,7 +38,8 @@ public class FileIOTest {
             "bobskins@fake.com");
     private static final Volunteer otherV = new Volunteer("Ross", "William",
             "ryansmith@fake.com");
-    private static final String[] parks = { "Kopachuck", "Blake Island", "Camp Seymour" };
+    private static final String[] parks = { "Kopachuck State Park", "Blake Island",
+            "Camp Seymour", "Titlow Beach" };
 
     /**
      * @throws java.lang.Exception

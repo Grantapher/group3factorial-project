@@ -54,7 +54,7 @@ public final class FileIO {
                 line = scan.nextLine();
                 sb.append(line);
                 sb.append('\n');
-            } while (!"".equals(line));
+            } while (!"".equals(line) && scan.hasNextLine());
             final Job job = new Job(sb.toString());
             final LocalDate date = job.getStartDate();
             if (!map.containsKey(date)) {
@@ -80,6 +80,7 @@ public final class FileIO {
             return;
         }
         final FileWriter fw = new FileWriter(JOB_FILE, true);
+        fw.write('\n');
         fw.write(job.toString());
         fw.close();
     }
@@ -232,7 +233,11 @@ public final class FileIO {
      */
     private static AbstractUser parseUser(final Scanner scan, final String lastName,
             final Character type, final String email) {
-        final char queryChar = scan.nextLine().charAt(0);
+        final String firstLine = scan.nextLine();
+        if ("".equals(firstLine)) {
+            return null;
+        }
+        final char queryChar = firstLine.charAt(0);
         final Scanner sc = new Scanner(scan.nextLine());
         final String queryFirstName = sc.next();
         final String queryLastName = sc.next();
