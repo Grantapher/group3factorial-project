@@ -59,7 +59,7 @@ public class IO {
 	 * The managers options.
 	 */
 	private static void managerInteract() {
-		System.out.println("What would you like to do?");
+		System.out.println("\nWhat would you like to do?");
 		System.out.println("Post a job (p)");
 		System.out.println("View your jobs (v)");
 		System.out.println("Quit (q)");
@@ -88,7 +88,7 @@ public class IO {
 		}
 
 		// Queries to view the volunteers for a job
-		System.out.println("Would you like to view the volunteers for a job?");
+		System.out.println("\nWould you like to view the volunteers for a job?");
 		System.out.print("Job Number (0 to not view volunteers): ");
 		jobIndex = inputReader.nextInt();
 		if (jobIndex >= 1 && jobIndex < jobs.size()) {
@@ -102,7 +102,7 @@ public class IO {
 	 * Promps to create a new job
 	 */
 	private static void createJob() {
-		System.out.print("Title: ");
+		System.out.print("\nTitle: ");
 		final String title = inputReader.nextLine();
 		System.out.print("Park Name: ");
 		final String parkName = inputReader.nextLine();
@@ -121,8 +121,11 @@ public class IO {
 		System.out.print("Description: ");
 		final String description = inputReader.nextLine();
 		try {
-			manager.submit(calendar, title, parkName, location, LocalDate.parse(startDate),
+			boolean submitCheck = manager.submit(calendar, title, parkName, location, LocalDate.parse(startDate),
 					LocalDate.parse(endDate), light, med, heavy, description);
+			if (!submitCheck) {
+				System.out.println("Job not added");
+			}
 		} catch (final IOException e) {
 			System.out.println("Job File not found, Find it!");
 			System.exit(0);
@@ -133,7 +136,7 @@ public class IO {
 	 * The administrators options
 	 */
 	private static void administratorInteract() {
-		System.out.print("Volunteer last name to search for (q to quit): ");
+		System.out.print("\nVolunteer last name to search for (q to quit): ");
 		final String lastName = inputReader.next();
 		if (lastName.equals("q")) {
 			System.exit(0);
@@ -155,7 +158,7 @@ public class IO {
 	 * The volunteers options
 	 */
 	private static void volunteerInteract() {
-		System.out.println("What would you like to do?");
+		System.out.println("\nWhat would you like to do?");
 		System.out.println("Search for a job (s)");
 		System.out.println("View your jobs (v)");
 		System.out.println("Quit (q)");
@@ -220,7 +223,7 @@ public class IO {
 		}
 
 		// Queries to sign up for a job
-		System.out.println("Would you like to sign up for a job?");
+		System.out.println("\nWould you like to sign up for a job?");
 		System.out.print("Job Number (0 to not sign up for a job): ");
 		jobIndex = inputReader.nextInt();
 		char grade = 0;
@@ -279,7 +282,7 @@ public class IO {
 	 * @param email
 	 */
 	private static void createUser(final String email) {
-		System.out.print("First Name: ");
+		System.out.print("\nFirst Name: ");
 		final String first = inputReader.next();
 		System.out.print("Last Name: ");
 		final String last = inputReader.next();
@@ -296,7 +299,7 @@ public class IO {
 			manager = new ParkManager(last, first, email);
 			String park;
 			do {
-				System.out.print("Tell me a park you work in (q): ");
+				System.out.print("\nTell me a park you work in (q): ");
 				park = inputReader.nextLine();
 				if (!park.equals("q")) {
 					manager.addPark(park);
