@@ -91,8 +91,8 @@ public class IO {
         System.out.println("\nWould you like to view the volunteers for a job?");
         System.out.print("Job Number (0 to not view volunteers): ");
         jobIndex = inputReader.nextInt();
-        if (jobIndex >= 1 && jobIndex < jobs.size()) {
-            for (final Volunteer v : manager.getVolunteers(jobs.get(jobIndex))) {
+        if (jobIndex >= 1 && jobIndex <= jobs.size()) {
+            for (final Volunteer v : manager.getVolunteers(jobs.get(jobIndex - 1))) {
                 System.out.println(v);
             }
         }
@@ -103,6 +103,7 @@ public class IO {
      */
     private static void createJob() {
         System.out.print("\nTitle: ");
+        inputReader.nextLine();
         final String title = inputReader.nextLine();
         System.out.print("Park Name: ");
         final String parkName = inputReader.nextLine();
@@ -119,6 +120,7 @@ public class IO {
         System.out.print("# of heavy volunteers needed: ");
         final int heavy = inputReader.nextInt();
         System.out.print("Description: ");
+        inputReader.nextLine();
         final String description = inputReader.nextLine();
         try {
             final boolean submitCheck = manager.submit(calendar, title, parkName, location,
@@ -192,7 +194,7 @@ public class IO {
 
     /**
      * Returns a string of a job ready to print to console
-     * 
+     *
      * @param j
      * @return
      */
@@ -280,7 +282,7 @@ public class IO {
 
     /**
      * Creates a new user profile
-     * 
+     *
      * @param email
      */
     private static void createUser(final String email) {

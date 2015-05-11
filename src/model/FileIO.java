@@ -9,10 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  * Handles the input and output from the files.
@@ -45,7 +45,7 @@ public final class FileIO {
      * @throws FileNotFoundException if the Job file doesn't exist
      */
     public static Map<LocalDate, List<Job>> readJobs() throws FileNotFoundException {
-        final Map<LocalDate, List<Job>> map = new HashMap<>();
+        final Map<LocalDate, List<Job>> map = new TreeMap<>();
         final Scanner scan = new Scanner(JOB_FILE);
         while (scan.hasNextLine()) {
             final StringBuilder sb = new StringBuilder();
@@ -58,7 +58,7 @@ public final class FileIO {
             final Job job = new Job(sb.toString());
             final LocalDate date = job.getStartDate();
             if (!map.containsKey(date)) {
-                map.put(date, new ArrayList<>());
+                map.put(date, new ArrayList<Job>());
             }
             map.get(date).add(job);
         } // end while
