@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * Handles the association between jobs, dates, and scheduling.
@@ -54,9 +53,7 @@ public class Calendar {
      * @return a Map from dates to lists of jobs on that date.
      */
     public Map<LocalDate, List<Job>> getJobs() {
-        final Map<LocalDate, List<Job>> copy = new TreeMap<LocalDate, List<Job>>(
-                dateToListOfJobs);
-        return copy;
+        return dateToListOfJobs;
     }
 
     /**
