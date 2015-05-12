@@ -80,7 +80,6 @@ public final class FileIO {
             return;
         }
         final FileWriter fw = new FileWriter(JOB_FILE, true);
-        fw.write('\n');
         fw.write(job.toString());
         fw.close();
     }
@@ -151,7 +150,7 @@ public final class FileIO {
      * @return A list of volunteers
      */
     public static List<Volunteer> getVolunteers(final String volunteers) {
-        final Scanner scan = new Scanner(volunteers.substring(0, volunteers.length() - 1));
+        final Scanner scan = new Scanner(volunteers.substring(1, volunteers.length() - 1));
         final List<AbstractUser> userList = queryUsers(scan, null, VOLUNTEER_CHAR, null);
         final List<Volunteer> volunteerList = new ArrayList<>();
         for (final AbstractUser user : userList) {
@@ -288,6 +287,7 @@ public final class FileIO {
         for (final List<Job> list : map.values()) {
             for (final Job job : list) {
                 fw.write(job.toString());
+                fw.write('\n');
             }
         }
         fw.close();
