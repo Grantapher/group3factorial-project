@@ -23,6 +23,14 @@ public class Job implements Comparable<Job>, Cloneable {
 	private final List<Volunteer> volunteers;
 
 	/**
+	 * Constructs a Job from just a title, park name, start and end date.
+	 * This constructor was authored by Wing-Sea.
+	 * /
+	public Job(final String title, final String park, final LocalDate start, final LocalDate end) {
+		this(title, park, "Location", start, end, 5, 5, 5, "Description");
+	}
+
+	/**
 	 * Constructs a job from a jobs toString. The string should be in this
 	 * format: title + "|" + parkName "|" + location + "|" + start + "|" + end +
 	 * "|" + maxLight + "|" + curLight + "|" + maxMed + "|" + curMed + "|" +
