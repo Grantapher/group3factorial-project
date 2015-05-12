@@ -236,7 +236,13 @@ public class IO {
             grade = inputReader.next().charAt(0);
         }
         if (jobIndex >= 1 && jobIndex <= 0) {
-            final boolean check = jobs.get(jobIndex).addVolunteer(volunteer, grade);
+            boolean check = false;
+            try {
+                check = jobs.get(jobIndex).addVolunteer(volunteer, grade);
+            } catch (final IOException theE) {
+                System.err.println("Lost the jobs file, find it!");
+                System.exit(1);
+            }
             if (check) {
                 System.out.println("Signup Successful");
             } else {
