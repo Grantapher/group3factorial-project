@@ -56,6 +56,7 @@ public class CalendarTest {
     @Before
     public void setUp() throws Exception {
         cal = Calendar.getInstance();
+        cal.getJobs().clear();
         oneDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TODAY, LIGHT, MED, HEAVY, DESCRIPTION);
         twoDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TOMORROW, LIGHT, MED, HEAVY, DESCRIPTION);
         over3MonthsAway = new Job(TITLE, PARK, LOCATION, TODAY.plusDays(91), TODAY.plusDays(92), LIGHT, MED, HEAVY, DESCRIPTION);
