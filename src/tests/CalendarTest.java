@@ -55,7 +55,7 @@ public class CalendarTest {
     @Before
     public void setUp() throws Exception {
         cal = Calendar.getInstance();
-        // cal.getJobs().clear();
+        cal.getJobs().clear();
         oneDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TODAY, LIGHT, MED, HEAVY,
                 DESCRIPTION);
         twoDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TOMORROW, LIGHT, MED, HEAVY,
@@ -93,7 +93,7 @@ public class CalendarTest {
 
     /**
      * Test method for {@link model.Calendar#isFull(java.time.LocalDate)}.
-     * 
+     *
      * @throws IOException if Job info file not found.
      */
     @Test
@@ -109,7 +109,7 @@ public class CalendarTest {
 
     /**
      * Test method for {@link model.Calendar#isFull()}.
-     * 
+     *
      * @throws IOException if Job info file not found.
      */
     @Test
@@ -124,7 +124,7 @@ public class CalendarTest {
 
     /**
      * Test method for {@link model.Calendar#addJob(model.Job)}.
-     * 
+     *
      * @throws IOException if Job info file not found.
      */
     @Test
