@@ -204,4 +204,13 @@ public class Calendar {
     public String toString() {
         return dateToListOfJobs.toString();
     }
+
+    /**
+     * Overwrites the Job file with the current map of jobs.
+     *
+     * @throws IOException if the file isn't found
+     */
+    public void writeJobs() throws IOException {
+        FileIO.writeJobs(dateToListOfJobs);
+    }
 }

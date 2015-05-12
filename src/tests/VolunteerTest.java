@@ -8,12 +8,12 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import model.Calendar;
+import model.FileIO;
 import model.Job;
 import model.Volunteer;
 
@@ -62,12 +62,12 @@ public class VolunteerTest {
 
     /**
      * Test method for {@link model.Volunteer#getJobs()}.
-     *
-     * @throws FileNotFoundException if the file isn't found
+     * 
+     * @throws IOException if the file isn't found
      */
     @Test
-    public final void testGetJobs() throws FileNotFoundException {
-        final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
+    public final void testGetJobs() throws IOException {
+        final Map<LocalDate, List<Job>> map = FileIO.readJobs();
         final List<Job> list = map.get(LocalDate.parse("2015-12-25"));
         final Job job = list.get(0);
         job.addVolunteer(tester, 'm');

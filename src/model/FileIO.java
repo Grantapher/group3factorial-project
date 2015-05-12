@@ -274,4 +274,23 @@ public final class FileIO {
         }
     }
 
+    /**
+     * Writes the map of jobs the the file, overwriting what is currently there.
+     *
+     * @param map the map to write from
+     * @throws IOException if the file isn't found
+     */
+    public static void writeJobs(final Map<LocalDate, List<Job>> map) throws IOException {
+        if (!JOB_FILE.exists()) {
+            JOB_FILE.createNewFile();
+        }
+        final FileWriter fw = new FileWriter(JOB_FILE, false);
+        for (final List<Job> list : map.values()) {
+            for (final Job job : list) {
+                fw.write(job.toString());
+            }
+        }
+        fw.close();
+    }
+
 }
