@@ -136,4 +136,14 @@ public class CalendarTest {
 
         assertEquals(map.toString(), cal.toString());
     }
+    
+    /**
+     * Restores the Calendar to read from the persistent info files.
+     * @throws FileNotFoundException if Job info file not found.
+     */
+    @After
+    public void tearDown() throws FileNotFoundException {
+        cal.getJobs().clear();
+        cal.getJobs().putAll(FileIO.readJobs());
+    }
 }
