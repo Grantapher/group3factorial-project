@@ -67,35 +67,26 @@ public final class FileIO {
     }
 
     /**
-     * Appends the Job file with the given job.
+     * Writes the map of jobs the the file, overwriting what is currently there.
+     * Exits after the write completes.
      *
-     * @param job the job to add to the file
-     * @throws IOException if the Job file doesn't exist
+     * @param map the map to write from
+     * @throws IOException if the file isn't found
      */
-    public static void addJob(final Job job) throws IOException {
+    public static void writeJobsAndExit(final Map<LocalDate, List<Job>> map)
+            throws IOException {
         if (!JOB_FILE.exists()) {
             JOB_FILE.createNewFile();
         }
-        if (jobExists(job)) {
-            return;
+        final FileWriter fw = new FileWriter(JOB_FILE, false);
+        for (final List<Job> list : map.values()) {
+            for (final Job job : list) {
+                fw.write(job.toString());
+                fw.write('\n');
+            }
         }
-        final FileWriter fw = new FileWriter(JOB_FILE, true);
-        fw.write(job.toString());
         fw.close();
-    }
-
-    /**
-     * @param job the job to look for duplicates of
-     * @return whether or not the job exists already
-     * @throws FileNotFoundException if the file doesn't exist
-     */
-    private static boolean jobExists(final Job job) throws FileNotFoundException {
-        final ArrayList<Job> list = new ArrayList<>();
-        final Map<LocalDate, List<Job>> map = FileIO.readJobs();
-        for (final LocalDate date : map.keySet()) {
-            list.addAll(map.get(date));
-        }
-        return list.contains(job);
+        System.exit(0);
     }
 
     /**
@@ -271,26 +262,6 @@ public final class FileIO {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Writes the map of jobs the the file, overwriting what is currently there.
-     *
-     * @param map the map to write from
-     * @throws IOException if the file isn't found
-     */
-    public static void writeJobs(final Map<LocalDate, List<Job>> map) throws IOException {
-        if (!JOB_FILE.exists()) {
-            JOB_FILE.createNewFile();
-        }
-        final FileWriter fw = new FileWriter(JOB_FILE, false);
-        for (final List<Job> list : map.values()) {
-            for (final Job job : list) {
-                fw.write(job.toString());
-                fw.write('\n');
-            }
-        }
-        fw.close();
     }
 
 }

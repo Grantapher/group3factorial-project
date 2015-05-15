@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import model.AbstractUser;
 import model.Administrator;
@@ -39,7 +38,7 @@ public class FileIOTest {
     private static final Volunteer otherV = new Volunteer("Ross", "William",
             "ryansmith@fake.com");
     private static final String[] parks = { "Kopachuck State Park", "Blake Island",
-            "Camp Seymour", "Titlow Beach" };
+        "Camp Seymour", "Titlow Beach" };
 
     /**
      * @throws java.lang.Exception
@@ -55,20 +54,6 @@ public class FileIOTest {
         FileIO.addUser(admin);
         FileIO.addUser(pm);
         FileIO.addUser(volunteer);
-    }
-
-    /**
-     * Test method for {@link model.FileIO#readJobs()} and
-     * {@link model.FileIO#addJob(model.Job)}.
-     *
-     * @throws IOException if the file fails to create or open.
-     */
-    @Test
-    public final void testAddAndReadJobs() throws IOException {
-        FileIO.addJob(job);
-        final Map<LocalDate, List<Job>> map = FileIO.readJobs();
-        final List<Job> list = map.get(date);
-        assertTrue("Job failed to add or failed to be read.", list.contains(job));
     }
 
     /**
