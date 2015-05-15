@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import model.Calendar;
+import model.FileIO;
 import model.Job;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -136,9 +139,10 @@ public class CalendarTest {
 
         assertEquals(map.toString(), cal.toString());
     }
-    
+
     /**
      * Restores the Calendar to read from the persistent info files.
+     * 
      * @throws FileNotFoundException if Job info file not found.
      */
     @After
