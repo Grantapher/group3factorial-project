@@ -24,17 +24,17 @@ public class ParkManagerUI {
     /**
      * View jobs option.
      */
-    private final Integer VIEWJOBS = 1;
+    private static final Integer VIEWJOBS = 1;
     
     /**
      * Create new job option.
      */
-    private final Integer CREATEJOB = 2;
+    private static final Integer CREATEJOB = 2;
     
     /**
      * Add a new park option.
      */
-    private final Integer ADDPARK = 3;
+    private static final Integer ADDPARK = 3;
 
     //Fields
     /**
