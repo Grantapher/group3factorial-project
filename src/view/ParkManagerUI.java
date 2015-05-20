@@ -1,5 +1,5 @@
 
-package view;
+package model;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,12 +31,17 @@ public class ParkManagerUI implements UserUI {
      */
     private static final Integer ADDPARK = 3;
 
+    /**
+     * View parks option.
+     */
+    private static final Integer VIEWPARKS = 4;
+
     // Fields
     /**
      * A park Manger for this class.
      */
     private final ParkManager myUser;
-    
+
     /**
      * If user wants to quit.
      */
@@ -56,29 +61,33 @@ public class ParkManagerUI implements UserUI {
      */
     @Override
     public boolean userMenu(final Scanner theScan) {
-    	iWantToQuit = false;
+        iWantToQuit = false;
         Scanner scan = theScan;
         do {
             System.out.println("What would you like to do? Please enter the number of your choice. ");
             System.out.println("1. View your jobs.");
             System.out.println("2. Post a new job.");
             System.out.println("3. Add a new Park.");
+            System.out.println("4. To view your parks.");
             System.out.println("Enter: (q)Quit");
             scan = new Scanner(System.in);
             String choice = theScan.nextLine();
             if (!"q".equals(choice) && choice.equals(VIEWJOBS.toString())
-                || choice.equals(CREATEJOB.toString()) || choice.equals(ADDPARK.toString())) { // ensure
-                                                                                               // user
-                                                                                               // enters
-                                                                                               // 1
-                                                                                               // or
-                                                                                               // 2
+                || choice.equals(CREATEJOB.toString()) || choice.equals(ADDPARK.toString())
+                || choice.equals(VIEWPARKS.toString())) { // ensure
+                                                          // user
+                                                          // enters
+                                                          // 1
+                                                          // or
+                                                          // 2
                 if (Integer.parseInt(choice) == VIEWJOBS)
                     option1(scan);
                 if (Integer.parseInt(choice) == CREATEJOB)
                     option2(scan);
                 if (Integer.parseInt(choice) == ADDPARK)
                     option3(scan);
+                if (Integer.parseInt(choice) == VIEWPARKS)
+                    option4(scan);
 
             } else if ("q".equals(choice)) {
                 iWantToQuit = true;
@@ -185,20 +194,28 @@ public class ParkManagerUI implements UserUI {
             if (park.length() > 0) {
                 myUser.addPark(park);
                 System.out.println("Your park " + park + " was successfully added");
-
                 System.out.println("Do you want to view your parks? Y/N");
                 String choice = theScan.nextLine();
                 if ("y".equals(choice.toLowerCase())) {
-                    int count = 1;
-                    final List<String> parks = myUser.getParks();
-                    for (String park1 : parks)
-                        System.out.println((count++) + ". " + park1);
+                    option4(theScan);
                 }
+
             } else {
                 System.out.println("You must enter a park name, try again");
             }
         } while (park.length() == 0);
 
+    }
+
+    /**
+     * Displays list of volunteers.
+     * @param theScan Scanner for user input.
+     */
+    private void option4(final Scanner theScan) {
+        int count = 1;
+        final List<String> parks = myUser.getParks();
+        for (String park1 : parks)
+            System.out.println((count++) + ". " + park1);
     }
 
     /**
