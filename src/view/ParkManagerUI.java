@@ -35,9 +35,12 @@ public class ParkManagerUI implements UserUI {
     /**
      * A park Manger for this class.
      */
-    private ParkManager myUser;
-
-    private boolean iWantToQuit = false;
+    private final ParkManager myUser;
+    
+    /**
+     * If user wants to quit.
+     */
+    private boolean iWantToQuit;
 
     /**
      * Constructs a Park Manager user interface.
@@ -53,6 +56,7 @@ public class ParkManagerUI implements UserUI {
      */
     @Override
     public boolean userMenu(final Scanner theScan) {
+    	iWantToQuit = false;
         Scanner scan = theScan;
         do {
             System.out.println("What would you like to do? Please enter the number of your choice. ");
