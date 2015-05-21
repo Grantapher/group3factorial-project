@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Handles the association between jobs, dates, and scheduling.
  *
- * @version May 9, 2015
+ * @version May 20, 2015
  * @author Wing-Sea Poon
  */
 public class Calendar {
@@ -88,7 +88,6 @@ public class Calendar {
         if (!isFull() && !isFull(job.getStartDate()) && !isFull(job.getEndDate())
                 && isValidLength(job) && isValidInterval(job)) {
             addJobToMap(job);
-            addJobToFile(job);
             return true;
         }
         return false;
@@ -188,13 +187,6 @@ public class Calendar {
 
         // add job to list of jobs for that date
         dateToListOfJobs.get(job.getStartDate()).add(job);
-    }
-
-    // private helper method for addJob(Job).
-    // Adds the job to a persistent file so that the Calendar can restore
-    // this information when the program starts up again.
-    private void addJobToFile(final Job job) throws IOException {
-        FileIO.addJob(job);
     }
 
     /**
