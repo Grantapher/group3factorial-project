@@ -1,3 +1,4 @@
+
 package view;
 
 import java.io.FileNotFoundException;
@@ -14,10 +15,10 @@ import model.Volunteer;
 
 /**
  * Park Manager User Interface.
- *
+ * 
  * @author Maurice Shaw
  */
-public class ParkManagerUI implements UserUI {
+public final class ParkManagerUI implements UserUI {
 
     // Constants
     /**
@@ -53,7 +54,7 @@ public class ParkManagerUI implements UserUI {
 
     /**
      * Constructs a Park Manager user interface.
-     *
+     * 
      * @param theManager the logged-in park manager.
      */
     public ParkManagerUI(final ParkManager theManager) {
@@ -66,178 +67,57 @@ public class ParkManagerUI implements UserUI {
     @Override
     public boolean userMenu(final Scanner theScan) {
         iWantToQuit = false;
-        Scanner scan = theScan;
+        MenuOption[] options = {new ViewJobs(), new CreateJob(), new AddPark() ,new ViewParks()};
         do {
-            System.out
-            .println("What would you like to do? Please enter the number of your choice. ");
-            System.out.println("1. View your jobs.");
-            System.out.println("2. Post a new job.");
-            System.out.println("3. Add a new Park.");
-            System.out.println("4. To view your parks.");
-            System.out.println("Enter: (q)Quit");
-            scan = new Scanner(System.in);
-            final String choice = theScan.nextLine();
+            introduction();
+            makeMenu();
+            Scanner scan = new Scanner(System.in);
+            String choice = theScan.nextLine();
+            // ensure user enters valid choice
             if (!"q".equals(choice) && choice.equals(VIEWJOBS.toString())
-                    || choice.equals(CREATEJOB.toString())
-                    || choice.equals(ADDPARK.toString())
-                    || choice.equals(VIEWPARKS.toString())) { // ensure
-                // user
-                // enters
-                // 1
-                // or
-                // 2
-                if (Integer.parseInt(choice) == VIEWJOBS) {
-                    option1(scan);
-                }
-                if (Integer.parseInt(choice) == CREATEJOB) {
-                    option2(scan);
-                }
-                if (Integer.parseInt(choice) == ADDPARK) {
-                    option3(scan);
-                }
-                if (Integer.parseInt(choice) == VIEWPARKS) {
-                    option4(scan);
-                }
-
+                || choice.equals(CREATEJOB.toString()) || choice.equals(ADDPARK.toString())
+                || choice.equals(VIEWPARKS.toString())) { 
+             
+                options[Integer.parseInt(choice) - 1].option(scan);
             } else if ("q".equals(choice)) {
                 iWantToQuit = true;
             } else {
                 System.out.println(choice + " is not a valid choice.");
-
             }
         } while (!iWantToQuit);
 
         return iWantToQuit;
 
     }
-
+    
     /**
-     * Displays job and volunteers for a job.
+     * Displays menu options.
      */
-    private void option1(final Scanner theScan) {
-        final List<Job> jobs = new ArrayList<Job>();
-        int jobIndex = 1;
-        try {
-            for (final Job j : Calendar.getInstance().getJobs(myUser.getParks())) {
-                System.out.print(jobIndex + ". " + jobString(j) + "\n");
-                jobs.add(j);
-                jobIndex++;
-            }
-        } catch (final FileNotFoundException e) {
-            System.out.println("The jobs file is missing!");
-            return;
-        }
-        if (jobs.size() > 0) {
-            System.out.println("\nWould you like to view the volunteers for a job? Y/N ");
-            final String choice = theScan.nextLine().toLowerCase();
-            System.out.print(choice);
-            if ("y".equals(choice)) {
-                System.out.print("Please enter the number of the job: ");
-                jobIndex = theScan.nextInt();
-
-                if (!jobs.get(jobIndex - 1).getVolunteers().isEmpty()) { // job
-                    // has
-                    // volunteers
-                    final List<Volunteer> volList = myUser.getVolunteers(jobs
-                            .get(jobIndex - 1));
-                    System.out.println("Volunteers to "
-                            + jobs.get(jobIndex - 1).getDescription() + ":\n");
-
-                    int count = 1;
-                    for (final Volunteer vol : volList) {
-                        System.out.println(count++ + ". " + volString(vol));
-                    }
-                }
-            }
-        } else {
-            System.out.println("You do not have any parks.");
-        }
-
-    }
-
-    /**
-     * Creates a new job and attempts to add a job. User will be informed if
-     * attempt fails.
-     */
-    private void option2(final Scanner theScan) {
-        System.out.println("Please enter the following information: ");
-        System.out.print("\nTitle: ");
-        final String title = theScan.nextLine();
-        System.out.print("Park Name: ");
-        final String parkName = theScan.nextLine();
-        System.out.print("Location: ");
-        final String location = theScan.nextLine();
-        System.out.print("Start Date (yyyy-mm-dd): ");
-        final String startDate = theScan.next(); // job fields
-        System.out.print("End Date (yyyy-mm-dd): ");
-        final String endDate = theScan.next();
-        System.out.print("# of light volunteers needed: ");
-        final int light = theScan.nextInt();
-        System.out.print("# of medium volunteers needed: ");
-        final int medium = theScan.nextInt();
-        System.out.print("# of heavy volunteers needed: ");
-        final int heavy = theScan.nextInt();
-        System.out.print("Description: ");
-        final String description = theScan.nextLine();
-        try {// try to add job
-            final boolean submitCheck = myUser.submit(Calendar.getInstance(), title, parkName,
-                    location, LocalDate.parse(startDate), LocalDate.parse(endDate), light,
-                    medium, heavy, description);
-
-            if (!submitCheck) {
-                System.out.println("Job not added");
-            }
-        } catch (final IOException e) {
-            System.out.println("Job file not found!");
-
-        }
-    }
-
-    /**
-     * Adds a park to this park manager's parks managed.
-     */
-    private void option3(final Scanner theScan) {
-        String park = "";
-        do {
-            System.out.println("Please enter the park name: ");
-            park = theScan.nextLine();
-            if (park.length() > 0) {
-                myUser.addPark(park);
-                System.out.println("Your park " + park + " was successfully added");
-                System.out.println("Do you want to view your parks? Y/N");
-                final String choice = theScan.nextLine();
-                if ("y".equals(choice.toLowerCase())) {
-                    option4(theScan);
-                }
-
-            } else {
-                System.out.println("You must enter a park name, try again");
-            }
-        } while (park.length() == 0);
-
-    }
-
-    /**
-     * Displays list of volunteers.
-     *
-     * @param theScan Scanner for user input.
-     */
-    private void option4(final Scanner theScan) {
+    private void makeMenu() {
+        String[] optionTitles = {"View your jobs", "Post new job", "Add new Park", "View your parks", "Enter: (q)Quit"};
         int count = 1;
-        final List<String> parks = myUser.getParks();
-        for (final String park1 : parks) {
-            System.out.println(count++ + ". " + park1);
+        for (final String title: optionTitles) {
+            if (count < optionTitles.length)
+                System.out.println((count++) +  ". " + title);
+            else
+                System.out.println(title);
         }
+    }
+    
+    /**
+     * Prompts user for input.
+     */
+    private void introduction() {
+        System.out.println("What would you like to do? Please enter the number of your choice. ");
     }
 
     /**
      * Returns string representation of a job.
-     *
      * @param theJob the job to be printed.
      * @return String representation of a job.
      */
     private String jobString(final Job theJob) {
-        final StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder();
         str.append("Title:       ");
         str.append(theJob.getTitle() + "\n");
         str.append("   Park:        ");
@@ -262,16 +142,171 @@ public class ParkManagerUI implements UserUI {
 
     /**
      * Returns a string representation of a Volunteer.
-     *
+     * 
      * @param theVol the Volunteer to be printed.
      * @return String representation of a Volunteer.
      */
     private String volString(final Volunteer theVol) {
-        final StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder();
         str.append(theVol.getFirstName() + " ");
         str.append(theVol.getLastName() + " ");
         str.append(theVol.getEmail() + "\n");
 
         return str.toString();
+    }
+    
+    /**
+     * Create a menu option.
+     * @author Maurice Shaw     
+     */
+    interface MenuOption {
+        
+       void option(final Scanner scan) ;
+    }
+    
+    /**
+     * Creates A display of jobs and their volunteers
+     * @author Maurice Shaw
+     */
+    private final class ViewJobs implements MenuOption {
+
+        /**
+         * Displays job and volunteers for a job.
+         * @param theScan   For user input.
+         */
+        public void option(final Scanner theScan) {
+            final List<Job> jobs = new ArrayList<Job>();
+            int jobIndex = 1;
+            try {
+                for (final Job j : Calendar.getInstance().getJobs(myUser.getParks())) {
+                    System.out.print(jobIndex + ". " + jobString(j) + "\n");
+                    jobs.add(j);
+                    jobIndex++;
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println("The jobs file is missing!");
+                return;
+            }
+            if (jobs.size() > 0) {
+                System.out.println("\nWould you like to view the volunteers for a job? Y/N ");
+                String choice = theScan.nextLine().toLowerCase();
+                if ("y".equals(choice)) {
+                    System.out.print("Please enter the number of the job: ");
+                    jobIndex = theScan.nextInt();
+                    // job has volunteers
+                    if (!jobs.get(jobIndex - 1).getVolunteers().isEmpty()) {
+                        List<Volunteer> volList = myUser.getVolunteers(jobs.get(jobIndex - 1));
+                        System.out.println("Volunteers to "
+                                           + jobs.get(jobIndex - 1).getDescription() + ":\n");
+
+                        int count = 1;
+                        for (final Volunteer vol : volList) {
+                            System.out.println((count++) + ". " + volString(vol));
+                        }
+                    }else 
+                        System.out.println("No one has volunteered for this job.");
+                }
+            } else
+                System.out.println("You do not have any parks.");
+
+        }
+
+    }
+    
+    /**
+     * Creates the menu option that creates a job.
+     * @author Maurice Shaw
+     */
+    private final class CreateJob implements MenuOption {
+        
+        /**
+         * Creates a new job and attempts to add a job. User will be informed if
+         * attempt fails.
+         * @param theScan   For user input.
+         */
+        public void option(final Scanner theScan) {
+            System.out.println("Please enter the following information: ");
+            System.out.print("\nTitle: ");
+            final String title = theScan.nextLine();
+            System.out.print("Park Name: ");
+            final String parkName = theScan.nextLine();
+            System.out.print("Location: ");
+            final String location = theScan.nextLine();
+            System.out.print("Start Date (yyyy-mm-dd): ");
+            final String startDate = theScan.next(); // job fields
+            System.out.print("End Date (yyyy-mm-dd): ");
+            final String endDate = theScan.next();
+            System.out.print("# of light volunteers needed: ");
+            final int light = theScan.nextInt();
+            System.out.print("# of medium volunteers needed: ");
+            final int medium = theScan.nextInt();
+            System.out.print("# of heavy volunteers needed: ");
+            final int heavy = theScan.nextInt();
+            System.out.print("Description: ");
+            final String description = theScan.nextLine();
+            try {// try to add job
+                final boolean submitCheck =
+                                myUser.submit(Calendar.getInstance(), title, parkName, location,
+                                              LocalDate.parse(startDate),
+                                              LocalDate.parse(endDate), light, medium, heavy,
+                                              description);
+
+                if (!submitCheck) {
+                    System.out.println("Job not added");
+                }
+            } catch (final IOException e) {
+                System.out.println("Job file not found!");
+
+            }
+        }
+    }
+    
+    /**
+     * Creates the menu option that adds a Park to this Park Manager's list of parks.
+     * @author Maurice Shaw
+     */
+    private final class AddPark implements MenuOption {
+        
+        /**
+         * Adds a park to this park manager's parks managed.
+         * @param theScan   For user input.
+         */
+        public void option(final Scanner theScan) {
+            String park = "";
+            do {
+                System.out.println("Please enter the park name: ");
+                park = theScan.nextLine();
+                if (park.length() > 0) {
+                    myUser.addPark(park);
+                    System.out.println("Your park " + park + " was successfully added");
+                    System.out.println("Do you want to view your parks? Y/N");
+                    String choice = theScan.nextLine();
+                    if ("y".equals(choice.toLowerCase())) {
+                        new ViewParks().option(theScan);
+                    }
+
+                } else {
+                    System.out.println("You must enter a park name, try again");
+                }
+            } while (park.length() == 0);
+        }  
+    }
+    
+    /**
+     * Creates the menu option to display the parks managed by this Park Manager.
+     * @author Maurice Shaw
+     */
+    private final class ViewParks implements MenuOption {
+
+        /**
+         * Displays list of volunteers.
+         * @param theScan Scanner for user input.
+         */
+        public void option(final Scanner theScan) {
+            int count = 1;
+            final List<String> parks = myUser.getParks();
+            for (String park1 : parks)
+                System.out.println((count++) + ". " + park1);
+        }
     }
 }
