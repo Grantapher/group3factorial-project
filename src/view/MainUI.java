@@ -1,17 +1,15 @@
 package view;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
 import model.AbstractUser;
 import model.Administrator;
 import model.Calendar;
-import model.FileIO;
 import model.ParkManager;
+import model.SerializableIO;
 import model.Volunteer;
 
-@SuppressWarnings("deprecation")
 public class MainUI {
     private static Scanner inputReader;
     private static UserUI userInterface;
@@ -26,10 +24,9 @@ public class MainUI {
      * options
      */
     private static void interact() {
-        while (userInterface.userMenu(inputReader)) {
-            ;
+        while (!userInterface.userMenu(inputReader)) {
+            // empty block
         }
-        login();
     }
 
     /**
@@ -44,8 +41,11 @@ public class MainUI {
             quit();
         }
         try {
-            user = FileIO.getUser(email);
-        } catch (final FileNotFoundException e) {
+            user = SerializableIO.getUser(email);
+        } catch (final ClassNotFoundException theE) {
+            System.out.println("User File corrupted, fix it!");
+            System.exit(0);
+        } catch (final IOException theE) {
             System.out.println("User File missing, find it!");
             System.exit(0);
         }
@@ -81,14 +81,15 @@ public class MainUI {
         final String last = inputReader.next();
         char userType = '0';
         // Query for userType
-        while (userType != FileIO.VOLUNTEER_CHAR && userType != FileIO.PARK_MANAGER_CHAR
-                && userType != FileIO.ADMIN_CHAR) {
+        while (userType != SerializableIO.VOLUNTEER_CHAR
+                && userType != SerializableIO.PARK_MANAGER_CHAR
+                && userType != SerializableIO.ADMIN_CHAR) {
             System.out.print("User Type(V for volunteer, P for park manager, A for admin): ");
             userType = inputReader.next().toUpperCase().charAt(0);
         }
 
         // Query for managers parks
-        if (userType == FileIO.PARK_MANAGER_CHAR) {
+        if (userType == SerializableIO.PARK_MANAGER_CHAR) {
             final ParkManager newManager = new ParkManager(last, first, email);
             String park;
             do {
@@ -99,29 +100,38 @@ public class MainUI {
                 }
             } while (!park.equals("q"));
             try {
-                FileIO.addUser(newManager);
+                SerializableIO.addUser(newManager);
                 return newManager;
             } catch (final IOException e) {
                 System.out.println("User File missing, find it!");
                 System.exit(0);
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("User File corrupted, fix it!");
+                System.exit(0);
             }
 
-        } else if (userType == FileIO.VOLUNTEER_CHAR) {
+        } else if (userType == SerializableIO.VOLUNTEER_CHAR) {
             final Volunteer newVolunteer = new Volunteer(last, first, email);
             try {
-                FileIO.addUser(newVolunteer);
+                SerializableIO.addUser(newVolunteer);
                 return newVolunteer;
             } catch (final IOException e) {
                 System.out.println("User File missing, find it!");
                 System.exit(0);
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("User File corrupted, fix it!");
+                System.exit(0);
             }
-        } else if (userType == FileIO.ADMIN_CHAR) {
+        } else if (userType == SerializableIO.ADMIN_CHAR) {
             final Administrator newAdmin = new Administrator(last, first, email);
             try {
-                FileIO.addUser(newAdmin);
+                SerializableIO.addUser(newAdmin);
                 return newAdmin;
             } catch (final IOException e) {
                 System.out.println("User File missing, find it!");
+                System.exit(0);
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("User File corrupted, fix it!");
                 System.exit(0);
             }
         }
@@ -130,9 +140,12 @@ public class MainUI {
 
     private static void quit() {
         try {
-            FileIO.writeJobsAndExit(Calendar.getInstance().getJobs());
+            SerializableIO.writeJobs(Calendar.getInstance().getJobs());
         } catch (final IOException e) {
             System.out.println("File missing, find it!");
+            System.exit(0);
+        } catch (final ClassNotFoundException theE) {
+            System.out.println("File corrupted, fix it!");
             System.exit(0);
         }
     }

@@ -4,7 +4,7 @@
 
 package model;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +37,10 @@ public class Volunteer extends AbstractUser {
 
     /**
      * @return the list of jobs this volunteer is signed up for
-     * @throws FileNotFoundException if the file doesn't exist
+     * @throws IOException if the file is not found
+     * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
-    public List<Job> getJobs() throws FileNotFoundException {
+    public List<Job> getJobs() throws ClassNotFoundException, IOException {
         final ArrayList<Job> list = new ArrayList<>();
         final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
         for (final LocalDate date : map.keySet()) {

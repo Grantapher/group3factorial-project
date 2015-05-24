@@ -1,7 +1,5 @@
-
 package view;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ import model.Volunteer;
 
 /**
  * Park Manager User Interface.
- * 
+ *
  * @author Maurice Shaw
  */
 public final class ParkManagerUI implements UserUI {
@@ -54,7 +52,7 @@ public final class ParkManagerUI implements UserUI {
 
     /**
      * Constructs a Park Manager user interface.
-     * 
+     *
      * @param theManager the logged-in park manager.
      */
     public ParkManagerUI(final ParkManager theManager) {
@@ -67,17 +65,19 @@ public final class ParkManagerUI implements UserUI {
     @Override
     public boolean userMenu(final Scanner theScan) {
         iWantToQuit = false;
-        MenuOption[] options = {new ViewJobs(), new CreateJob(), new AddPark() ,new ViewParks()};
+        final MenuOption[] options = { new ViewJobs(), new CreateJob(), new AddPark(),
+                new ViewParks() };
         do {
             introduction();
             makeMenu();
-            Scanner scan = new Scanner(System.in);
-            String choice = theScan.nextLine();
+            final Scanner scan = new Scanner(System.in);
+            final String choice = theScan.nextLine();
             // ensure user enters valid choice
             if (!"q".equals(choice) && choice.equals(VIEWJOBS.toString())
-                || choice.equals(CREATEJOB.toString()) || choice.equals(ADDPARK.toString())
-                || choice.equals(VIEWPARKS.toString())) { 
-             
+                    || choice.equals(CREATEJOB.toString())
+                    || choice.equals(ADDPARK.toString())
+                    || choice.equals(VIEWPARKS.toString())) {
+
                 options[Integer.parseInt(choice) - 1].option(scan);
             } else if ("q".equals(choice)) {
                 iWantToQuit = true;
@@ -89,35 +89,39 @@ public final class ParkManagerUI implements UserUI {
         return iWantToQuit;
 
     }
-    
+
     /**
      * Displays menu options.
      */
     private void makeMenu() {
-        String[] optionTitles = {"View your jobs", "Post new job", "Add new Park", "View your parks", "Enter: (q)Quit"};
+        final String[] optionTitles = { "View your jobs", "Post new job", "Add new Park",
+                "View your parks", "Enter: (q)Quit" };
         int count = 1;
-        for (final String title: optionTitles) {
-            if (count < optionTitles.length)
-                System.out.println((count++) +  ". " + title);
-            else
+        for (final String title : optionTitles) {
+            if (count < optionTitles.length) {
+                System.out.println(count++ + ". " + title);
+            } else {
                 System.out.println(title);
+            }
         }
     }
-    
+
     /**
      * Prompts user for input.
      */
     private void introduction() {
-        System.out.println("What would you like to do? Please enter the number of your choice. ");
+        System.out
+        .println("What would you like to do? Please enter the number of your choice. ");
     }
 
     /**
      * Returns string representation of a job.
+     *
      * @param theJob the job to be printed.
      * @return String representation of a job.
      */
     private String jobString(final Job theJob) {
-        StringBuilder str = new StringBuilder();
+        final StringBuilder str = new StringBuilder();
         str.append("Title:       ");
         str.append(theJob.getTitle() + "\n");
         str.append("   Park:        ");
@@ -142,38 +146,42 @@ public final class ParkManagerUI implements UserUI {
 
     /**
      * Returns a string representation of a Volunteer.
-     * 
+     *
      * @param theVol the Volunteer to be printed.
      * @return String representation of a Volunteer.
      */
     private String volString(final Volunteer theVol) {
-        StringBuilder str = new StringBuilder();
+        final StringBuilder str = new StringBuilder();
         str.append(theVol.getFirstName() + " ");
         str.append(theVol.getLastName() + " ");
         str.append(theVol.getEmail() + "\n");
 
         return str.toString();
     }
-    
+
     /**
      * Create a menu option.
-     * @author Maurice Shaw     
+     *
+     * @author Maurice Shaw
      */
     interface MenuOption {
-        
-       void option(final Scanner scan) ;
+
+        void option(final Scanner scan);
     }
-    
+
     /**
      * Creates A display of jobs and their volunteers
+     *
      * @author Maurice Shaw
      */
     private final class ViewJobs implements MenuOption {
 
         /**
          * Displays job and volunteers for a job.
-         * @param theScan   For user input.
+         *
+         * @param theScan For user input.
          */
+        @Override
         public void option(final Scanner theScan) {
             final List<Job> jobs = new ArrayList<Job>();
             int jobIndex = 1;
@@ -183,47 +191,56 @@ public final class ParkManagerUI implements UserUI {
                     jobs.add(j);
                     jobIndex++;
                 }
-            } catch (FileNotFoundException e) {
+            } catch (final IOException e) {
                 System.out.println("The jobs file is missing!");
+                return;
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("The jobs file is corrupted!");
                 return;
             }
             if (jobs.size() > 0) {
                 System.out.println("\nWould you like to view the volunteers for a job? Y/N ");
-                String choice = theScan.nextLine().toLowerCase();
+                final String choice = theScan.nextLine().toLowerCase();
                 if ("y".equals(choice)) {
                     System.out.print("Please enter the number of the job: ");
                     jobIndex = theScan.nextInt();
                     // job has volunteers
                     if (!jobs.get(jobIndex - 1).getVolunteers().isEmpty()) {
-                        List<Volunteer> volList = myUser.getVolunteers(jobs.get(jobIndex - 1));
+                        final List<Volunteer> volList = myUser.getVolunteers(jobs
+                                .get(jobIndex - 1));
                         System.out.println("Volunteers to "
-                                           + jobs.get(jobIndex - 1).getDescription() + ":\n");
+                                + jobs.get(jobIndex - 1).getDescription() + ":\n");
 
                         int count = 1;
                         for (final Volunteer vol : volList) {
-                            System.out.println((count++) + ". " + volString(vol));
+                            System.out.println(count++ + ". " + volString(vol));
                         }
-                    }else 
+                    } else {
                         System.out.println("No one has volunteered for this job.");
+                    }
                 }
-            } else
+            } else {
                 System.out.println("You do not have any parks.");
+            }
 
         }
 
     }
-    
+
     /**
      * Creates the menu option that creates a job.
+     *
      * @author Maurice Shaw
      */
     private final class CreateJob implements MenuOption {
-        
+
         /**
          * Creates a new job and attempts to add a job. User will be informed if
          * attempt fails.
-         * @param theScan   For user input.
+         *
+         * @param theScan For user input.
          */
+        @Override
         public void option(final Scanner theScan) {
             System.out.println("Please enter the following information: ");
             System.out.print("\nTitle: ");
@@ -245,11 +262,9 @@ public final class ParkManagerUI implements UserUI {
             System.out.print("Description: ");
             final String description = theScan.nextLine();
             try {// try to add job
-                final boolean submitCheck =
-                                myUser.submit(Calendar.getInstance(), title, parkName, location,
-                                              LocalDate.parse(startDate),
-                                              LocalDate.parse(endDate), light, medium, heavy,
-                                              description);
+                final boolean submitCheck = myUser.submit(Calendar.getInstance(), title,
+                        parkName, location, LocalDate.parse(startDate),
+                        LocalDate.parse(endDate), light, medium, heavy, description);
 
                 if (!submitCheck) {
                     System.out.println("Job not added");
@@ -257,20 +272,26 @@ public final class ParkManagerUI implements UserUI {
             } catch (final IOException e) {
                 System.out.println("Job file not found!");
 
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("Job file is corrupted!");
             }
         }
     }
-    
+
     /**
-     * Creates the menu option that adds a Park to this Park Manager's list of parks.
+     * Creates the menu option that adds a Park to this Park Manager's list of
+     * parks.
+     *
      * @author Maurice Shaw
      */
     private final class AddPark implements MenuOption {
-        
+
         /**
          * Adds a park to this park manager's parks managed.
-         * @param theScan   For user input.
+         *
+         * @param theScan For user input.
          */
+        @Override
         public void option(final Scanner theScan) {
             String park = "";
             do {
@@ -280,7 +301,7 @@ public final class ParkManagerUI implements UserUI {
                     myUser.addPark(park);
                     System.out.println("Your park " + park + " was successfully added");
                     System.out.println("Do you want to view your parks? Y/N");
-                    String choice = theScan.nextLine();
+                    final String choice = theScan.nextLine();
                     if ("y".equals(choice.toLowerCase())) {
                         new ViewParks().option(theScan);
                     }
@@ -289,24 +310,29 @@ public final class ParkManagerUI implements UserUI {
                     System.out.println("You must enter a park name, try again");
                 }
             } while (park.length() == 0);
-        }  
+        }
     }
-    
+
     /**
-     * Creates the menu option to display the parks managed by this Park Manager.
+     * Creates the menu option to display the parks managed by this Park
+     * Manager.
+     *
      * @author Maurice Shaw
      */
     private final class ViewParks implements MenuOption {
 
         /**
          * Displays list of volunteers.
+         *
          * @param theScan Scanner for user input.
          */
+        @Override
         public void option(final Scanner theScan) {
             int count = 1;
             final List<String> parks = myUser.getParks();
-            for (String park1 : parks)
-                System.out.println((count++) + ". " + park1);
+            for (final String park1 : parks) {
+                System.out.println(count++ + ". " + park1);
+            }
         }
     }
 }

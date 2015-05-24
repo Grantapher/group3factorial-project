@@ -19,7 +19,7 @@ public class JobTest {
     private static final Volunteer v = new Volunteer("Doe", "John", "john.doe@fake.com");
 
     @Test
-    public void containsVolunteerTest() throws IOException {
+    public void containsVolunteerTest() throws IOException, ClassNotFoundException {
         final Job j = new Job(null, null, null, null, null, 0, 0, 0, null);
         assertFalse("Volunteer shouldn't be contained", j.containsVolunteer(v));
         j.addVolunteer(v, 'l');
@@ -38,7 +38,7 @@ public class JobTest {
     }
 
     @Test
-    public void addVolunteerTest() throws IOException {
+    public void addVolunteerTest() throws IOException, ClassNotFoundException {
         final Job j = new Job(null, "Rainier", null, null, null, 1, 0, 0, null);
         assertFalse("Can't add to a full grade", j.addVolunteer(v, 'm'));
         assertTrue("Volunteer added", j.addVolunteer(v, 'l'));

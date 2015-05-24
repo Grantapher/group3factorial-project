@@ -3,7 +3,6 @@
  */
 package view;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,9 @@ public class VolunteerUI implements UserUI {
         System.out.println("1) Search for a job");
         System.out.println("2) View your jobs");
         System.out.println("3) Quit");
+        System.out.print("Your choice: ");
         final String line = sc.nextLine();
+        System.out.println();
         try {
             switch (parseInt(line, 1, 4)) {
                 case 1:
@@ -68,7 +69,7 @@ public class VolunteerUI implements UserUI {
      * @param job the job to print the details of
      * @return a neatly formatted string for the user to read
      */
-    private String displayJobForSignUP(final Job job) {
+    private String displayJobForSignUp(final Job job) {
         final StringBuilder sb = new StringBuilder(displayVolunteersJob(job));
         sb.append("Volunteer Capacity:\n\tLight: ");
         sb.append(job.getCurLight());
@@ -91,7 +92,10 @@ public class VolunteerUI implements UserUI {
         Calendar cal;
         try {
             cal = Calendar.getInstance();
-        } catch (final FileNotFoundException theE) {
+        } catch (final ClassNotFoundException theE) {
+            System.err.println("Job File is corrupted.");
+            return;
+        } catch (final IOException theE) {
             System.err.println("Job File is missing.");
             return;
         }
@@ -103,7 +107,7 @@ public class VolunteerUI implements UserUI {
             for (final Job j : jobList) {
                 System.out.print(jobIndex);
                 System.out.print(' ');
-                System.out.println(displayJobForSignUP(j));
+                System.out.println(displayJobForSignUp(j));
                 jobs.add(j);
                 jobIndex++;
             }
@@ -119,10 +123,16 @@ public class VolunteerUI implements UserUI {
             } catch (final NumberFormatException e) {
                 System.err.println("Invalid Choice");
             }
-        } while (choiceIndex < 0 || jobs.size() <= choiceIndex);
+        } while (choiceIndex < 0 || jobs.size() < choiceIndex);
         if (choiceIndex == 0) {
             return;
         }
+        choiceIndex--;
+
+        // get the chosen job
+        final Job job = jobs.get(choiceIndex);
+        System.out.println();
+        System.out.println(displayJobForSignUp(job));
 
         // Pick a grade
         int gradeInt = -1;
@@ -137,7 +147,7 @@ public class VolunteerUI implements UserUI {
             } catch (final NumberFormatException e) {
                 System.err.println("Invalid Choice");
             }
-        } while (gradeInt < 1 || 4 <= gradeInt);
+        } while (gradeInt < 0 || 4 <= gradeInt);
         if (gradeInt == 0) {
             return;
         }
@@ -161,9 +171,12 @@ public class VolunteerUI implements UserUI {
         // Sign up for job
         boolean isFull = false;
         try {
-            isFull = jobs.get(jobIndex).addVolunteer(myVolunteer, grade);
+            isFull = job.addVolunteer(myVolunteer, grade);
         } catch (final IOException theE) {
             System.err.println("Job File is missing, can't add volunteer to job.");
+            return;
+        } catch (final ClassNotFoundException theE) {
+            System.err.println("Job File is corrupted, can't add volunteer to job.");
             return;
         }
 
@@ -186,7 +199,9 @@ public class VolunteerUI implements UserUI {
                     throw new AssertionError();
             }
             System.out
-                    .println("The " + gradeChoice + " category is full! Signup Unsuccessful");
+                    .println("Either the "
+                            + gradeChoice
+                            + " category is full, or you are already signed up for this job! Signup unsuccessful.");
         }
     }
 
@@ -200,6 +215,10 @@ public class VolunteerUI implements UserUI {
         } catch (final IOException theE) {
             System.err.println("Job File is missing, can't view " + myVolunteer.getFirstName()
                     + "'s jobs.");
+            return;
+        } catch (final ClassNotFoundException theE) {
+            System.err.println("Job File is corrupted, can't view "
+                    + myVolunteer.getFirstName() + "'s jobs.");
             return;
         }
         for (final Job job : jobs) {
@@ -248,7 +267,7 @@ public class VolunteerUI implements UserUI {
     private int parseInt(final String str, final int lowerBound, final int upperBound)
             throws NumberFormatException {
         final int number = Integer.parseInt(str);
-        if (lowerBound < number || number >= upperBound) {
+        if (number < lowerBound || upperBound <= number) {
             throw new NumberFormatException();
         }
         return number;

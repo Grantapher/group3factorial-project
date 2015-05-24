@@ -3,7 +3,6 @@
  */
 package model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -39,7 +38,10 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      * "|" + maxLight + "|" + curLight + "|" + maxMed + "|" + curMed + "|" +
      * maxHeavy + "|" + curHeavy + "|" + description for(Volunteer v :
      * volunteers) { + "|" + v.getEmail() }
+     * 
+     * @deprecated use SerializableIO
      */
+    @Deprecated
     public Job(final String jobString) {
         final String[] params = jobString.split("[|]");
         title = params[0];
@@ -185,11 +187,11 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      * @param v
      * @param grade
      * @return
-     * @throws IOException
-     * @throws FileNotFoundException
+     * @throws IOException if the file is not found
+     * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
-    public boolean addVolunteer(final Volunteer v, final char grade)
-            throws FileNotFoundException, IOException {
+    public boolean addVolunteer(final Volunteer v, final char grade) throws IOException,
+    ClassNotFoundException {
         if (containsVolunteer(v)) {
             return false;
         }

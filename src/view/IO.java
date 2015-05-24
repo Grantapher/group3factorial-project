@@ -31,7 +31,7 @@ public class IO {
     private static Scanner inputReader;
     private static Calendar calendar;
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws ClassNotFoundException, IOException {
         try {
             calendar = Calendar.getInstance();
         } catch (final FileNotFoundException e) {
@@ -46,8 +46,11 @@ public class IO {
     /**
      * Called repeatedly once a user is logged in to display to the user their
      * options
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    private static void interact() {
+    private static void interact() throws ClassNotFoundException, IOException {
         if (userType == FileIO.VOLUNTEER_CHAR) {
             volunteerInteract();
         } else if (userType == FileIO.ADMIN_CHAR) {
@@ -161,8 +164,11 @@ public class IO {
 
     /**
      * The volunteers options
+     *
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
-    private static void volunteerInteract() {
+    private static void volunteerInteract() throws ClassNotFoundException, IOException {
         System.out.println("\nWhat would you like to do?");
         System.out.println("Search for a job (s)");
         System.out.println("View your jobs (v)");
@@ -180,8 +186,11 @@ public class IO {
 
     /**
      * Displays all jobs the volunteer has signed up for
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    private static void displaySignedUp() {
+    private static void displaySignedUp() throws ClassNotFoundException, IOException {
         List<Job> jobs = new ArrayList<Job>();
         try {
             jobs = volunteer.getJobs();
@@ -215,8 +224,10 @@ public class IO {
     /**
      * Displays all upcoming jobs Then it prompts the user for if they want to
      * sign up for one.
+     *
+     * @throws ClassNotFoundException
      */
-    private static void displayJobs() {
+    private static void displayJobs() throws ClassNotFoundException {
         int jobIndex = 1;
         final List<Job> jobs = new ArrayList<Job>();
         for (final List<Job> jobList : calendar.getJobs().values()) {

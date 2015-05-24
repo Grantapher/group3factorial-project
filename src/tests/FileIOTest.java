@@ -25,7 +25,9 @@ import org.junit.Test;
 /**
  * @author Grant Toepfer
  * @version May 9, 2015
+ * @deprecated use SerializableIOTest
  */
+@Deprecated
 public class FileIOTest {
     private static final LocalDate date = LocalDate.parse("2015-12-25");
     private static final Job job = new Job("Clearing", "Kopachuck State Park", "Trails", date,
@@ -38,7 +40,7 @@ public class FileIOTest {
     private static final Volunteer otherV = new Volunteer("Ross", "William",
             "ryansmith@fake.com");
     private static final String[] parks = { "Kopachuck State Park", "Blake Island",
-        "Camp Seymour", "Titlow Beach" };
+            "Camp Seymour", "Titlow Beach" };
 
     /**
      * @throws java.lang.Exception
