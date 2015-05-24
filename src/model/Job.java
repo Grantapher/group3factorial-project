@@ -38,7 +38,7 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      * "|" + maxLight + "|" + curLight + "|" + maxMed + "|" + curMed + "|" +
      * maxHeavy + "|" + curHeavy + "|" + description for(Volunteer v :
      * volunteers) { + "|" + v.getEmail() }
-     * 
+     *
      * @deprecated use SerializableIO
      */
     @Deprecated
@@ -191,7 +191,7 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
     public boolean addVolunteer(final Volunteer v, final char grade) throws IOException,
-    ClassNotFoundException {
+            ClassNotFoundException {
         if (containsVolunteer(v)) {
             return false;
         }
@@ -212,7 +212,6 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
             curHeavy++;
         }
         volunteers.add(v);
-        Calendar.getInstance().writeJobs();
         return true;
     }
 

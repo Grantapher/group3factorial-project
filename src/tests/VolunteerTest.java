@@ -13,8 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import model.Calendar;
 import model.Job;
-import model.SerializableIO;
 import model.Volunteer;
 
 import org.junit.Before;
@@ -68,7 +68,7 @@ public class VolunteerTest {
      */
     @Test
     public final void testGetJobs() throws IOException, ClassNotFoundException {
-        final Map<LocalDate, List<Job>> map = SerializableIO.readJobs();
+        final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
         final List<Job> list = map.get(LocalDate.parse("2015-12-25"));
         final Job job = list.get(0);
         job.addVolunteer(tester, 'm');
