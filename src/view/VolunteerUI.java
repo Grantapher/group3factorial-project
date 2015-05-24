@@ -72,15 +72,15 @@ public class VolunteerUI implements UserUI {
         final StringBuilder sb = new StringBuilder(displayVolunteersJob(job));
         sb.append("Volunteer Capacity:\n\tLight: ");
         sb.append(job.getCurLight());
-        sb.append('-');
+        sb.append('/');
         sb.append(job.getMaxLight());
         sb.append("\n\tMedium: ");
         sb.append(job.getCurMed());
-        sb.append('-');
+        sb.append('/');
         sb.append(job.getMaxMed());
         sb.append("\n\tHeavy: ");
         sb.append(job.getCurHeavy());
-        sb.append('-');
+        sb.append('/');
         sb.append(job.getMaxHeavy());
         sb.append('\n');
         return sb.toString();
@@ -186,7 +186,7 @@ public class VolunteerUI implements UserUI {
                     throw new AssertionError();
             }
             System.out
-            .println("The " + gradeChoice + " category is full! Signup Unsuccessful");
+                    .println("The " + gradeChoice + " category is full! Signup Unsuccessful");
         }
     }
 

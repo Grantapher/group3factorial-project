@@ -19,6 +19,11 @@ import java.util.Map;
 public class Volunteer extends AbstractUser {
 
     /**
+     * @version 1.0
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Creates a new volunteer object with the given identifiers and list of
      * jobs.
      *

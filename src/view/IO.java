@@ -19,7 +19,9 @@ import model.Volunteer;
  * The console IO class for our project.
  *
  * @author Sam
+ * @deprecated Now using literally everything else in the view but this class
  */
+@Deprecated
 public class IO {
     private static char userType;
     private static AbstractUser user;

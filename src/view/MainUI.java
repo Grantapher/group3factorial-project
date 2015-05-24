@@ -11,6 +11,7 @@ import model.FileIO;
 import model.ParkManager;
 import model.Volunteer;
 
+@SuppressWarnings("deprecation")
 public class MainUI {
     private static Scanner inputReader;
     private static UserUI userInterface;
@@ -46,6 +47,7 @@ public class MainUI {
             user = FileIO.getUser(email);
         } catch (final FileNotFoundException e) {
             System.out.println("User File missing, find it!");
+            e.printStackTrace();
             System.exit(0);
         }
 

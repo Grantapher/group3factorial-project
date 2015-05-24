@@ -10,11 +10,16 @@ import java.util.List;
 
 /**
  * This class represents an Administrator.
- * 
+ *
  * @author Maurice Shaw
  * @version May 2014
  */
 public final class Administrator extends AbstractUser {
+
+    /**
+     * @version 1.0
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}
@@ -26,7 +31,7 @@ public final class Administrator extends AbstractUser {
 
     /**
      * Returns a list of volunteers with a certain last name.
-     * 
+     *
      * @param theName The last name of the user to be searched.
      * @return List of volunteers with the requested last name.
      * @throws FileNotFoundException
@@ -34,8 +39,8 @@ public final class Administrator extends AbstractUser {
     public List<Volunteer> findVolunteer(final String theName) throws FileNotFoundException {
         final List<Volunteer> yourVolunteer = new ArrayList<>();
         final List<AbstractUser> userList = FileIO.queryUsers(theName, 'V'); // List
-                                                                             // of
-                                                                             // users
+        // of
+        // users
 
         if (!userList.isEmpty()) { // list will be empty if name is not found
 

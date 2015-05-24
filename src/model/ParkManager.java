@@ -19,6 +19,10 @@ public final class ParkManager extends AbstractUser {
     // Field
 
     /**
+     * @version 1.0
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * List of parks managed by this park manager.
      */
     private final ArrayList<String> myParks;

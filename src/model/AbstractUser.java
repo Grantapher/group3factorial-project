@@ -3,13 +3,19 @@
  */
 package model;
 
+import java.io.Serializable;
+
 /**
  * Every type of User in the system will inherit from this abstract class.
  *
  * @author Wing-Sea Poon
  * @version May 9, 2015
  */
-public abstract class AbstractUser {
+public abstract class AbstractUser implements Serializable {
+    /**
+     * @version 1.0
+     */
+    private static final long serialVersionUID = 1L;
     protected String lastName;
     protected String firstName;
     protected String email;

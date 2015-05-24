@@ -5,11 +5,16 @@ package model;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Job implements Comparable<Job>, Cloneable {
+public class Job implements Comparable<Job>, Cloneable, Serializable {
+    /**
+     * @version 1.0
+     */
+    private static final long serialVersionUID = 1L;
     private final String title;
     private final String parkName;
     private final String location;
