@@ -39,7 +39,7 @@ public class SerializableIOTest {
     private static final Volunteer otherV = new Volunteer("Ross", "William",
             "ryansmith@fake.com");
     private static final String[] parks = { "Kopachuck State Park", "Blake Island",
-            "Camp Seymour", "Titlow Beach" };
+        "Camp Seymour", "Titlow Beach" };
 
     /**
      * @throws java.lang.Exception
@@ -71,13 +71,21 @@ public class SerializableIOTest {
         if (list == null) {
             list = new ArrayList<>();
         }
-        list.add(job);
+        final boolean contained = list.contains(job);
+        if (contained) {
+            list.remove(job);
+        } else {
+            list.add(job);
+        }
+
         map.put(job.getStartDate(), list);
         SerializableIO.writeJobs(map);
 
         final Map<LocalDate, List<Job>> newMap = SerializableIO.readJobs();
+
         assertTrue("Job not present after read, adding the job, writing, and reading again.",
-                containsJob(newMap, job));
+                contained ? !containsJob(newMap, job) : containsJob(newMap, job));
+
     }
 
     /**
