@@ -16,7 +16,7 @@ import model.Job;
 import model.SerializableIO;
 
 /**
- * Class that reads the text files and writes them to the serialized files.
+ * Reads the text files and writes them to the serialized files.
  *
  * @author Grant Toepfer
  * @version May 23, 2015
