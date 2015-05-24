@@ -69,7 +69,7 @@ public class VolunteerTest {
     @Test
     public final void testGetJobs() throws IOException, ClassNotFoundException {
         final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
-        final List<Job> list = map.get(LocalDate.parse("2015-12-25"));
+        final List<Job> list = map.get(LocalDate.parse("2015-08-19"));
         final Job job = list.get(0);
         job.addVolunteer(tester, 'm');
         final List<Job> jobs = tester.getJobs();
