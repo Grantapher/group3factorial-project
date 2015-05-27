@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import model.FileIO;
+import model.Calendar;
 import model.Job;
 import model.Volunteer;
 
@@ -62,20 +62,19 @@ public class VolunteerTest {
 
     /**
      * Test method for {@link model.Volunteer#getJobs()}.
-     * 
+     *
      * @throws IOException if the file isn't found
+     * @throws ClassNotFoundException
      */
     @Test
-    public final void testGetJobs() throws IOException {
-        final Map<LocalDate, List<Job>> map = FileIO.readJobs();
-        final List<Job> list = map.get(LocalDate.parse("2015-12-25"));
+    public final void testGetJobs() throws IOException, ClassNotFoundException {
+        final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
+        final List<Job> list = map.get(LocalDate.parse("2015-08-19"));
         final Job job = list.get(0);
         job.addVolunteer(tester, 'm');
         final List<Job> jobs = tester.getJobs();
         assertTrue("Volunteer wasn't added to the job or get jobs didn't get the job.",
                 jobs.contains(job));
-        // TODO volunteer getting added to the job won't add that volunteer to
-        // the job file's records!
     }
 
     /**

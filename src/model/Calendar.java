@@ -3,7 +3,6 @@
  */
 package model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,9 +29,10 @@ public class Calendar {
 
     /**
      * @return the single instance to this class
-     * @throws FileNotFoundException if the job info file is not found.
+     * @throws IOException if the file is not found
+     * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
-    public static Calendar getInstance() throws FileNotFoundException {
+    public static Calendar getInstance() throws ClassNotFoundException, IOException {
         if (instance == null) {
             instance = new Calendar();
         }
@@ -43,10 +43,11 @@ public class Calendar {
      * Private constructor. Reads in persistent data from a File, and stores it
      * back into the Calendar.
      *
-     * @throws FileNotFoundException if the job info file is not found.
+     * @throws IOException if the file is not found
+     * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
-    private Calendar() throws FileNotFoundException {
-        dateToListOfJobs = FileIO.readJobs();
+    private Calendar() throws ClassNotFoundException, IOException {
+        dateToListOfJobs = SerializableIO.readJobs();
     }
 
     /**
@@ -203,6 +204,6 @@ public class Calendar {
      * @throws IOException if the file isn't found
      */
     public void writeJobs() throws IOException {
-        FileIO.writeJobsAndExit(dateToListOfJobs);
+        SerializableIO.writeJobs(dateToListOfJobs);
     }
 }

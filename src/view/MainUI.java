@@ -1,18 +1,15 @@
 package view;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
 import model.AbstractUser;
 import model.Administrator;
 import model.Calendar;
-import model.FileIO;
 import model.ParkManager;
 import model.SerializableIO;
 import model.Volunteer;
 
-@SuppressWarnings("deprecation")
 public class MainUI {
     private static Scanner inputReader;
     private static UserUI userInterface;
@@ -28,8 +25,8 @@ public class MainUI {
      * options
      */
     private static void interact() {
-        while (userInterface.userMenu(inputReader)) {
-            ;
+        while (!userInterface.userMenu(inputReader)) {
+            // empty block
         }
     }
 
@@ -45,14 +42,14 @@ public class MainUI {
             quit();
         }
         try {
-			user = SerializableIO.getUser(email);
-		} catch (ClassNotFoundException e) {
-			System.out.println("Class not found!");
-			System.exit(0);
-		} catch (IOException e) {
-			System.out.println("IO Exception");
-			System.exit(0);
-		}
+            user = SerializableIO.getUser(email);
+        } catch (final ClassNotFoundException theE) {
+            System.out.println("User File corrupted, fix it!");
+            System.exit(0);
+        } catch (final IOException theE) {
+            System.out.println("User File missing, find it!");
+            System.exit(0);
+        }
 
         //Prompts if the user would like to create a new account
         if (user == null) {
@@ -104,44 +101,44 @@ public class MainUI {
                     newManager.addPark(park);
                 }
             } while (!park.equals("q"));
-                try {
-					SerializableIO.addUser(newManager);
-				} catch (ClassNotFoundException e) {
-					System.out.println("Class not found");
-					System.exit(0);
-				} catch (IOException e) {
-					System.out.println("IO exception");
-					System.exit(0);
-				}
+            try {
+                SerializableIO.addUser(newManager);
                 return newManager;
+            } catch (final IOException e) {
+                System.out.println("User File missing, find it!");
+                System.exit(0);
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("User File corrupted, fix it!");
+                System.exit(0);
+            }
 
                 //Creates a new volunteer profile
         } else if (userType == SerializableIO.VOLUNTEER_CHAR) {
             final Volunteer newVolunteer = new Volunteer(last, first, email);
-                try {
-					SerializableIO.addUser(newVolunteer);
-				} catch (ClassNotFoundException e) {
-					System.out.println("Class not found");
-					System.exit(0);
-				} catch (IOException e) {
-					System.out.println("IO exception");
-					System.exit(0);
-				}
+            try {
+                SerializableIO.addUser(newVolunteer);
                 return newVolunteer;
- 
-              //Creates a new admin profile
+            } catch (final IOException e) {
+                System.out.println("User File missing, find it!");
+                System.exit(0);
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("User File corrupted, fix it!");
+                System.exit(0);
+            }
+
+			//Creates a new admin profile
         } else if (userType == SerializableIO.ADMIN_CHAR) {
             final Administrator newAdmin = new Administrator(last, first, email);
-                try {
-					SerializableIO.addUser(newAdmin);
-				} catch (ClassNotFoundException e) {
-					System.out.println("Class not found");
-					System.exit(0);
-				} catch (IOException e) {
-					System.out.println("IO exception");
-					System.exit(0);
-				}
+            try {
+                SerializableIO.addUser(newAdmin);
                 return newAdmin;
+            } catch (final IOException e) {
+                System.out.println("User File missing, find it!");
+                System.exit(0);
+            } catch (final ClassNotFoundException theE) {
+                System.out.println("User File corrupted, fix it!");
+                System.exit(0);
+            }
         }
         return null;
     }
@@ -150,16 +147,13 @@ public class MainUI {
      * Saves any changes that have been made to jobs and exits.
      */
     private static void quit() {
-    	try {
-			SerializableIO.writeJobs(Calendar.getInstance().getJobs());
-			System.exit(0);
-		} catch (FileNotFoundException e) {
+        try {
+            SerializableIO.writeJobs(Calendar.getInstance().getJobs());
+        } catch (final IOException e) {
 			System.out.println("Job File not found!");
-			System.exit(0);
-		} catch (IOException e) {
-			System.out.println("IO exception!");
-			System.exit(0);
-		}
-
+        } catch (final ClassNotFoundException theE) {
+            System.out.println("File corrupted, fix it!");
+        }
+        System.exit(0);
     }
 }

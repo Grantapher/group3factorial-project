@@ -204,12 +204,12 @@ public final class SerializableIO {
     private static boolean checkType(final AbstractUser user, final char type) {
         switch (type) {
             case ADMIN_CHAR:
-                if (user instanceof Volunteer) {
+                if (user instanceof Administrator) {
                     return true;
                 }
                 break;
             case PARK_MANAGER_CHAR:
-                if (user instanceof Volunteer) {
+                if (user instanceof ParkManager) {
                     return true;
                 }
                 break;

@@ -4,7 +4,7 @@
 
 package model;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +34,14 @@ public final class Administrator extends AbstractUser {
      *
      * @param theName The last name of the user to be searched.
      * @return List of volunteers with the requested last name.
-     * @throws FileNotFoundException
+     * @throws IOException if the file is not found
+     * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
-    public List<Volunteer> findVolunteer(final String theName) throws FileNotFoundException {
+    public List<Volunteer> findVolunteer(final String theName) throws ClassNotFoundException,
+    IOException {
         final List<Volunteer> yourVolunteer = new ArrayList<>();
-        final List<AbstractUser> userList = FileIO.queryUsers(theName, 'V'); // List
-        // of
-        // users
+        final List<AbstractUser> userList = SerializableIO.queryUsers(theName,
+                SerializableIO.VOLUNTEER_CHAR); // List of users
 
         if (!userList.isEmpty()) { // list will be empty if name is not found
 
