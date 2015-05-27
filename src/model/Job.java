@@ -179,7 +179,7 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
     }
 
     /**
-     * Adds a volunteer to this job at the given job. Returns false if the add
+     * Adds a volunteer to this job at the given grade(l/m/h). Returns false if the add
      * failed (because a grade was full)
      *
      * @param v
