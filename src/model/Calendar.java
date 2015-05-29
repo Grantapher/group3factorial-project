@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import exception.InvalidTimeIntervalException;
+import exception.JobTooLongException;
+import exception.MaxJobsExceededException;
+import exception.WeekFullException;
+
 /**
  * Handles the association between jobs, dates, and scheduling.
  *
@@ -83,15 +88,29 @@ public class Calendar {
      *
      * @param job the Job to add.
      * @throws IOException if the Job file doesn't exist
-     * @return true if the Job has been added successfully
+     * @throws MaxJobsExceededException if the Calendar already contains MAX_TOTAL_JOBS
+     * @throws WeekFullException if the Job is being added to a week with MAX_JOBS_PER_WEEK
+     * @throws JobTooLongException if the specified Job's duration exceeds MAX_JOB_LENGTH
+     * @throws InvalidTimeIntervalException if the Job is added in the past or
+     * after MAX_DAYS
      */
-    public boolean addJob(final Job job) throws IOException {
-        if (!isFull() && !isFull(job.getStartDate()) && !isFull(job.getEndDate())
-                && isValidLength(job) && isValidInterval(job)) {
-            addJobToMap(job);
-            return true;
+    public void addJob(final Job job) 
+    throws IOException, MaxJobsExceededException, WeekFullException, 
+    JobTooLongException, InvalidTimeIntervalException {
+        if(isFull()) {
+        	throw new MaxJobsExceededException("Error: Max Jobs exceeded");
         }
-        return false;
+        if(isFull(job.getStartDate()) || isFull(job.getEndDate())) {
+        	throw new WeekFullException("Error: Week is full");
+        }
+        if(!isValidLength(job)) {
+        	throw new JobTooLongException("Error: Job duration too long");
+        }
+        if(!isValidInterval(job)) {
+        	throw new InvalidTimeIntervalException("Error: Attempt to add Job "
+        			+ "within invalid time interval");
+        }
+        addJobToMap(job);
     }
 
     /**
