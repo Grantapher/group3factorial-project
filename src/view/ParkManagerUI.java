@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import exception.*;
 import utility.NotMyParkException;
 import model.Calendar;
 import model.Job;
@@ -296,7 +297,15 @@ public final class ParkManagerUI implements UserUI {
 
             } catch (NotMyParkException e) {
                 System.out.println(e.getPark() + " is not one of the parks you manage");
-            }
+            } catch (MaxJobsExceededException e) {
+            	System.out.println(e);
+            } catch (WeekFullException e) {
+            	System.out.println(e);
+            } catch (JobTooLongException e) {
+            	System.out.println(e);
+            } catch (InvalidTimeIntervalException e) {
+            	System.out.println(e);
+            } 
         }
     }
 
