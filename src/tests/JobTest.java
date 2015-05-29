@@ -3,8 +3,7 @@
  */
 package tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,12 +18,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JobTest {
-    private static final Volunteer v = new Volunteer("Doe", "John", "john.doe@fake.com");
+    private static Volunteer v;
     private static Job dumbJob;
+    private static Job pastJob;
+    private static Job dumbJob2;
     
     @Before
     public void init() {
-    	dumbJob = new Job(null, "Rainier", null, null, null, 1, 0, 2, null); 	
+    	v = new Volunteer("Doe", "John", "john.doe@fake.com");
+    	final LocalDate futureDate = LocalDate.parse("2015-06-25");
+    	final LocalDate pastDate = LocalDate.parse("2014-12-25");
+    	dumbJob = new Job(null, "Rainier", null, futureDate, futureDate, 1, 0, 2, null);
+    	pastJob = new Job(null, "Rainier", null, pastDate, pastDate, 1, 0, 2, null);
+    	dumbJob2 = new Job(null, "Over the Rainbow", null, futureDate, futureDate, 1, 0, 2, null);
     }
     
     @Test
@@ -34,9 +40,10 @@ public class JobTest {
     
     
     @Test
-    public void testContainsVolunteerOnPresent() {
+    //
+    public void testContainsVolunteerOnPresent() throws ClassNotFoundException {
         try {
-			dumbJob.addVolunteer(v, 'l');
+			assertEquals(Job.SUCCESS, dumbJob.addVolunteer(v, 'l'));
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found");
 		} catch (IOException e) {
@@ -60,18 +67,38 @@ public class JobTest {
     }
     
     @Test
-    public void testAddVolunteerOnNoRoom() throws IOException {
-        assertFalse("Can't add to a full grade", dumbJob.addVolunteer(v, 'm'));
+    //
+    public void testAddVolunteerOnNoRoom() throws IOException, ClassNotFoundException {
+    	int status = dumbJob.addVolunteer(v, 'm');
+    	assertEquals("" + status, Job.WORK_CATEGORY_FULL, status);
     }
     
     @Test
-    public void testAddVolunteerOnRoom() throws IOException {
-        assertTrue("Volunteer added", dumbJob.addVolunteer(v, 'l'));
+    //
+    public void testAddVolunteerOnRoom() throws IOException, ClassNotFoundException {
+    	int status = dumbJob.addVolunteer(v, 'l');
+    	assertEquals("" + status, Job.SUCCESS, status);
     }
     
     @Test
-    public void testAddVolunteerTestOnDuplicate() throws IOException {
+    //
+    public void testAddVolunteerOnFuture() throws IOException, ClassNotFoundException {
+    	int status = dumbJob.addVolunteer(v, 'l');
+    	assertEquals("" + status, Job.SUCCESS, status);
+    }
+    @Test
+    public void testAddVolunteerOnPast() throws IOException, ClassNotFoundException {
+    	int status = pastJob.addVolunteer(v, 'l');
+    	assertEquals("" + status, Job.JOB_IN_PAST, status);
+    }
+    
+    @Test
+    //
+    public void testAddVolunteerOnTwoOnOneDay() throws IOException, ClassNotFoundException {
     	dumbJob.addVolunteer(v, 'h');
-        assertFalse("Duplicate detected", dumbJob.addVolunteer(v, 'l'));
+    	int status = dumbJob2.addVolunteer(v, 'l');
+    	assertEquals("" + status, Job.TWO_IN_ONE_DAY, status);
     }
+    
+ 
 }
