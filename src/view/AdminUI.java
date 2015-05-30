@@ -51,6 +51,7 @@ public class AdminUI implements UserUI {
             System.out.println("User File corrupted, fix it!");
             System.exit(0);
         }
+        System.out.println();
         for (final AbstractUser v : volunteers) {
             System.out.println(v);
         }

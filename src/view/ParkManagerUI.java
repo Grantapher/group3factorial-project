@@ -95,7 +95,7 @@ public final class ParkManagerUI implements UserUI {
      */
     private void makeMenu() {
         final String[] optionTitles = { "View your jobs", "Post new job", "Add new Park",
-                "View your parks", "Enter: (q)Quit" };
+                "View your parks", "Enter (q to quit): " };
         int count = 1;
         for (final String title : optionTitles) {
             if (count < optionTitles.length) {
@@ -253,11 +253,11 @@ public final class ParkManagerUI implements UserUI {
             final String startDate = theScan.next(); // job fields
             System.out.print("End Date (yyyy-mm-dd): ");
             final String endDate = theScan.next();
-            System.out.print("# of light volunteers needed: ");
+            System.out.print("Number of light volunteers needed: ");
             final int light = theScan.nextInt();
-            System.out.print("# of medium volunteers needed: ");
+            System.out.print("Number of medium volunteers needed: ");
             final int medium = theScan.nextInt();
-            System.out.print("# of heavy volunteers needed: ");
+            System.out.print("Number of heavy volunteers needed: ");
             final int heavy = theScan.nextInt();
             System.out.print("Description: ");
             final String description = theScan.nextLine();

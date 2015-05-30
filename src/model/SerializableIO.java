@@ -52,7 +52,7 @@ public final class SerializableIO {
      * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
     public static Map<LocalDate, List<Job>> readJobs() throws IOException,
-    ClassNotFoundException {
+            ClassNotFoundException {
         final ObjectInput ois = new ObjectInputStream(new BufferedInputStream(
                 new FileInputStream(JOB_FILE)));
         @SuppressWarnings("unchecked")
@@ -107,7 +107,7 @@ public final class SerializableIO {
      * @throws ClassNotFoundException if the ser file doesn't contain users
      */
     public static AbstractUser getUser(final String email) throws ClassNotFoundException,
-    IOException {
+            IOException {
         final List<AbstractUser> list = queryUsers(null, null, email);
         final int size = list.size();
         if (size == 0) {
@@ -127,7 +127,7 @@ public final class SerializableIO {
      * @throws ClassNotFoundException if the ser file doesn't contain users
      */
     public static void addUser(final AbstractUser user) throws IOException,
-            ClassNotFoundException {
+    ClassNotFoundException {
         if (!USER_FILE.exists()) {
             USER_FILE.createNewFile();
         }
@@ -154,7 +154,7 @@ public final class SerializableIO {
      * @throws ClassNotFoundException if the ser file doesn't contain users
      */
     private static boolean emailExists(final String email) throws ClassNotFoundException,
-            IOException {
+    IOException {
         return null != getUser(email);
     }
 
@@ -184,8 +184,8 @@ public final class SerializableIO {
         ois.close();
         final List<AbstractUser> queryList = new ArrayList<>();
         for (final AbstractUser user : allList) {
-            if ((null == lastName || lastName.equals(user.getLastName()))
-                    && (null == email || email.equals(user.getEmail()))
+            if ((null == lastName || lastName.equalsIgnoreCase(user.getLastName()))
+                    && (null == email || email.equalsIgnoreCase(user.getEmail()))
                     && (null == type || checkType(user, type))) {
                 queryList.add(user);
             }

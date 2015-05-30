@@ -181,8 +181,8 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
     }
 
     /**
-     * Adds a volunteer to this job at the given grade(l/m/h). Returns false if the add
-     * failed (because a grade was full)
+     * Adds a volunteer to this job at the given grade(l/m/h). Returns false if
+     * the add failed (because a grade was full)
      *
      * @param v
      * @param grade
@@ -192,21 +192,37 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      */
     public boolean addVolunteer(final Volunteer v, final char grade) throws IOException,
             ClassNotFoundException {
+
+        if (LocalDate.now().isAfter(start)) {
+            return false;
+        }
+
         if (containsVolunteer(v)) {
             return false;
         }
+
+        // check for conflicting days, add conflicts(Job) method.
+
+        // boolean sameDay = false;
+        // for (final Job job : v.getJobs()) {
+        // sameDay |= conflicts(job);
+        // }
+        // if (sameDay) {
+        // return false;
+        // }
+
         if (grade == 'l') {
-            if (maxLight == curLight) {
+            if (maxLight <= curLight) {
                 return false;
             }
             curLight++;
         } else if (grade == 'm') {
-            if (maxMed == curMed) {
+            if (maxMed <= curMed) {
                 return false;
             }
             curMed++;
         } else if (grade == 'h') {
-            if (maxHeavy == curHeavy) {
+            if (maxHeavy <= curHeavy) {
                 return false;
             }
             curHeavy++;

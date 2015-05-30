@@ -97,7 +97,7 @@ public final class ParkManager extends AbstractUser {
      * @param theParkName Name of park.
      * @return If park is present are not.
      */
-    private boolean isMyPark(final String theParkName) {
+    public boolean isMyPark(final String theParkName) {
         boolean amIThere = false;
 
         for (final String parkName : myParks) {

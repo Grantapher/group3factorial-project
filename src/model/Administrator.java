@@ -38,7 +38,7 @@ public final class Administrator extends AbstractUser {
      * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
     public List<Volunteer> findVolunteer(final String theName) throws ClassNotFoundException,
-    IOException {
+            IOException {
         final List<Volunteer> yourVolunteer = new ArrayList<>();
         final List<AbstractUser> userList = SerializableIO.queryUsers(theName,
                 SerializableIO.VOLUNTEER_CHAR); // List of users
@@ -46,10 +46,7 @@ public final class Administrator extends AbstractUser {
         if (!userList.isEmpty()) { // list will be empty if name is not found
 
             for (final AbstractUser theVolunteer : userList) {
-                final String volunteerLastName = theVolunteer.getLastName().toLowerCase();
-                if (volunteerLastName.equals(theName.toLowerCase())) {
-                    yourVolunteer.add((Volunteer) theVolunteer);
-                }
+                yourVolunteer.add((Volunteer) theVolunteer);
             }
         }
         return yourVolunteer;

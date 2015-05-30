@@ -20,28 +20,28 @@ import org.junit.Test;
 
 public class JobTest {
     private static final Volunteer v = new Volunteer("Doe", "John", "john.doe@fake.com");
+    private static final LocalDate date = LocalDate.parse("2015-06-25");
     private static Job dumbJob;
-    
+
     @Before
     public void init() {
-    	dumbJob = new Job(null, "Rainier", null, null, null, 1, 0, 2, null); 	
+        dumbJob = new Job(null, "Rainier", null, date, date, 1, 0, 2, null);
     }
-    
+
     @Test
     public void testContainsVolunteerOnMissing() {
-    	assertFalse("Volunteer shouldn't be contained", dumbJob.containsVolunteer(v));
+        assertFalse("Volunteer shouldn't be contained", dumbJob.containsVolunteer(v));
     }
-    
-    
+
     @Test
-    public void testContainsVolunteerOnPresent() {
+    public void testContainsVolunteerOnPresent() throws ClassNotFoundException {
         try {
-			dumbJob.addVolunteer(v, 'l');
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found");
-		} catch (IOException e) {
-			System.out.println("IO exception");
-		}
+            dumbJob.addVolunteer(v, 'l');
+        } catch (final FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (final IOException e) {
+            System.out.println("IO exception");
+        }
         assertTrue("volunteer contained", dumbJob.containsVolunteer(v));
     }
 
@@ -54,24 +54,24 @@ public class JobTest {
 
     @Test
     public void testIsJobInParkListOnPresent() {
-    	final List<String> jobList = new ArrayList<String>();
-    	jobList.add("Rainier");
-    	assertTrue("List does contain park", dumbJob.isJobinParkList(jobList));
+        final List<String> jobList = new ArrayList<String>();
+        jobList.add("Rainier");
+        assertTrue("List does contain park", dumbJob.isJobinParkList(jobList));
     }
-    
+
     @Test
-    public void testAddVolunteerOnNoRoom() throws IOException {
+    public void testAddVolunteerOnNoRoom() throws IOException, ClassNotFoundException {
         assertFalse("Can't add to a full grade", dumbJob.addVolunteer(v, 'm'));
     }
-    
+
     @Test
-    public void testAddVolunteerOnRoom() throws IOException {
+    public void testAddVolunteerOnRoom() throws IOException, ClassNotFoundException {
         assertTrue("Volunteer added", dumbJob.addVolunteer(v, 'l'));
     }
-    
+
     @Test
-    public void testAddVolunteerTestOnDuplicate() throws IOException {
-    	dumbJob.addVolunteer(v, 'h');
+    public void testAddVolunteerTestOnDuplicate() throws IOException, ClassNotFoundException {
+        dumbJob.addVolunteer(v, 'h');
         assertFalse("Duplicate detected", dumbJob.addVolunteer(v, 'l'));
     }
 }

@@ -18,6 +18,7 @@ public class MainUI {
         inputReader = new Scanner(System.in);
         login();
         interact();
+        quit();
     }
 
     /**
@@ -51,7 +52,7 @@ public class MainUI {
             System.exit(0);
         }
 
-        //Prompts if the user would like to create a new account
+        // Prompts if the user would like to create a new account
         if (user == null) {
             System.out.println("Unrecognized email\n"
                     + "Would you like to create a new account? (y/n)");
@@ -61,9 +62,10 @@ public class MainUI {
             } else {
                 login();
             }
-            
-            //Creates a UI of the user's type
-        } else if (user instanceof Volunteer) {
+
+            // Creates a UI of the user's type
+        }
+        if (user instanceof Volunteer) {
             userInterface = new VolunteerUI((Volunteer) user);
         } else if (user instanceof Administrator) {
             userInterface = new AdminUI((Administrator) user);
@@ -84,13 +86,14 @@ public class MainUI {
         final String last = inputReader.next();
         char userType = '0';
         // Query for userType
-        while (userType != SerializableIO.VOLUNTEER_CHAR && userType != SerializableIO.PARK_MANAGER_CHAR
+        while (userType != SerializableIO.VOLUNTEER_CHAR
+                && userType != SerializableIO.PARK_MANAGER_CHAR
                 && userType != SerializableIO.ADMIN_CHAR) {
             System.out.print("User Type(V for volunteer, P for park manager, A for admin): ");
             userType = inputReader.next().toUpperCase().charAt(0);
         }
 
-      //Creates a new ParkManager profile
+        // Creates a new ParkManager profile
         if (userType == SerializableIO.PARK_MANAGER_CHAR) {
             final ParkManager newManager = new ParkManager(last, first, email);
             String park;
@@ -112,7 +115,7 @@ public class MainUI {
                 System.exit(0);
             }
 
-                //Creates a new volunteer profile
+            // Creates a new volunteer profile
         } else if (userType == SerializableIO.VOLUNTEER_CHAR) {
             final Volunteer newVolunteer = new Volunteer(last, first, email);
             try {
@@ -126,7 +129,7 @@ public class MainUI {
                 System.exit(0);
             }
 
-			//Creates a new admin profile
+            // Creates a new admin profile
         } else if (userType == SerializableIO.ADMIN_CHAR) {
             final Administrator newAdmin = new Administrator(last, first, email);
             try {
@@ -150,7 +153,7 @@ public class MainUI {
         try {
             SerializableIO.writeJobs(Calendar.getInstance().getJobs());
         } catch (final IOException e) {
-			System.out.println("Job File not found!");
+            System.out.println("Job File not found!");
         } catch (final ClassNotFoundException theE) {
             System.out.println("File corrupted, fix it!");
         }
