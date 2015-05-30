@@ -9,7 +9,7 @@ package exception;
  * @version May 28, 2015
  * @author Wing-Sea Poon
  */
-public class JobTooLongException extends Exception {
+public class JobTooLongException extends BRException {
 	private static final long serialVersionUID = 4637078049549883219L;
 	
 	/**
