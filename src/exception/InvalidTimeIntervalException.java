@@ -9,7 +9,7 @@ package exception;
  * @version May 28, 2015
  * @author Wing-Sea Poon
  */
-public class InvalidTimeIntervalException extends Exception {
+public class InvalidTimeIntervalException extends BRException {
 	private static final long serialVersionUID = 3702469187863291822L;
 
 	/**
