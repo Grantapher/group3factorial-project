@@ -64,6 +64,17 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
         description = params[11];
         volunteers = FileIO.getVolunteers(params[12]);
     }
+    
+    /**
+     * A Job constructor that makes Calendar tests less cluttered with
+     * unnecessary info.
+     * 
+     * @param start
+     * @param end
+     */
+	public Job(final LocalDate start, final LocalDate end) {
+		this("Job", "Park", "Location", start, end, 5, 5, 5, "Description");
+	}
 
     /**
      * Constructs a new job
