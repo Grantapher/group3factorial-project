@@ -8,6 +8,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.InvalidTimeIntervalException;
+import exception.JobTooLongException;
+import exception.MaxJobsExceededException;
+import exception.NotMyParkException;
+import exception.WeekFullException;
+
 /**
  * This class represents a Park Manager .
  *
@@ -74,21 +80,27 @@ public final class ParkManager extends AbstractUser {
      * @param theDescription Description of the job.
      * @throws IOException if the Job file doesn't exist.
      * @return If Job has been successfully added.
+     * @throws InvalidTimeIntervalException
+     * @throws JobTooLongException
+     * @throws WeekFullException
+     * @throws MaxJobsExceededException
+     * @throws NotMyParkException
      */
-    public boolean submit(final Calendar theCalendar, final String theTitle,
+    public void submit(final Calendar theCalendar, final String theTitle,
             final String theParkName, final String theLocation, final LocalDate theStart,
             final LocalDate theEnd, final int theLight, final int theMed, final int theHeavy,
-            final String theDescription) throws IOException {
-
-        boolean jobAdded = false;
+            final String theDescription) throws IOException, MaxJobsExceededException,
+            WeekFullException, JobTooLongException, InvalidTimeIntervalException,
+            NotMyParkException {
 
         if (isMyPark(theParkName)) {
             final Job gig = new Job(theTitle, theParkName, theLocation, theStart, theEnd,
                     theLight, theMed, theHeavy, theDescription);
             final Calendar cal = theCalendar;
-            jobAdded = cal.addJob(gig);
+            cal.addJob(gig);
+        } else {
+            throw new NotMyParkException(theParkName);
         }
-        return jobAdded;
     }
 
     /**

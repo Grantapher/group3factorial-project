@@ -2,6 +2,7 @@ package view;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,6 +11,11 @@ import model.Calendar;
 import model.Job;
 import model.ParkManager;
 import model.Volunteer;
+import exception.InvalidTimeIntervalException;
+import exception.JobTooLongException;
+import exception.MaxJobsExceededException;
+import exception.NotMyParkException;
+import exception.WeekFullException;
 
 /**
  * Park Manager User Interface.
@@ -78,7 +84,9 @@ public final class ParkManagerUI implements UserUI {
                     || choice.equals(ADDPARK.toString())
                     || choice.equals(VIEWPARKS.toString())) {
 
-                options[Integer.parseInt(choice) - 1].option(scan);
+                final int menu = Integer.parseInt(choice) - 1;
+                options[menu].option(scan);
+
             } else if ("q".equals(choice)) {
                 iWantToQuit = true;
             } else {
@@ -95,7 +103,7 @@ public final class ParkManagerUI implements UserUI {
      */
     private void makeMenu() {
         final String[] optionTitles = { "View your jobs", "Post new job", "Add new Park",
-                "View your parks", "Enter (q to quit): " };
+                "View your parks", "Enter: (q)Quit" };
         int count = 1;
         for (final String title : optionTitles) {
             if (count < optionTitles.length) {
@@ -191,21 +199,20 @@ public final class ParkManagerUI implements UserUI {
                     jobs.add(j);
                     jobIndex++;
                 }
-            } catch (final IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 System.out.println("The jobs file is missing!");
                 return;
-            } catch (final ClassNotFoundException theE) {
-                System.out.println("The jobs file is corrupted!");
-                return;
             }
-            if (jobs.size() > 0) {
+            if (jobs.size() > 0) { // park has job
                 System.out.println("\nWould you like to view the volunteers for a job? Y/N ");
                 final String choice = theScan.nextLine().toLowerCase();
                 if ("y".equals(choice)) {
                     System.out.print("Please enter the number of the job: ");
                     jobIndex = theScan.nextInt();
                     // job has volunteers
-                    if (!jobs.get(jobIndex - 1).getVolunteers().isEmpty()) {
+                    if (!jobs.get(jobIndex - 1).getVolunteers().isEmpty()
+                            && jobIndex < jobs.size() && jobIndex > 0) {
+
                         final List<Volunteer> volList = myUser.getVolunteers(jobs
                                 .get(jobIndex - 1));
                         System.out.println("Volunteers to "
@@ -215,6 +222,9 @@ public final class ParkManagerUI implements UserUI {
                         for (final Volunteer vol : volList) {
                             System.out.println(count++ + ". " + volString(vol));
                         }
+                        // user enters invalid number of job
+                    } else if (jobIndex > jobs.size() || jobIndex < 1) {
+                        System.out.println(jobIndex + " is not a valid choice");
                     } else {
                         System.out.println("No one has volunteered for this job.");
                     }
@@ -242,6 +252,10 @@ public final class ParkManagerUI implements UserUI {
          */
         @Override
         public void option(final Scanner theScan) {
+            boolean goodInput;
+            LocalDate startDate = null;
+            LocalDate endDate = null;
+
             System.out.println("Please enter the following information: ");
             System.out.print("\nTitle: ");
             final String title = theScan.nextLine();
@@ -249,10 +263,34 @@ public final class ParkManagerUI implements UserUI {
             final String parkName = theScan.nextLine();
             System.out.print("Location: ");
             final String location = theScan.nextLine();
-            System.out.print("Start Date (yyyy-mm-dd): ");
-            final String startDate = theScan.next(); // job fields
-            System.out.print("End Date (yyyy-mm-dd): ");
-            final String endDate = theScan.next();
+            do {
+                System.out.print("Start Date (yyyy-mm-dd): ");
+                final String startDateString = theScan.next();
+
+                try { // check date formatting
+                    goodInput = true;
+                    startDate = LocalDate.parse(startDateString);
+                } catch (final DateTimeParseException dt) {
+                    System.out
+                    .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
+                    goodInput = false;
+                }
+            } while (!goodInput);
+
+            do {
+                System.out.print("End Date (yyyy-mm-dd): ");
+                final String endDateString = theScan.next();
+
+                try { // check date formatting
+                    goodInput = true;
+                    endDate = LocalDate.parse(endDateString);
+                } catch (final DateTimeParseException dt) {
+                    System.out
+                    .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
+                    goodInput = false;
+                }
+
+            } while (!goodInput);
             System.out.print("Number of light volunteers needed: ");
             final int light = theScan.nextInt();
             System.out.print("Number of medium volunteers needed: ");
@@ -262,18 +300,22 @@ public final class ParkManagerUI implements UserUI {
             System.out.print("Description: ");
             final String description = theScan.nextLine();
             try {// try to add job
-                final boolean submitCheck = myUser.submit(Calendar.getInstance(), title,
-                        parkName, location, LocalDate.parse(startDate),
-                        LocalDate.parse(endDate), light, medium, heavy, description);
+                myUser.submit(Calendar.getInstance(), title, parkName, location, startDate,
+                        endDate, light, medium, heavy, description);
 
-                if (!submitCheck) {
-                    System.out.println("Job not added");
-                }
-            } catch (final IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 System.out.println("Job file not found!");
 
-            } catch (final ClassNotFoundException theE) {
-                System.out.println("Job file is corrupted!");
+            } catch (final NotMyParkException e) {
+                System.out.println(e.getPark() + " is not one of the parks you manage");
+            } catch (final MaxJobsExceededException e) {
+                System.out.println(e);
+            } catch (final WeekFullException e) {
+                System.out.println(e);
+            } catch (final JobTooLongException e) {
+                System.out.println(e);
+            } catch (final InvalidTimeIntervalException e) {
+                System.out.println(e);
             }
         }
     }

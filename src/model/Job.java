@@ -13,7 +13,13 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
     /**
      * @version 1.0
      */
+    public static final int SUCCESS = 0;
+    public static final int WORK_CATEGORY_FULL = 1;
+    public static final int JOB_IN_PAST = 2;
+    public static final int TWO_IN_ONE_DAY = 3;
+
     private static final long serialVersionUID = 1L;
+
     private final String title;
     private final String parkName;
     private final String location;
@@ -149,15 +155,15 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      * @return
      */
     public boolean isLightFull() {
-        return maxLight == curLight;
+        return maxLight <= curLight;
     }
 
     public boolean isMedFull() {
-        return maxMed == curMed;
+        return maxMed <= curMed;
     }
 
     public boolean isHeavyFull() {
-        return maxHeavy == curHeavy;
+        return maxHeavy <= curHeavy;
     }
 
     /**
@@ -181,8 +187,32 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
     }
 
     /**
-     * Adds a volunteer to this job at the given grade(l/m/h). Returns false if
-     * the add failed (because a grade was full)
+     * Given a volunteer, returns true if adding that volunteer to this job
+     * would make that volunteer be signed up for two jobs on the same day.
+     * 
+     * @param v
+     * @return
+     */
+    public boolean dayConflict(final Volunteer v) {
+        try {
+            for (final Job j : v.getJobs()) {
+                if (j.getStartDate().equals(start) || j.getStartDate().equals(end)
+                        || j.getEndDate().equals(start) || j.getEndDate().equals(end)) {
+                    return true;
+                }
+            }
+        } catch (final ClassNotFoundException e) {
+            System.out.println("Class not found");
+        } catch (final IOException e) {
+            System.out.println("IO Exception");
+        }
+        return false;
+    }
+
+    /**
+     * Adds a volunteer to this job at the given grade(l/m/h). Returns int codes
+     * for success/failure: SUCCESS = 0; WORK_CATEGORY_FULL = 1; JOB_IN_PAST =
+     * 2; TWO_IN_ONE_DAY = 3;
      *
      * @param v
      * @param grade
@@ -190,45 +220,32 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      * @throws IOException if the file is not found
      * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
-    public boolean addVolunteer(final Volunteer v, final char grade) throws IOException,
-            ClassNotFoundException {
-
-        if (LocalDate.now().isAfter(start)) {
-            return false;
+    public int addVolunteer(final Volunteer v, final char grade) throws IOException,
+    ClassNotFoundException {
+        if (start.isBefore(LocalDate.now())) {
+            return JOB_IN_PAST;
         }
-
-        if (containsVolunteer(v)) {
-            return false;
+        if (dayConflict(v)) {
+            return TWO_IN_ONE_DAY;
         }
-
-        // check for conflicting days, add conflicts(Job) method.
-
-        // boolean sameDay = false;
-        // for (final Job job : v.getJobs()) {
-        // sameDay |= conflicts(job);
-        // }
-        // if (sameDay) {
-        // return false;
-        // }
-
         if (grade == 'l') {
             if (maxLight <= curLight) {
-                return false;
+                return WORK_CATEGORY_FULL;
             }
             curLight++;
         } else if (grade == 'm') {
             if (maxMed <= curMed) {
-                return false;
+                return WORK_CATEGORY_FULL;
             }
             curMed++;
         } else if (grade == 'h') {
             if (maxHeavy <= curHeavy) {
-                return false;
+                return WORK_CATEGORY_FULL;
             }
             curHeavy++;
         }
         volunteers.add(v);
-        return true;
+        return SUCCESS;
     }
 
     /**

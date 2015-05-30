@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
+
 /**
  * Test class for a Park Manager 
  * @author Maurice Shaw
@@ -65,10 +66,12 @@ public class ParkManagerTest {
         
         for (int x = 0; x < arr.length; x++) {
             myManager1.addPark(arr[x]);
-            if (x < 4) // accepts only strings that are at east one character long
-               assertTrue(myManager1.isMyPark(arr[x]));               
-            else //add park to list as needed
+            if (x < 4)
+                assertTrue(myManager1.isMyPark(arr[x]));  
+            else
                 assertFalse(myManager1.isMyPark(arr[x]));
+                  
+                
             
         }  
         
