@@ -10,7 +10,7 @@ package exception;
  * @version May 28, 2015
  * @author Wing-Sea Poon
  */
-public class MaxJobsExceededException extends Exception {
+public class MaxJobsExceededException extends BRException {
 	private static final long serialVersionUID = -8453505605943487235L;
 
     /**
