@@ -3,19 +3,16 @@
  */
 package tests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
 
 import model.Calendar;
 import model.Job;
 import model.SerializableIO;
+import exception.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,27 +24,17 @@ import org.junit.Test;
  * @author Wing-Sea Poon
  * @version May 3, 2015
  */
-/*
- * final String title, final String parkName, final String location, final
- * LocalDate start, final LocalDate end, final int light, final int med, final
- * int heavy, final String description
- */
 public class CalendarTest {
-    private static final String TITLE = "Title";
-    private static final String PARK = "Park";
-    private static final String LOCATION = "Location";
+	private static final int MAX_JOBS = 30;
+    private static final int MAX_DAYS = 90;
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TOMORROW = TODAY.plusDays(1);
-    private static final LocalDate ONE_MONTH_FROM_NOW = TODAY.plusDays(30);
-    private static final int LIGHT = 5;
-    private static final int MED = 5;
-    private static final int HEAVY = 5;
-    private static final String DESCRIPTION = "Description";
+    private static final LocalDate YESTERDAY = TODAY.minusDays(1);
+    private static final LocalDate MAX_DAYS_FROM_NOW = TODAY.plusDays(MAX_DAYS);
+    
     private Calendar cal;
-    private Job oneDayJobToday;
-    private Job twoDayJobToday;
-    private Job over3MonthsAway;
-    private Job oneMonthAwayJob;
+    private Job oneDayJobTomorrow;
+    private Job twoDayJobTomorrow;
 
     /**
      * Creates a test object.
@@ -58,86 +45,246 @@ public class CalendarTest {
     public void setUp() throws Exception {
         cal = Calendar.getInstance();
         cal.getJobs().clear();
-        oneDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TODAY, LIGHT, MED, HEAVY,
-                DESCRIPTION);
-        twoDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TOMORROW, LIGHT, MED, HEAVY,
-                DESCRIPTION);
-        over3MonthsAway = new Job(TITLE, PARK, LOCATION, TODAY.plusDays(91),
-                TODAY.plusDays(92), LIGHT, MED, HEAVY, DESCRIPTION);
-        oneMonthAwayJob = new Job(TITLE, PARK, LOCATION, ONE_MONTH_FROM_NOW,
-                ONE_MONTH_FROM_NOW, LIGHT, MED, HEAVY, DESCRIPTION);
+        
+        oneDayJobTomorrow = new Job(TOMORROW, TOMORROW);
+        twoDayJobTomorrow = new Job(TOMORROW, TOMORROW.plusDays(1));
+    }
+
+    /**
+     * Test method for {@link model.Calendar#isFull()}.
+     */
+    @Test
+    public void testIsFullNoJobs() {
+        assertFalse(cal.isFull());
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull()}.
+     * @throws BRException
+     * @throws IOException 
+     */
+    @Test
+    public void testIsFullOneJob() throws IOException, BRException {
+    	cal.addJob(oneDayJobTomorrow);
+        assertFalse(cal.isFull());
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull()}.
+     * @throws BRException
+     * @throws IOException 
+     */
+    @Test
+    public void testIsFullMaxMinusOneJobs() throws IOException, BRException {
+    	LocalDate start = LocalDate.from(TOMORROW);
+    	for (int i = 0; i < (MAX_JOBS - 1) * 2; i += 2) {
+    		LocalDate toAdd = start.plusDays(i);
+    		Job job = new Job(toAdd, toAdd);
+    		cal.addJob(job);
+    	}
+        assertFalse(cal.isFull());
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull()}.
+     * @throws BRException
+     * @throws IOException 
+     */
+    @Test
+    public void testIsFullMaxMinusOneJobsTwoDayJobs() throws IOException, BRException {
+    	LocalDate start = LocalDate.from(TOMORROW);
+    	for (int i = 0; i < (MAX_JOBS - 1) * 2; i += 2) {
+    		LocalDate toAdd = start.plusDays(i);
+    		Job job = new Job(toAdd, toAdd.plusDays(1));
+    		cal.addJob(job);
+    	}
+        assertFalse(cal.isFull());
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull()}.
+     * @throws BRException 
+     * @throws IOException 
+     */
+    @Test
+    public void testIsFullMaxJobs() throws IOException, BRException {
+    	LocalDate start = LocalDate.from(TOMORROW);
+    	for (int i = 0; i < MAX_JOBS * 2; i += 2) {
+    		LocalDate toAdd = start.plusDays(i);
+    		Job job = new Job(toAdd, toAdd);
+    		cal.addJob(job);
+    	}
+        assertTrue(cal.isFull());
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull()}.
+     * @throws BRException 
+     * @throws IOException 
+     */
+    @Test(expected = MaxJobsExceededException.class)
+    public void testIsFullMaxPlusOneJobs() throws IOException, BRException {
+    	LocalDate start = LocalDate.from(TOMORROW);
+    	for (int i = 0; i < (MAX_JOBS + 1) * 2; i += 2) {
+    		LocalDate toAdd = start.plusDays(i);
+    		Job job = new Job(toAdd, toAdd);
+    		cal.addJob(job);
+    	}
+        assertTrue(cal.isFull());
     }
 
     /**
      * Test method for {@link model.Calendar#isValidLength(model.Job)}.
      */
     @Test
-    public void testIsValidLength() {
-        assertTrue(cal.isValidLength(oneDayJobToday));
-        assertTrue(cal.isValidLength(twoDayJobToday));
-        final Job job3 = new Job(TITLE, PARK, LOCATION, TODAY, TODAY.plusDays(4), LIGHT, MED,
-                HEAVY, DESCRIPTION);
-        assertFalse(cal.isValidLength(job3));
+    public void testIsValidLengthOneDayLong() {
+        assertTrue(cal.isValidLength(oneDayJobTomorrow));
     }
-
+    
     /**
-     * Test method for {@link model.Calendar#isValidInterval(model.Job)}.
+     * Test method for {@link model.Calendar#isValidLength(model.Job)}.
      */
     @Test
-    public void testIsValidInterval() {
-        final Job job1 = new Job(TITLE, PARK, LOCATION, TODAY, TODAY.minusDays(10), LIGHT,
-                MED, HEAVY, DESCRIPTION);
-        assertFalse(cal.isValidInterval(job1));
-        assertFalse(cal.isValidInterval(oneDayJobToday));
-        assertFalse(cal.isValidInterval(over3MonthsAway));
-        assertTrue(cal.isValidInterval(oneMonthAwayJob));
+    public void testIsValidLengthTwoDaysLong() {
+        assertTrue(cal.isValidLength(twoDayJobTomorrow));
     }
-
+    
     /**
-     * Test method for {@link model.Calendar#isFull(java.time.LocalDate)}.
-     *
-     * @throws IOException if Job info file not found.
+     * Test method for {@link model.Calendar#isValidLength(model.Job)}.
      */
     @Test
-    public void testIsFullDate() throws IOException {
-        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW));
-        cal.addJob(oneMonthAwayJob);
-        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW));
-        for (int i = 0; i < 4; i++) {
-            cal.addJob(oneMonthAwayJob);
-        }
-        assertTrue(cal.isFull(ONE_MONTH_FROM_NOW));
+    public void testIsValidLengthNegativeDaysLong() {
+    	Job negLengthJob = new Job(TOMORROW, TOMORROW.minusDays(1));
+        assertFalse(cal.isValidLength(negLengthJob));
     }
-
+    
     /**
-     * Test method for {@link model.Calendar#isFull()}.
-     *
-     * @throws IOException if Job info file not found.
+     * Test method for {@link model.Calendar#isValidLength(model.Job)}.
      */
     @Test
-    public void testIsFull() throws IOException {
-        assertFalse(cal.isFull());
-        for (LocalDate ctr = LocalDate.now(); ctr.isBefore(ONE_MONTH_FROM_NOW)
-                || ctr.isEqual(ONE_MONTH_FROM_NOW); ctr = ctr.plusDays(1)) {
-            cal.addJob(new Job(TITLE, PARK, LOCATION, ctr, ctr, LIGHT, MED, HEAVY, DESCRIPTION));
-        }
-        assertTrue(cal.isFull());
+    public void testIsValidLengthThreeDaysLong() {
+    	Job threeDayJob = new Job(TOMORROW, TOMORROW.plusDays(2));
+        assertFalse(cal.isValidLength(threeDayJob));
     }
-
-    /**
-     * Test method for {@link model.Calendar#addJob(model.Job)}.
-     *
-     * @throws IOException if Job info file not found.
-     */
-    @Test
-    public void testAddJob() throws IOException {
-        cal.addJob(oneMonthAwayJob);
-        final Map<LocalDate, ArrayList<Job>> map = new TreeMap<LocalDate, ArrayList<Job>>();
-        map.put(ONE_MONTH_FROM_NOW, new ArrayList<Job>());
-        map.get(ONE_MONTH_FROM_NOW).add(oneMonthAwayJob);
-
-        assertEquals(map.toString(), cal.toString());
-    }
+    
+	 /**
+	  * Test method for {@link model.Calendar#addJob(model.Job)}.
+	 * @throws BRException 
+	 * @throws IOException 
+	  */
+	 @Test(expected = JobTooLongException.class)
+	 public void testAddJobJobTooLongException1() throws IOException, BRException {
+		 Job threeDayJob = new Job(TOMORROW, TOMORROW.plusDays(2));
+		 cal.addJob(threeDayJob);
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#addJob(model.Job)}.
+	 * @throws BRException 
+	 * @throws IOException 
+	  */
+	 @Test(expected = JobTooLongException.class)
+	 public void testAddJobJobTooLongException2() throws IOException, BRException {
+		 Job negLengthJob = new Job(TOMORROW, TOMORROW.minusDays(1));
+		 cal.addJob(negLengthJob);
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#isNotPast(model.Job)}.
+	  */
+	 @Test
+	 public void testIsNotPastYesterday() {
+		 Job yesterday = new Job(YESTERDAY, YESTERDAY);
+		 assertFalse(cal.isNotPast(yesterday));
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#addJob(model.Job)}.
+	  * @throws BRException 
+	  * @throws IOException 
+	  */
+	  @Test(expected = InvalidTimeIntervalException.class)
+	  public void testAddJobInvalidTimeIntervalException1() throws IOException, BRException {
+		  Job yesterday = new Job(YESTERDAY, YESTERDAY);
+		  cal.addJob(yesterday);
+	  }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#isNotPast(model.Job)}.
+	  */
+	 @Test
+	 public void testIsNotPastToday() {
+		 Job today = new Job(TODAY, TODAY);
+		 assertFalse(cal.isNotPast(today));
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#addJob(model.Job)}.
+	  * @throws BRException 
+	  * @throws IOException 
+	  */
+	  @Test(expected = InvalidTimeIntervalException.class)
+	  public void testAddJobInvalidTimeIntervalException2() throws IOException, BRException {
+		  Job today = new Job(TODAY, TODAY);
+		  cal.addJob(today);
+	  }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#isNotPast(model.Job)}.
+	  */
+	 @Test
+	 public void testIsNotPastTomorrow() {
+		 assertTrue(cal.isNotPast(oneDayJobTomorrow));
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#isWithinMaxDays(model.Job)}.
+	  */
+	 @Test
+	 public void testIsWithinMaxDaysTomorrow() {
+		 assertTrue(cal.isWithinMaxDays(oneDayJobTomorrow));
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#isWithinMaxDays(model.Job)}.
+	  */
+	 @Test
+	 public void testIsWithinMaxDaysMaxMinusOne() {
+		 LocalDate dayBeforeMax = MAX_DAYS_FROM_NOW.minusDays(1);
+		 Job job = new Job(dayBeforeMax, dayBeforeMax);
+		 assertTrue(cal.isWithinMaxDays(job));
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#isWithinMaxDays(model.Job)}.
+	  */
+	 @Test
+	 public void testIsWithinMaxDaysMax() {
+		 Job job = new Job(MAX_DAYS_FROM_NOW, MAX_DAYS_FROM_NOW);
+		 assertTrue(cal.isWithinMaxDays(job));
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#isWithinMaxDays(model.Job)}.
+	  */
+	 @Test
+	 public void testIsWithinMaxDaysMaxPlusOne() {
+		 LocalDate dayAfterMax = MAX_DAYS_FROM_NOW.plusDays(1);
+		 Job job = new Job(dayAfterMax, dayAfterMax);
+		 assertFalse(cal.isWithinMaxDays(job));
+	 }
+	 
+	 /**
+	  * Test method for {@link model.Calendar#addJob(model.Job)}.
+	  * @throws BRException 
+	  * @throws IOException 
+	  */
+	  @Test(expected = InvalidTimeIntervalException.class)
+	  public void testAddJobInvalidTimeIntervalException3() throws IOException, BRException {
+		  LocalDate dayAfterMax = MAX_DAYS_FROM_NOW.plusDays(1);
+		  Job job = new Job(dayAfterMax, dayAfterMax);
+		  cal.addJob(job);
+	  }
 
     /**
      * Restores the Calendar to read from the persistent info files.
