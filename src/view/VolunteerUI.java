@@ -11,6 +11,7 @@ import java.util.Scanner;
 import model.Calendar;
 import model.Job;
 import model.Volunteer;
+import exception.BusinessRuleException;
 
 /**
  * This class contains the UI for a Volunteer using the system.
@@ -169,39 +170,17 @@ public class VolunteerUI implements UserUI {
         }
 
         // Sign up for job
-        boolean isFull = false;
         try {
-            isFull = job.addVolunteer(myVolunteer, grade);
+            job.addVolunteer(myVolunteer, grade);
+            System.out.println("Signup Success!");
         } catch (final IOException theE) {
             System.err.println("Job File is missing, can't add volunteer to job.");
             return;
         } catch (final ClassNotFoundException theE) {
             System.err.println("Job File is corrupted, can't add volunteer to job.");
             return;
-        }
-
-        // Report whether the sign up was successful or not
-        if (isFull) {
-            System.out.println("Signup Successful!");
-        } else {
-            String gradeChoice;
-            switch (gradeInt) {
-                case 1:
-                    gradeChoice = "Light";
-                    break;
-                case 2:
-                    gradeChoice = "Medium";
-                    break;
-                case 3:
-                    gradeChoice = "Heavy";
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-            System.out
-                    .println("Either the "
-                            + gradeChoice
-                            + " category is full, or you are already signed up for this job! Signup unsuccessful.");
+        } catch (final BusinessRuleException theE) {
+            System.out.println(theE.getMessage());
         }
     }
 

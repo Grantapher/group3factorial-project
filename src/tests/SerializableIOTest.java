@@ -23,6 +23,8 @@ import model.Volunteer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import exception.BusinessRuleException;
+
 /**
  * @author Grant Toepfer
  * @version May 24, 2015
@@ -41,13 +43,14 @@ public class SerializableIOTest {
     private static final String[] parks = { "Kopachuck State Park", "Blake Island",
         "Camp Seymour", "Titlow Beach" };
 
-    /**
-     * @throws java.lang.Exception
-     */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        job.addVolunteer(volunteer, 'l');
-        job.addVolunteer(otherV, 'h');
+        try {
+            job.addVolunteer(volunteer, 'l');
+            job.addVolunteer(otherV, 'h');
+        } catch (final BusinessRuleException theE) {
+            // expected
+        }
 
         for (final String park : parks) {
             pm.addPark(park);
@@ -67,24 +70,24 @@ public class SerializableIOTest {
     @Test
     public final void testReadAndWriteJobs() throws ClassNotFoundException, IOException {
         final Map<LocalDate, List<Job>> map = SerializableIO.readJobs();
-        List<Job> list = map.get(job.getStartDate());
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-        final boolean contained = list.contains(job);
-        if (contained) {
-            list.remove(job);
-        } else {
-            list.add(job);
-        }
 
+        // clear job from last test
+        map.put(job.getStartDate(), null);
+        SerializableIO.writeJobs(map);
+
+        // put job in again
+        final List<Job> list = new ArrayList<>();
+        list.add(job);
         map.put(job.getStartDate(), list);
         SerializableIO.writeJobs(map);
 
+        // get map again
         final Map<LocalDate, List<Job>> newMap = SerializableIO.readJobs();
 
-        assertTrue("Job not present after read, adding the job, writing, and reading again.",
-                contained ? !containsJob(newMap, job) : containsJob(newMap, job));
+        // see if it worked
+        assertTrue(
+                "Job not present after read, deleting the job, writing, adding the job, writing, and reading again.",
+                containsJob(newMap, job));
 
     }
 

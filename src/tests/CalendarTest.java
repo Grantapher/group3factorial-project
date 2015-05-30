@@ -6,6 +6,7 @@ package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -20,6 +21,9 @@ import model.SerializableIO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import exception.BusinessRuleException;
+import exception.InvalidTimeIntervalException;
 
 /**
  * Test cases for {@link model.Calendar}.
@@ -46,7 +50,7 @@ public class CalendarTest {
     private Calendar cal;
     private Job oneDayJobToday;
     private Job twoDayJobToday;
-    private Job over3MonthsAway;
+    // private Job over3MonthsAway;
     private Job oneMonthAwayJob;
 
     /**
@@ -62,8 +66,8 @@ public class CalendarTest {
                 DESCRIPTION);
         twoDayJobToday = new Job(TITLE, PARK, LOCATION, TODAY, TOMORROW, LIGHT, MED, HEAVY,
                 DESCRIPTION);
-        over3MonthsAway = new Job(TITLE, PARK, LOCATION, TODAY.plusDays(91),
-                TODAY.plusDays(92), LIGHT, MED, HEAVY, DESCRIPTION);
+        // over3MonthsAway = new Job(TITLE, PARK, LOCATION, TODAY.plusDays(91),
+        // TODAY.plusDays(92), LIGHT, MED, HEAVY, DESCRIPTION);
         oneMonthAwayJob = new Job(TITLE, PARK, LOCATION, ONE_MONTH_FROM_NOW,
                 ONE_MONTH_FROM_NOW, LIGHT, MED, HEAVY, DESCRIPTION);
     }
@@ -80,46 +84,58 @@ public class CalendarTest {
         assertFalse(cal.isValidLength(job3));
     }
 
-    /**
-     * Test method for {@link model.Calendar#isValidInterval(model.Job)}.
-     */
-    @Test
-    public void testIsValidInterval() {
-        final Job job1 = new Job(TITLE, PARK, LOCATION, TODAY, TODAY.minusDays(10), LIGHT,
-                MED, HEAVY, DESCRIPTION);
-        assertFalse(cal.isValidInterval(job1));
-        assertFalse(cal.isValidInterval(oneDayJobToday));
-        assertFalse(cal.isValidInterval(over3MonthsAway));
-        assertTrue(cal.isValidInterval(oneMonthAwayJob));
-    }
+    // XXX Method is gone in Calendar. over3MonthAway commented out.
+    // /**
+    // * Test method for {@link model.Calendar#isValidInterval(model.Job)}.
+    // */
+    // @Test
+    // public void testIsValidInterval() {
+    // final Job job1 = new Job(TITLE, PARK, LOCATION, TODAY,
+    // TODAY.minusDays(10), LIGHT,
+    // MED, HEAVY, DESCRIPTION);
+    // assertFalse(cal.isValidInterval(job1));
+    // assertFalse(cal.isValidInterval(oneDayJobToday));
+    // assertFalse(cal.isValidInterval(over3MonthsAway));
+    // assertTrue(cal.isValidInterval(oneMonthAwayJob));
+    // }
 
     /**
      * Test method for {@link model.Calendar#isFull(java.time.LocalDate)}.
      *
      * @throws IOException if Job info file not found.
+     * @throws BusinessRuleException if a business rulea attempts to be violated
      */
     @Test
-    public void testIsFullDate() throws IOException {
-        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW));
+    public void testIsFullDate() throws IOException, BusinessRuleException {
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
         cal.addJob(oneMonthAwayJob);
-        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW));
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
         for (int i = 0; i < 4; i++) {
             cal.addJob(oneMonthAwayJob);
         }
-        assertTrue(cal.isFull(ONE_MONTH_FROM_NOW));
+        assertTrue(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
     }
 
     /**
      * Test method for {@link model.Calendar#isFull()}.
      *
      * @throws IOException if Job info file not found.
+     * @throws BusinessRuleException if a business rule is attempted to be
+     *             violated
      */
     @Test
     public void testIsFull() throws IOException {
         assertFalse(cal.isFull());
         for (LocalDate ctr = LocalDate.now(); ctr.isBefore(ONE_MONTH_FROM_NOW)
                 || ctr.isEqual(ONE_MONTH_FROM_NOW); ctr = ctr.plusDays(1)) {
-            cal.addJob(new Job(TITLE, PARK, LOCATION, ctr, ctr, LIGHT, MED, HEAVY, DESCRIPTION));
+            try {
+                cal.addJob(new Job(TITLE, PARK, LOCATION, ctr, ctr, LIGHT, MED, HEAVY,
+                        DESCRIPTION));
+            } catch (final InvalidTimeIntervalException theE) {
+                // expected
+            } catch (final BusinessRuleException theE) {
+                fail(theE.toString());
+            }
         }
         assertTrue(cal.isFull());
     }
@@ -128,9 +144,11 @@ public class CalendarTest {
      * Test method for {@link model.Calendar#addJob(model.Job)}.
      *
      * @throws IOException if Job info file not found.
+     * @throws BusinessRuleException if a business rule is attempted to be
+     *             violated
      */
     @Test
-    public void testAddJob() throws IOException {
+    public void testAddJob() throws IOException, BusinessRuleException {
         cal.addJob(oneMonthAwayJob);
         final Map<LocalDate, ArrayList<Job>> map = new TreeMap<LocalDate, ArrayList<Job>>();
         map.put(ONE_MONTH_FROM_NOW, new ArrayList<Job>());
@@ -141,7 +159,7 @@ public class CalendarTest {
 
     /**
      * Restores the Calendar to read from the persistent info files.
-     * 
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */

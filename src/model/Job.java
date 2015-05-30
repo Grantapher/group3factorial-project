@@ -9,7 +9,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Job implements Comparable<Job>, Cloneable, Serializable {
+import exception.BusinessRuleException;
+import exception.FullCategoryException;
+import exception.OverbookedVolunteerException;
+import exception.PastJobException;
+
+public class Job implements Comparable<Job>, Serializable {
     /**
      * @version 1.0
      */
@@ -189,15 +194,14 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
     /**
      * Given a volunteer, returns true if adding that volunteer to this job
      * would make that volunteer be signed up for two jobs on the same day.
-     * 
+     *
      * @param v
      * @return
      */
     public boolean dayConflict(final Volunteer v) {
         try {
             for (final Job j : v.getJobs()) {
-                if (j.getStartDate().equals(start) || j.getStartDate().equals(end)
-                        || j.getEndDate().equals(start) || j.getEndDate().equals(end)) {
+                if (!j.getStartDate().isAfter(end) && !j.getEndDate().isBefore(start)) {
                     return true;
                 }
             }
@@ -219,33 +223,34 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
      * @return
      * @throws IOException if the file is not found
      * @throws ClassNotFoundException If the ser file doesn't contain the jobs
+     * @throws BusinessRuleException If a business rule is attempting to be
+     *             violated
      */
-    public int addVolunteer(final Volunteer v, final char grade) throws IOException,
-    ClassNotFoundException {
+    public void addVolunteer(final Volunteer v, final char grade) throws IOException,
+            ClassNotFoundException, BusinessRuleException {
         if (start.isBefore(LocalDate.now())) {
-            return JOB_IN_PAST;
+            throw new PastJobException(start);
         }
         if (dayConflict(v)) {
-            return TWO_IN_ONE_DAY;
+            throw new OverbookedVolunteerException(this, v);
         }
         if (grade == 'l') {
             if (maxLight <= curLight) {
-                return WORK_CATEGORY_FULL;
+                throw new FullCategoryException("light");
             }
             curLight++;
         } else if (grade == 'm') {
             if (maxMed <= curMed) {
-                return WORK_CATEGORY_FULL;
+                throw new FullCategoryException("medium");
             }
             curMed++;
         } else if (grade == 'h') {
             if (maxHeavy <= curHeavy) {
-                return WORK_CATEGORY_FULL;
+                throw new FullCategoryException("heavy");
             }
             curHeavy++;
         }
         volunteers.add(v);
-        return SUCCESS;
     }
 
     /**
@@ -294,15 +299,6 @@ public class Job implements Comparable<Job>, Cloneable, Serializable {
             sb.append(v);
         }
         return sb.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        // TODO Auto-generated method stub
-        return super.clone();
     }
 
     /**

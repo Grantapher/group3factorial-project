@@ -4,27 +4,20 @@
 package exception;
 
 /**
- * Thrown when the total number of jobs for the week exceeds the maximum number 
+ * Thrown when the total number of jobs for the week exceeds the maximum number
  * of jobs allowed per week.
  *
  * @version May 28, 2015
  * @author Wing-Sea Poon
  */
-public class WeekFullException extends Exception {
-	private static final long serialVersionUID = -4858693123180616397L;
+public class WeekFullException extends BusinessRuleException {
+    private static final long serialVersionUID = -4858693123180616397L;
 
-	/**
-     *  Constructs a WeekFullException with null as its error detail message.
+    /**
+     * Constructs a WeekFullException with an acceptable error detail message.
      */
-	public WeekFullException(){
-        super();
+    public WeekFullException() {
+        super("Total number of jobs for the week is at maximum capacity!");
     }
 
-	/**
-	 * Constructs an WeekFullException with the specified detail message.
-	 * @param message The detail message
-	 */
-    public WeekFullException(String message){
-        super(message);
-    }
 }

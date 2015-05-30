@@ -8,11 +8,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import exception.InvalidTimeIntervalException;
-import exception.JobTooLongException;
-import exception.MaxJobsExceededException;
+import exception.BusinessRuleException;
 import exception.NotMyParkException;
-import exception.WeekFullException;
 
 /**
  * This class represents a Park Manager .
@@ -79,19 +76,14 @@ public final class ParkManager extends AbstractUser {
      * @param theHeavy The level of work.
      * @param theDescription Description of the job.
      * @throws IOException if the Job file doesn't exist.
+     * @throws BusinessRuleException if a business rule is attempting to be
+     *             violated
      * @return If Job has been successfully added.
-     * @throws InvalidTimeIntervalException
-     * @throws JobTooLongException
-     * @throws WeekFullException
-     * @throws MaxJobsExceededException
-     * @throws NotMyParkException
      */
     public void submit(final Calendar theCalendar, final String theTitle,
             final String theParkName, final String theLocation, final LocalDate theStart,
             final LocalDate theEnd, final int theLight, final int theMed, final int theHeavy,
-            final String theDescription) throws IOException, MaxJobsExceededException,
-            WeekFullException, JobTooLongException, InvalidTimeIntervalException,
-            NotMyParkException {
+            final String theDescription) throws IOException, BusinessRuleException {
 
         if (isMyPark(theParkName)) {
             final Job gig = new Job(theTitle, theParkName, theLocation, theStart, theEnd,

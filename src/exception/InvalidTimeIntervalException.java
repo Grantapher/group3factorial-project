@@ -9,21 +9,14 @@ package exception;
  * @version May 28, 2015
  * @author Wing-Sea Poon
  */
-public class InvalidTimeIntervalException extends Exception {
-	private static final long serialVersionUID = 3702469187863291822L;
+public class InvalidTimeIntervalException extends BusinessRuleException {
+    private static final long serialVersionUID = 3702469187863291822L;
 
-	/**
-     *  Constructs a InvalidTimeIntervalException with null as its error detail message.
+    /**
+     * Constructs an InvalidTimeIntervalException with an appropriate message.
      */
-	public InvalidTimeIntervalException(){
-        super();
+    public InvalidTimeIntervalException() {
+        super("Trying to schedule a job within an invalid time interval!");
     }
 
-	/**
-	 * Constructs an InvalidTimeIntervalException with the specified detail message.
-	 * @param message The detail message
-	 */
-    public InvalidTimeIntervalException(String message){
-        super(message);
-    }
 }

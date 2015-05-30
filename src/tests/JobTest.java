@@ -3,11 +3,10 @@
  */
 package tests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +17,11 @@ import model.Volunteer;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import exception.BusinessRuleException;
+import exception.FullCategoryException;
+import exception.OverbookedVolunteerException;
+import exception.PastJobException;
 
 public class JobTest {
     private static Volunteer v;
@@ -30,9 +34,9 @@ public class JobTest {
         v = new Volunteer("Doe", "John", "john.doe@fake.com");
         final LocalDate futureDate = LocalDate.parse("2015-06-25");
         final LocalDate pastDate = LocalDate.parse("2014-12-25");
-        dumbJob = new Job(null, "Rainier", null, futureDate, futureDate, 1, 0, 2, null);
-        pastJob = new Job(null, "Rainier", null, pastDate, pastDate, 1, 0, 2, null);
-        dumbJob2 = new Job(null, "Over the Rainbow", null, futureDate, futureDate, 1, 0, 2,
+        dumbJob = new Job(null, "Rainier", null, futureDate, futureDate, 0, 1, 2, null);
+        pastJob = new Job(null, "Rainier", null, pastDate, pastDate, 0, 0, 2, null);
+        dumbJob2 = new Job(null, "Over the Rainbow", null, futureDate, futureDate, 1, 1, 2,
                 null);
     }
 
@@ -43,13 +47,11 @@ public class JobTest {
 
     @Test
     //
-    public void testContainsVolunteerOnPresent() throws ClassNotFoundException {
+    public void testContainsVolunteerOnPresent() throws ClassNotFoundException, IOException {
         try {
-            assertEquals(Job.SUCCESS, dumbJob.addVolunteer(v, 'l'));
-        } catch (final FileNotFoundException e) {
-            System.out.println("File not found");
-        } catch (final IOException e) {
-            System.out.println("IO exception");
+            dumbJob.addVolunteer(v, 'h');
+        } catch (final BusinessRuleException theE) {
+            fail(theE.toString());
         }
         assertTrue("volunteer contained", dumbJob.containsVolunteer(v));
     }
@@ -71,36 +73,61 @@ public class JobTest {
     @Test
     //
     public void testAddVolunteerOnNoRoom() throws IOException, ClassNotFoundException {
-        final int status = dumbJob.addVolunteer(v, 'm');
-        assertEquals("" + status, Job.WORK_CATEGORY_FULL, status);
+        try {
+            dumbJob.addVolunteer(v, 'l');
+            fail("Exception Expected!");
+        } catch (final FullCategoryException theE) {
+            // good, pass
+        } catch (final BusinessRuleException theE) {
+            fail(theE.toString());
+        }
     }
 
     @Test
     //
     public void testAddVolunteerOnRoom() throws IOException, ClassNotFoundException {
-        final int status = dumbJob.addVolunteer(v, 'l');
-        assertEquals("" + status, Job.SUCCESS, status);
+        try {
+            dumbJob.addVolunteer(v, 'm');
+        } catch (final BusinessRuleException theE) {
+            fail(theE.toString());
+        }
     }
 
     @Test
     //
     public void testAddVolunteerOnFuture() throws IOException, ClassNotFoundException {
-        final int status = dumbJob.addVolunteer(v, 'l');
-        assertEquals("" + status, Job.SUCCESS, status);
+        try {
+            dumbJob.addVolunteer(v, 'm');
+        } catch (final BusinessRuleException theE) {
+            fail(theE.toString());
+        }
     }
 
     @Test
     public void testAddVolunteerOnPast() throws IOException, ClassNotFoundException {
-        final int status = pastJob.addVolunteer(v, 'l');
-        assertEquals("" + status, Job.JOB_IN_PAST, status);
+        try {
+            pastJob.addVolunteer(v, 'm');
+            fail("Exception expected!");
+        } catch (final PastJobException theE) {
+            // good, pass
+        } catch (final BusinessRuleException theE) {
+            fail(theE.toString());
+        }
     }
 
     @Test
     //
     public void testAddVolunteerOnTwoOnOneDay() throws IOException, ClassNotFoundException {
-        dumbJob.addVolunteer(v, 'h');
-        final int status = dumbJob2.addVolunteer(v, 'l');
-        assertEquals("" + status, Job.TWO_IN_ONE_DAY, status);
+        try {
+            dumbJob.addVolunteer(v, 'h');
+            dumbJob2.addVolunteer(v, 'm');
+            // TODO without interacting with Calendar, this will always fail.
+            fail("Exception expected!");
+        } catch (final OverbookedVolunteerException theE) {
+            // good, pass
+        } catch (final BusinessRuleException theE) {
+            fail(theE.toString());
+        }
     }
 
 }

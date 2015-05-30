@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import exception.BusinessRuleException;
 import exception.InvalidTimeIntervalException;
 import exception.JobTooLongException;
 import exception.MaxJobsExceededException;
@@ -88,31 +89,25 @@ public class Calendar {
      *
      * @param job the Job to add.
      * @throws IOException if the Job file doesn't exist
-     * @throws MaxJobsExceededException if the Calendar already contains MAX_TOTAL_JOBS
-     * @throws WeekFullException if the Job is being added to a week with MAX_JOBS_PER_WEEK
-     * @throws JobTooLongException if the specified Job's duration exceeds MAX_JOB_LENGTH
-     * @throws InvalidTimeIntervalException if the Job is added in the past or
-     * after MAX_DAYS
+     * @throws BusinessRuleException if a business rule is attempting to be
+     *             violated
      */
-    public void addJob(final Job job) 
-    throws IOException, MaxJobsExceededException, WeekFullException, 
-    JobTooLongException, InvalidTimeIntervalException {
-        if(isFull()) {
-        	throw new MaxJobsExceededException("Error: Max Jobs exceeded");
+    public void addJob(final Job job) throws IOException, BusinessRuleException {
+        if (isFull()) {
+            throw new MaxJobsExceededException();
         }
-        if(isFull(job.getStartDate(), job.getEndDate())) {
-        	throw new WeekFullException("Error: Week is full");
+        if (isFull(job.getStartDate(), job.getEndDate())) {
+            throw new WeekFullException();
         }
-        if(!isValidLength(job)) {
-        	throw new JobTooLongException("Error: Job duration too long");
+        if (!isValidLength(job)) {
+            throw new JobTooLongException();
         }
-        if(!isNotPast(job) || !isWithinMaxDays(job)) {
-        	throw new InvalidTimeIntervalException("Error: Attempt to add Job "
-        			+ "within invalid time interval");
+        if (!isNotPast(job) || !isWithinMaxDays(job)) {
+            throw new InvalidTimeIntervalException();
         }
         addJobToMap(job);
     }
-    
+
     /**
      * Checks whether the whole Calendar is full of Jobs.
      *
@@ -130,7 +125,7 @@ public class Calendar {
 
         return totalJobs >= MAX_TOTAL_JOBS;
     }
-    
+
     /**
      * Checks whether a week is full of Jobs.
      *
@@ -145,21 +140,22 @@ public class Calendar {
 
         return jobsThisWeek >= MAX_JOBS_PER_WEEK;
     }
-    
+
     /**
-     * Count all jobs that have startDate within this week, 
-     * based on the start and end date parameters
+     * Count all jobs that have startDate within this week, based on the start
+     * and end date parameters
+     *
      * @param start The startDate of the Job we want to add
      * @param end The endDate of the Job we want to add
-     * @return The number of Jobs that are within 3 before "start," and
-     * 			3 days after "end"
+     * @return The number of Jobs that are within 3 before "start," and 3 days
+     *         after "end"
      */
     public int countJobStartDatesInWeek(final LocalDate start, final LocalDate end) {
-    	int jobsThisWeek = 0;
+        int jobsThisWeek = 0;
         final LocalDate weekStart = start.minusDays(HALF_WEEK);
         final LocalDate weekEnd = end.plusDays(HALF_WEEK);
         List<Job> listOfJobsThisDay = null;
-        
+
         for (LocalDate day = LocalDate.from(weekStart); day.isBefore(weekEnd)
                 || day.equals(weekEnd); day = day.plusDays(1)) {
             if (dateToListOfJobs.containsKey(day)) {
@@ -167,22 +163,23 @@ public class Calendar {
                 jobsThisWeek += listOfJobsThisDay.size();
             }
         }
-        
+
         return jobsThisWeek;
     }
-    
+
     /**
      * Count all jobs that have endDate at the start of the week
+     *
      * @param start The startDate of the Job we want to add
      * @return The number of Jobs that have endDate on the start of the week,
-     * 			counting from "start."
+     *         counting from "start."
      */
     public int countJobEndDatesAtBeginningOfWeek(final LocalDate start) {
-    	int jobs = 0;
+        int jobs = 0;
         final LocalDate startDate = start.minusDays(HALF_WEEK);
         final LocalDate dayBeforeStart = startDate.minusDays(1);
         List<Job> listOfJobsThisDay = null;
-        
+
         if (dateToListOfJobs.containsKey(dayBeforeStart)) {
             listOfJobsThisDay = dateToListOfJobs.get(dayBeforeStart);
             for (final Job job : listOfJobsThisDay) {
@@ -191,7 +188,7 @@ public class Calendar {
                 }
             }
         }
-        
+
         return jobs;
     }
 
@@ -218,16 +215,16 @@ public class Calendar {
         final LocalDate now = LocalDate.now();
         return startDate.isAfter(now);
     }
-    
+
     /**
      * Checks whether the Job has been scheduled on a valid date.
      *
      * @param job The Job whose date we want to check
-     * @return true if this Job is within the max number of 
-     * 			days we want to keep track of.
+     * @return true if this Job is within the max number of days we want to keep
+     *         track of.
      */
     public boolean isWithinMaxDays(final Job job) {
-    	final LocalDate startDate = job.getStartDate();
+        final LocalDate startDate = job.getStartDate();
         final LocalDate now = LocalDate.now();
         return now.plusDays(MAX_DAYS).isAfter(startDate);
     }

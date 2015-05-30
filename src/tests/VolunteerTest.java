@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,6 +20,8 @@ import model.Volunteer;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import exception.BusinessRuleException;
 
 /**
  * Test cases for {@link model.Volunteer}.
@@ -71,7 +74,11 @@ public class VolunteerTest {
         final Map<LocalDate, List<Job>> map = Calendar.getInstance().getJobs();
         final List<Job> list = map.get(LocalDate.parse("2015-08-19"));
         final Job job = list.get(0);
-        job.addVolunteer(tester, 'm');
+        try {
+            job.addVolunteer(tester, 'l');
+        } catch (final BusinessRuleException theE) {
+            fail(theE.toString());
+        }
         final List<Job> jobs = tester.getJobs();
         assertTrue("Volunteer wasn't added to the job or get jobs didn't get the job.",
                 jobs.contains(job));

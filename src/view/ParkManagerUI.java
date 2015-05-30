@@ -11,11 +11,7 @@ import model.Calendar;
 import model.Job;
 import model.ParkManager;
 import model.Volunteer;
-import exception.InvalidTimeIntervalException;
-import exception.JobTooLongException;
-import exception.MaxJobsExceededException;
-import exception.NotMyParkException;
-import exception.WeekFullException;
+import exception.BusinessRuleException;
 
 /**
  * Park Manager User Interface.
@@ -199,8 +195,11 @@ public final class ParkManagerUI implements UserUI {
                     jobs.add(j);
                     jobIndex++;
                 }
-            } catch (IOException | ClassNotFoundException e) {
-                System.out.println("The jobs file is missing!");
+            } catch (final IOException theE) {
+                System.err.println("Job File is missing, can't add volunteer to job.");
+                return;
+            } catch (final ClassNotFoundException theE) {
+                System.err.println("Job File is corrupted, can't add volunteer to job.");
                 return;
             }
             if (jobs.size() > 0) { // park has job
@@ -272,7 +271,7 @@ public final class ParkManagerUI implements UserUI {
                     startDate = LocalDate.parse(startDateString);
                 } catch (final DateTimeParseException dt) {
                     System.out
-                    .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
+                            .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
                     goodInput = false;
                 }
             } while (!goodInput);
@@ -286,7 +285,7 @@ public final class ParkManagerUI implements UserUI {
                     endDate = LocalDate.parse(endDateString);
                 } catch (final DateTimeParseException dt) {
                     System.out
-                    .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
+                            .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
                     goodInput = false;
                 }
 
@@ -303,19 +302,12 @@ public final class ParkManagerUI implements UserUI {
                 myUser.submit(Calendar.getInstance(), title, parkName, location, startDate,
                         endDate, light, medium, heavy, description);
 
-            } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Job file not found!");
-
-            } catch (final NotMyParkException e) {
-                System.out.println(e.getPark() + " is not one of the parks you manage");
-            } catch (final MaxJobsExceededException e) {
-                System.out.println(e);
-            } catch (final WeekFullException e) {
-                System.out.println(e);
-            } catch (final JobTooLongException e) {
-                System.out.println(e);
-            } catch (final InvalidTimeIntervalException e) {
-                System.out.println(e);
+            } catch (final IOException theE) {
+                System.err.println("Job File is missing, can't add volunteer to job.");
+            } catch (final ClassNotFoundException theE) {
+                System.err.println("Job File is corrupted, can't add volunteer to job.");
+            } catch (final BusinessRuleException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
