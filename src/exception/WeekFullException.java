@@ -10,7 +10,7 @@ package exception;
  * @version May 28, 2015
  * @author Wing-Sea Poon
  */
-public class WeekFullException extends Exception {
+public class WeekFullException extends BRException {
 	private static final long serialVersionUID = -4858693123180616397L;
 
 	/**
