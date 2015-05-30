@@ -10,10 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import exception.InvalidTimeIntervalException;
-import exception.JobTooLongException;
-import exception.MaxJobsExceededException;
-import exception.WeekFullException;
+import exception.*;
 
 /**
  * Handles the association between jobs, dates, and scheduling.
@@ -84,7 +81,7 @@ public class Calendar {
     }
 
     /**
-     * Adds a Job to the Calendar.
+     * Adds a Job to the Calendar. Jobs must be added at least one day in advance.
      *
      * @param job the Job to add.
      * @throws IOException if the Job file doesn't exist
@@ -94,9 +91,7 @@ public class Calendar {
      * @throws InvalidTimeIntervalException if the Job is added in the past or
      * after MAX_DAYS
      */
-    public void addJob(final Job job) 
-    throws IOException, MaxJobsExceededException, WeekFullException, 
-    JobTooLongException, InvalidTimeIntervalException {
+    public void addJob(final Job job) throws IOException, BRException {
         if(isFull()) {
         	throw new MaxJobsExceededException("Error: Max Jobs exceeded");
         }
@@ -204,7 +199,8 @@ public class Calendar {
     public boolean isValidLength(final Job job) {
         final LocalDate startDate = job.getStartDate();
         final LocalDate endDate = job.getEndDate();
-        return startDate.plusDays(MAX_JOB_LENGTH).isAfter(endDate);
+        return (endDate.isAfter(startDate) || endDate.equals(startDate)) &&
+        		startDate.plusDays(MAX_JOB_LENGTH).isAfter(endDate);
     }
 
     /**
@@ -229,7 +225,8 @@ public class Calendar {
     public boolean isWithinMaxDays(final Job job) {
     	final LocalDate startDate = job.getStartDate();
         final LocalDate now = LocalDate.now();
-        return now.plusDays(MAX_DAYS).isAfter(startDate);
+        return now.plusDays(MAX_DAYS).equals(startDate) ||
+        		now.plusDays(MAX_DAYS).isAfter(startDate);
     }
 
     // private helper method for addJob(Job).
