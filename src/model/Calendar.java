@@ -85,7 +85,8 @@ public class Calendar {
     }
 
     /**
-     * Adds a Job to the Calendar.
+     * Adds a Job to the Calendar. Jobs must be added at least one day in
+     * advance.
      *
      * @param job the Job to add.
      * @throws IOException if the Job file doesn't exist
@@ -201,7 +202,8 @@ public class Calendar {
     public boolean isValidLength(final Job job) {
         final LocalDate startDate = job.getStartDate();
         final LocalDate endDate = job.getEndDate();
-        return startDate.plusDays(MAX_JOB_LENGTH).isAfter(endDate);
+        return (endDate.isAfter(startDate) || endDate.equals(startDate))
+                && startDate.plusDays(MAX_JOB_LENGTH).isAfter(endDate);
     }
 
     /**
@@ -226,7 +228,8 @@ public class Calendar {
     public boolean isWithinMaxDays(final Job job) {
         final LocalDate startDate = job.getStartDate();
         final LocalDate now = LocalDate.now();
-        return now.plusDays(MAX_DAYS).isAfter(startDate);
+        return now.plusDays(MAX_DAYS).equals(startDate)
+                || now.plusDays(MAX_DAYS).isAfter(startDate);
     }
 
     // private helper method for addJob(Job).
