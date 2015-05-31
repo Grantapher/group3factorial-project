@@ -28,6 +28,7 @@ public class CalendarTest {
 	private static final int MAX_JOBS_PER_WEEK = 5;
 	private static final int MAX_JOBS = 30;
     private static final int MAX_DAYS = 90;
+    private static final int HALF_WEEK = 3;
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TOMORROW = TODAY.plusDays(1);
     private static final LocalDate YESTERDAY = TODAY.minusDays(1);
@@ -55,15 +56,6 @@ public class CalendarTest {
         oneDayJobAMonthFromNow = new Job(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW);
         twoDayJobAMonthFromNow = new Job(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW.plusDays(1));
     }
-    
-//    /**
-//     * Test method for {@link model.Calendar#getJobs(List<String>)}.
-//     */
-//    @Test
-//    public void testGetJobs() {
-//        //
-//    }
-
 
     /**
      * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
@@ -152,6 +144,52 @@ public class CalendarTest {
     	}
     	cal.addJob(twoDayJobAMonthFromNow);
         assertTrue(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
+     *
+     * @throws IOException if Job info file not found.
+     * @throws BRException 
+     */
+    @Test
+    public void testIsFullDateMaxMinusOneJobsPlusTwoDayJobAtBeginning() 
+    throws IOException, BRException {
+    	int maxMinusOne = MAX_JOBS_PER_WEEK - 1;
+    	for (int i = 0; i < maxMinusOne; i++) {
+    		Job toAdd = new Job(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW);
+    		cal.addJob(toAdd);
+    	}
+    	
+    	LocalDate startWeek = ONE_MONTH_FROM_NOW.minusDays(HALF_WEEK);
+    	LocalDate dayBeforeStart = startWeek.minusDays(1);
+    	Job toAdd = new Job(dayBeforeStart, dayBeforeStart.plusDays(1));
+    	cal.addJob(toAdd);
+    	
+        assertTrue(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
+     *
+     * @throws IOException if Job info file not found.
+     * @throws BRException 
+     */
+    @Test
+    public void testIsFullDateMaxMinusOneJobsPlusOneDayJobBeforeBeginning() 
+    throws IOException, BRException {
+    	int maxMinusOne = MAX_JOBS_PER_WEEK - 1;
+    	for (int i = 0; i < maxMinusOne; i++) {
+    		Job toAdd = new Job(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW);
+    		cal.addJob(toAdd);
+    	}
+    	
+    	LocalDate startWeek = ONE_MONTH_FROM_NOW.minusDays(HALF_WEEK);
+    	LocalDate dayBeforeStart = startWeek.minusDays(1);
+    	Job toAdd = new Job(dayBeforeStart, dayBeforeStart);
+    	cal.addJob(toAdd);
+    	
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
     }
 
     /**
