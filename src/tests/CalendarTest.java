@@ -25,16 +25,20 @@ import org.junit.Test;
  * @version May 3, 2015
  */
 public class CalendarTest {
+	private static final int MAX_JOBS_PER_WEEK = 5;
 	private static final int MAX_JOBS = 30;
     private static final int MAX_DAYS = 90;
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate TOMORROW = TODAY.plusDays(1);
     private static final LocalDate YESTERDAY = TODAY.minusDays(1);
+    private static final LocalDate ONE_MONTH_FROM_NOW = TODAY.plusDays(30);
     private static final LocalDate MAX_DAYS_FROM_NOW = TODAY.plusDays(MAX_DAYS);
     
     private Calendar cal;
     private Job oneDayJobTomorrow;
     private Job twoDayJobTomorrow;
+    private Job oneDayJobAMonthFromNow;
+    private Job twoDayJobAMonthFromNow;
 
     /**
      * Creates a test object.
@@ -48,6 +52,106 @@ public class CalendarTest {
         
         oneDayJobTomorrow = new Job(TOMORROW, TOMORROW);
         twoDayJobTomorrow = new Job(TOMORROW, TOMORROW.plusDays(1));
+        oneDayJobAMonthFromNow = new Job(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW);
+        twoDayJobAMonthFromNow = new Job(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW.plusDays(1));
+    }
+    
+//    /**
+//     * Test method for {@link model.Calendar#getJobs(List<String>)}.
+//     */
+//    @Test
+//    public void testGetJobs() {
+//        //
+//    }
+
+
+    /**
+     * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
+     */
+    @Test
+    public void testIsFullDateNoJobs() throws IOException {
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
+     *
+     * @throws IOException if Job info file not found.
+     * @throws BRException 
+     */
+    @Test
+    public void testIsFullDateOneJob() throws IOException, BRException {
+    	cal.addJob(oneDayJobAMonthFromNow);
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
+     *
+     * @throws IOException if Job info file not found.
+     * @throws BRException 
+     */
+    @Test
+    public void testIsFullDateMaxMinusOneJobs() throws IOException, BRException {
+    	int maxMinusOne = MAX_JOBS_PER_WEEK - 1;
+    	for (int i = 0; i < Math.floor(maxMinusOne / 2); i++) {
+    		LocalDate dateToAddJob = ONE_MONTH_FROM_NOW.plusDays(i);
+    		Job toAdd = new Job(dateToAddJob, dateToAddJob);
+    		cal.addJob(toAdd);
+    	}
+    	for (int i = 0; i < Math.ceil(maxMinusOne / 2); i++) {
+    		LocalDate dateToAddJob = ONE_MONTH_FROM_NOW.minusDays(i);
+    		Job toAdd = new Job(dateToAddJob, dateToAddJob);
+    		cal.addJob(toAdd);
+    	}
+        assertFalse(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
+     *
+     * @throws IOException if Job info file not found.
+     * @throws BRException 
+     */
+    @Test
+    public void testIsFullDateMaxJobs() throws IOException, BRException {
+    	int maxMinusOne = MAX_JOBS_PER_WEEK - 1;
+    	for (int i = 0; i < Math.floor(maxMinusOne / 2); i++) {
+    		LocalDate dateToAddJob = ONE_MONTH_FROM_NOW.plusDays(i);
+    		Job toAdd = new Job(dateToAddJob, dateToAddJob);
+    		cal.addJob(toAdd);
+    	}
+    	cal.addJob(oneDayJobAMonthFromNow);
+    	for (int i = 0; i < Math.ceil(maxMinusOne / 2); i++) {
+    		LocalDate dateToAddJob = ONE_MONTH_FROM_NOW.minusDays(i);
+    		Job toAdd = new Job(dateToAddJob, dateToAddJob);
+    		cal.addJob(toAdd);
+    	}
+        assertTrue(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
+    }
+    
+    /**
+     * Test method for {@link model.Calendar#isFull(java.time.LocalDate, java.time.LocalDate)}.
+     *
+     * @throws IOException if Job info file not found.
+     * @throws BRException 
+     */
+    @Test(expected = WeekFullException.class)
+    public void testIsFullDateMaxPlusOneJobs() throws IOException, BRException {
+    	int maxMinusOne = MAX_JOBS_PER_WEEK - 1;
+    	for (int i = 0; i < Math.floor(maxMinusOne / 2); i++) {
+    		LocalDate dateToAddJob = ONE_MONTH_FROM_NOW.plusDays(i);
+    		Job toAdd = new Job(dateToAddJob, dateToAddJob);
+    		cal.addJob(toAdd);
+    	}
+    	cal.addJob(oneDayJobAMonthFromNow);
+    	for (int i = 0; i < Math.ceil(maxMinusOne / 2); i++) {
+    		LocalDate dateToAddJob = ONE_MONTH_FROM_NOW.minusDays(i);
+    		Job toAdd = new Job(dateToAddJob, dateToAddJob);
+    		cal.addJob(toAdd);
+    	}
+    	cal.addJob(twoDayJobAMonthFromNow);
+        assertTrue(cal.isFull(ONE_MONTH_FROM_NOW, ONE_MONTH_FROM_NOW));
     }
 
     /**
