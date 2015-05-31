@@ -75,11 +75,7 @@ public final class ParkManagerUI implements UserUI {
             final Scanner scan = new Scanner(System.in);
             final String choice = theScan.nextLine();
             // ensure user enters valid choice
-            if (!"q".equals(choice) && choice.equals(VIEWJOBS.toString())
-                    || choice.equals(CREATEJOB.toString())
-                    || choice.equals(ADDPARK.toString())
-                    || choice.equals(VIEWPARKS.toString())) {
-
+            if (validChoice(choice)) {
                 final int menu = Integer.parseInt(choice) - 1;
                 options[menu].option(scan);
 
@@ -92,6 +88,19 @@ public final class ParkManagerUI implements UserUI {
 
         return iWantToQuit;
 
+    }
+    
+    /**
+     * Determines whether not not the users choice is a valid one.
+     * 
+     * @param theChoice the users choice.
+     * @return  true if the users choice is the valid, false otherwise.
+     */
+    private boolean validChoice(final String theChoice) {
+        return !"q".equals(theChoice) && theChoice.equals(VIEWJOBS.toString())
+                        || theChoice.equals(CREATEJOB.toString())
+                        || theChoice.equals(ADDPARK.toString())
+                        || theChoice.equals(VIEWPARKS.toString()) ;
     }
 
     /**
@@ -167,6 +176,7 @@ public final class ParkManagerUI implements UserUI {
      * Create a menu option.
      *
      * @author Maurice Shaw
+     * @version 23May15
      */
     interface MenuOption {
 
@@ -240,6 +250,7 @@ public final class ParkManagerUI implements UserUI {
      * Creates the menu option that creates a job.
      *
      * @author Maurice Shaw
+     * @version 23May15
      */
     private final class CreateJob implements MenuOption {
 
@@ -352,6 +363,7 @@ public final class ParkManagerUI implements UserUI {
      * Manager.
      *
      * @author Maurice Shaw
+     * @version 23May15
      */
     private final class ViewParks implements MenuOption {
 
