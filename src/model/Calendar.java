@@ -104,7 +104,7 @@ public class Calendar {
             throw new JobTooLongException();
         }
         if (!isNotPast(job) || !isWithinMaxDays(job)) {
-            throw new InvalidTimeIntervalException();
+            throw new InvalidTimeIntervalException(job);
         }
         addJobToMap(job);
     }
@@ -179,10 +179,9 @@ public class Calendar {
         int jobs = 0;
         final LocalDate startDate = start.minusDays(HALF_WEEK);
         final LocalDate dayBeforeStart = startDate.minusDays(1);
-        List<Job> listOfJobsThisDay = null;
 
         if (dateToListOfJobs.containsKey(dayBeforeStart)) {
-            listOfJobsThisDay = dateToListOfJobs.get(dayBeforeStart);
+            final List<Job> listOfJobsThisDay = dateToListOfJobs.get(dayBeforeStart);
             for (final Job job : listOfJobsThisDay) {
                 if (job.getEndDate().equals(startDate)) {
                     jobs++;

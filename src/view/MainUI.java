@@ -42,6 +42,7 @@ public class MainUI {
         if (email.equals("q")) {
             quit();
         }
+        System.out.println();
         try {
             user = SerializableIO.getUser(email);
         } catch (final ClassNotFoundException theE) {

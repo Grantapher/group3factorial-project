@@ -11,9 +11,8 @@ public final class NotMyParkException extends BusinessRuleException {
 
     private static final long serialVersionUID = -12411087227115972L;
 
-
     public NotMyParkException(final String thePark) {
-        super(thePark + " is not a park you manage!");
+        super("\"" + thePark + "\" is not a park you manage!");
     }
 
 }

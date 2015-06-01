@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -76,6 +77,7 @@ public final class ParkManagerUI implements UserUI {
             final String choice = theScan.nextLine();
             // ensure user enters valid choice
             if (validChoice(choice)) {
+                System.out.println();
                 final int menu = Integer.parseInt(choice) - 1;
                 options[menu].option(scan);
 
@@ -83,24 +85,25 @@ public final class ParkManagerUI implements UserUI {
                 iWantToQuit = true;
             } else {
                 System.out.println(choice + " is not a valid choice.");
+                System.out.println();
             }
         } while (!iWantToQuit);
 
         return iWantToQuit;
 
     }
-    
+
     /**
      * Determines whether not not the users choice is a valid one.
-     * 
+     *
      * @param theChoice the users choice.
-     * @return  true if the users choice is the valid, false otherwise.
+     * @return true if the users choice is the valid, false otherwise.
      */
     private boolean validChoice(final String theChoice) {
         return !"q".equals(theChoice) && theChoice.equals(VIEWJOBS.toString())
-                        || theChoice.equals(CREATEJOB.toString())
-                        || theChoice.equals(ADDPARK.toString())
-                        || theChoice.equals(VIEWPARKS.toString()) ;
+                || theChoice.equals(CREATEJOB.toString())
+                || theChoice.equals(ADDPARK.toString())
+                || theChoice.equals(VIEWPARKS.toString());
     }
 
     /**
@@ -124,7 +127,7 @@ public final class ParkManagerUI implements UserUI {
      */
     private void introduction() {
         System.out
-        .println("What would you like to do? Please enter the number of your choice. ");
+                .println("What would you like to do? Please enter the number of your choice. ");
     }
 
     /**
@@ -165,9 +168,9 @@ public final class ParkManagerUI implements UserUI {
      */
     private String volString(final Volunteer theVol) {
         final StringBuilder str = new StringBuilder();
-        str.append(theVol.getFirstName() + " ");
-        str.append(theVol.getLastName() + " ");
-        str.append(theVol.getEmail() + "\n");
+        str.append(theVol.getFirstName()).append(" ");
+        str.append(theVol.getLastName()).append(" ");
+        str.append(theVol.getEmail());
 
         return str.toString();
     }
@@ -201,7 +204,7 @@ public final class ParkManagerUI implements UserUI {
             int jobIndex = 1;
             try {
                 for (final Job j : Calendar.getInstance().getJobs(myUser.getParks())) {
-                    System.out.print(jobIndex + ". " + jobString(j) + "\n");
+                    System.out.println(jobIndex + ". " + jobString(j));
                     jobs.add(j);
                     jobIndex++;
                 }
@@ -213,37 +216,56 @@ public final class ParkManagerUI implements UserUI {
                 return;
             }
             if (jobs.size() > 0) { // park has job
-                System.out.println("\nWould you like to view the volunteers for a job? Y/N ");
+                System.out.println("Would you like to view the volunteers for "
+                        + (jobs.size() > 1 ? "a" : "this") + " job? Y/N ");
                 final String choice = theScan.nextLine().toLowerCase();
+                System.out.println();
                 if ("y".equals(choice)) {
-                    System.out.print("Please enter the number of the job: ");
-                    jobIndex = theScan.nextInt();
+                    jobIndex = 1;
+                    if (jobs.size() != 1) {
+                        boolean goodInput = false;
+                        jobIndex = -1;
+                        do {
+                            System.out.print("Please enter the number of the job: ");
+
+                            try { // check numbers
+                                goodInput = true;
+                                jobIndex = theScan.nextInt();
+                                if (jobIndex < 1 || jobs.size() < jobIndex) {
+                                    throw new InputMismatchException();
+                                }
+                            } catch (final InputMismatchException e) {
+                                System.out.println("You must enter a number between 1 and "
+                                        + jobs.size() + ". Try Again.");
+                                goodInput = false;
+                                theScan.nextLine();
+                            }
+                        } while (!goodInput);
+                        System.out.println();
+                    }
+
                     // job has volunteers
-                    if (!jobs.get(jobIndex - 1).getVolunteers().isEmpty()
-                            && jobIndex < jobs.size() && jobIndex > 0) {
+                    if (!jobs.get(jobIndex - 1).getVolunteers().isEmpty()) {
 
                         final List<Volunteer> volList = myUser.getVolunteers(jobs
                                 .get(jobIndex - 1));
-                        System.out.println("Volunteers to "
-                                + jobs.get(jobIndex - 1).getDescription() + ":\n");
+                        System.out.println("Volunteers for \""
+                                + jobs.get(jobIndex - 1).getTitle() + "\":");
 
                         int count = 1;
                         for (final Volunteer vol : volList) {
                             System.out.println(count++ + ". " + volString(vol));
                         }
-                        // user enters invalid number of job
-                    } else if (jobIndex > jobs.size() || jobIndex < 1) {
-                        System.out.println(jobIndex + " is not a valid choice");
                     } else {
                         System.out.println("No one has volunteered for this job.");
                     }
+                    System.out.println();
                 }
             } else {
-                System.out.println("You do not have any parks.");
+                System.out.println("You do not have any upcoming jobs.");
             }
 
         }
-
     }
 
     /**
@@ -263,8 +285,6 @@ public final class ParkManagerUI implements UserUI {
         @Override
         public void option(final Scanner theScan) {
             boolean goodInput;
-            LocalDate startDate = null;
-            LocalDate endDate = null;
 
             System.out.println("Please enter the following information: ");
             System.out.print("\nTitle: ");
@@ -273,6 +293,8 @@ public final class ParkManagerUI implements UserUI {
             final String parkName = theScan.nextLine();
             System.out.print("Location: ");
             final String location = theScan.nextLine();
+
+            LocalDate startDate = null;
             do {
                 System.out.print("Start Date (yyyy-mm-dd): ");
                 final String startDateString = theScan.next();
@@ -282,11 +304,12 @@ public final class ParkManagerUI implements UserUI {
                     startDate = LocalDate.parse(startDateString);
                 } catch (final DateTimeParseException dt) {
                     System.out
-                            .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
+                    .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
                     goodInput = false;
                 }
             } while (!goodInput);
 
+            LocalDate endDate = null;
             do {
                 System.out.print("End Date (yyyy-mm-dd): ");
                 final String endDateString = theScan.next();
@@ -296,30 +319,82 @@ public final class ParkManagerUI implements UserUI {
                     endDate = LocalDate.parse(endDateString);
                 } catch (final DateTimeParseException dt) {
                     System.out
-                            .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
+                    .println("You must enter the date using this format (yyyy-mm-dd). Try Again");
                     goodInput = false;
                 }
 
             } while (!goodInput);
-            System.out.print("Number of light volunteers needed: ");
-            final int light = theScan.nextInt();
-            System.out.print("Number of medium volunteers needed: ");
-            final int medium = theScan.nextInt();
-            System.out.print("Number of heavy volunteers needed: ");
-            final int heavy = theScan.nextInt();
+
+            int light = -1;
+            do {
+                System.out.print("Number of light volunteers needed: ");
+
+                try { // check numbers
+                    goodInput = true;
+                    light = theScan.nextInt();
+                    if (light < 0) {
+                        throw new InputMismatchException();
+                    }
+                } catch (final InputMismatchException e) {
+                    System.out.println("You must enter an integer > 0. Try Again");
+                    goodInput = false;
+                    theScan.nextLine();
+                }
+
+            } while (!goodInput);
+
+            int medium = -1;
+            do {
+                System.out.print("Number of medium volunteers needed: ");
+
+                try { // check numbers
+                    goodInput = true;
+                    medium = theScan.nextInt();
+                    if (medium < 0) {
+                        throw new InputMismatchException();
+                    }
+                } catch (final InputMismatchException e) {
+                    System.out.println("You must enter an integer > 0. Try Again");
+                    goodInput = false;
+                    theScan.nextLine();
+                }
+
+            } while (!goodInput);
+
+            int heavy = -1;
+            do {
+                System.out.print("Number of heavy volunteers needed: ");
+
+                try { // check numbers
+                    goodInput = true;
+                    heavy = theScan.nextInt();
+                    if (heavy < 0) {
+                        throw new InputMismatchException();
+                    }
+                } catch (final InputMismatchException e) {
+                    System.out.println("You must enter an integer > 0. Try Again");
+                    goodInput = false;
+                    theScan.nextLine();
+                }
+
+            } while (!goodInput);
+
             theScan.nextLine();
             System.out.print("Description: ");
             final String description = theScan.nextLine();
+            System.out.println();
             try {// try to add job
                 myUser.submit(Calendar.getInstance(), title, parkName, location, startDate,
                         endDate, light, medium, heavy, description);
-
+                System.out.println("Job successfully created!");
+                System.out.println();
             } catch (final IOException theE) {
                 System.err.println("Job File is missing, can't add volunteer to job.");
             } catch (final ClassNotFoundException theE) {
                 System.err.println("Job File is corrupted, can't add volunteer to job.");
             } catch (final BusinessRuleException e) {
                 System.out.println(e.getMessage());
+                System.out.println();
             }
         }
     }
@@ -340,22 +415,29 @@ public final class ParkManagerUI implements UserUI {
         @Override
         public void option(final Scanner theScan) {
             String park = "";
-            do {
+            while (park.length() == 0) {
                 System.out.println("Please enter the park name: ");
                 park = theScan.nextLine();
-                if (park.length() > 0) {
+                if (park.length() == 0) {
+                    System.out.println("You must enter a park name, try again.");
+                    System.out.println();
+                } else if (myUser.isMyPark(park)) {
+                    System.out.println("You can't have multiple parks under the same name.");
+                    System.out.println();
+                } else {
                     myUser.addPark(park);
-                    System.out.println("Your park " + park + " was successfully added");
+                    System.out.println("Your park " + park + " was successfully added!");
+                    System.out.println();
                     System.out.println("Do you want to view your parks? Y/N");
                     final String choice = theScan.nextLine();
                     if ("y".equals(choice.toLowerCase())) {
+                        System.out.println();
                         new ViewParks().option(theScan);
+                    } else {
+                        System.out.println();
                     }
-
-                } else {
-                    System.out.println("You must enter a park name, try again");
                 }
-            } while (park.length() == 0);
+            }
         }
     }
 
@@ -377,9 +459,10 @@ public final class ParkManagerUI implements UserUI {
         public void option(final Scanner theScan) {
             int count = 1;
             final List<String> parks = myUser.getParks();
-            for (final String park1 : parks) {
-                System.out.println(count++ + ". " + park1);
+            for (final String park : parks) {
+                System.out.println(count++ + ". " + park);
             }
+            System.out.println();
         }
     }
 }

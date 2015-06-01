@@ -21,7 +21,7 @@ public class PastJobException extends BusinessRuleException {
      * @param theDate the date they tried to sign up for.
      */
     public PastJobException(final LocalDate theDate) {
-        super("The job you tried to sign up for is on " + theDate.toString() + ", today is "
-                + LocalDate.now().toString());
+        super("The job you tried to sign up for was on " + theDate.toString() + ", today is "
+                + LocalDate.now().toString() + "!");
     }
 }

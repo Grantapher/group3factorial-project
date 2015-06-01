@@ -35,7 +35,7 @@ public class AdminUI implements UserUI {
      */
     @Override
     public boolean userMenu(final Scanner sc) {
-        System.out.print("\nVolunteer last name to search for (q to quit): ");
+        System.out.print("Volunteer last name to search for (q to quit): ");
         final String lastName = sc.next();
         if (lastName.equals("q")) {
             return true;

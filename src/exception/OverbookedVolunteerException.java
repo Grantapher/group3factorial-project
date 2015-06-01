@@ -71,7 +71,7 @@ public class OverbookedVolunteerException extends BusinessRuleException {
         sb.append(start);
         final LocalDate end = theJob.getEndDate();
         if (!start.equals(end)) {
-            sb.append(" - ");
+            sb.append(" to ");
             sb.append(end);
         }
         return sb.toString();

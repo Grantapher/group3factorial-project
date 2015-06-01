@@ -34,6 +34,7 @@ public class VolunteerTest {
     private static final String FIRST = "John";
     private static final String EMAIL = "SmithJohn@gmail.com";
     private Volunteer tester;
+    private Volunteer testerCopy;
 
     /**
      * Creates a test object.
@@ -43,6 +44,7 @@ public class VolunteerTest {
     @Before
     public void setUp() throws Exception {
         tester = new Volunteer(LAST, FIRST, EMAIL);
+        testerCopy = new Volunteer(LAST, FIRST, EMAIL);
     }
 
     /**
@@ -90,7 +92,7 @@ public class VolunteerTest {
     @Test
     public final void testEqualsObject() {
         final Volunteer other = new Volunteer("Testing", "Is", "Fun!");
-        assertEquals("equals false negative", tester, new Volunteer(LAST, FIRST, EMAIL));
+        assertEquals("false negative", tester, testerCopy);
         assertNotEquals("false positive", tester, other);
     }
 

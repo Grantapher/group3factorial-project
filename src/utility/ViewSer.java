@@ -61,7 +61,7 @@ public class ViewSer {
         sb.append("\nDate: ");
         sb.append(job.getStartDate());
         if (!job.getStartDate().equals(job.getEndDate())) {
-            sb.append(" - ");
+            sb.append(" to ");
             sb.append(job.getEndDate());
         }
         sb.append("\nDescription: ");

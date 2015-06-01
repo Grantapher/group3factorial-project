@@ -36,7 +36,7 @@ public class VolunteerUI implements UserUI {
      */
     @Override
     public boolean userMenu(final Scanner sc) {
-        System.out.println("\nWhat would you like to do?");
+        System.out.println("What would you like to do?");
         System.out.println("1) Search for a job");
         System.out.println("2) View your jobs");
         System.out.println("3) Quit");
@@ -117,7 +117,7 @@ public class VolunteerUI implements UserUI {
         // Queries to sign up for a job
         int choiceIndex = -1;
         do {
-            System.out.println("\nWould you like to sign up for a job?");
+            System.out.println("Would you like to sign up for a job?");
             System.out.print("Job Number (0 to not sign up for a job): ");
             try {
                 choiceIndex = parseInt(sc.nextLine(), 0, jobIndex);
@@ -126,6 +126,7 @@ public class VolunteerUI implements UserUI {
             }
         } while (choiceIndex < 0 || jobs.size() < choiceIndex);
         if (choiceIndex == 0) {
+            System.out.println();
             return;
         }
         choiceIndex--;
@@ -149,6 +150,7 @@ public class VolunteerUI implements UserUI {
                 System.err.println("Invalid Choice");
             }
         } while (gradeInt < 0 || 4 <= gradeInt);
+        System.out.println();
         if (gradeInt == 0) {
             return;
         }
@@ -182,6 +184,7 @@ public class VolunteerUI implements UserUI {
         } catch (final BusinessRuleException theE) {
             System.out.println(theE.getMessage());
         }
+        System.out.println();
     }
 
     /**
@@ -226,7 +229,7 @@ public class VolunteerUI implements UserUI {
         sb.append("\nDate: ");
         sb.append(job.getStartDate());
         if (!job.getStartDate().equals(job.getEndDate())) {
-            sb.append(" - ");
+            sb.append(" to ");
             sb.append(job.getEndDate());
         }
         sb.append("\nDescription: ");
