@@ -41,7 +41,7 @@ public class SerializableIOTest {
     private static final Volunteer otherV = new Volunteer("Ross", "William",
             "ryansmith@fake.com");
     private static final String[] parks = { "Kopachuck State Park", "Blake Island",
-        "Camp Seymour", "Titlow Beach" };
+            "Camp Seymour", "Titlow Beach" };
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -126,13 +126,13 @@ public class SerializableIOTest {
     /**
      * Test method for
      * {@link model.SerializableIO#queryUsers(java.lang.String, java.lang.Character)}
-     * and {@link model.SerializableIO#addUser(model.AbstractUser)}.
+     * .
      *
      * @throws IOException if the file is not found
      * @throws ClassNotFoundException If the ser file doesn't contain the jobs
      */
     @Test
-    public final void testAddAndQueryUsers() throws IOException, ClassNotFoundException {
+    public final void testQueryUsers() throws IOException, ClassNotFoundException {
         final List<AbstractUser> allList = SerializableIO.queryUsers(null, null);
         assertTrue("The query (null, null) didn't return the type Administrator.",
                 allList.contains(admin));

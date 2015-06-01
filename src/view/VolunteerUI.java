@@ -200,8 +200,12 @@ public class VolunteerUI implements UserUI {
                     + myVolunteer.getFirstName() + "'s jobs.");
             return;
         }
-        for (final Job job : jobs) {
-            System.out.println(displayVolunteersJob(job));
+        if (jobs.size() == 0) {
+            System.out.println("You are not signed up for any jobs at this moment.");
+        } else {
+            for (final Job job : jobs) {
+                System.out.println(displayVolunteersJob(job));
+            }
         }
     }
 

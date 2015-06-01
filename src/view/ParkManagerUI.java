@@ -99,7 +99,7 @@ public final class ParkManagerUI implements UserUI {
      */
     private void makeMenu() {
         final String[] optionTitles = { "View your jobs", "Post new job", "Add new Park",
-                "View your parks", "Enter: (q)Quit" };
+                "View your parks", "Your choice (q to Quit):" };
         int count = 1;
         for (final String title : optionTitles) {
             if (count < optionTitles.length) {
@@ -296,6 +296,7 @@ public final class ParkManagerUI implements UserUI {
             final int medium = theScan.nextInt();
             System.out.print("Number of heavy volunteers needed: ");
             final int heavy = theScan.nextInt();
+            theScan.nextLine();
             System.out.print("Description: ");
             final String description = theScan.nextLine();
             try {// try to add job
